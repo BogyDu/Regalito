@@ -73,84 +73,52 @@ th {
     </div>
 
     <script>
-        // JavaScript para interactuar con la página y el almacenamiento local
-
-        // Obtiene el elemento select y el contenedor de la tabla
-        const selectRoutine = document.getElementById('selectRoutine');
-        const tableContainer = document.getElementById('tableContainer');
-
-       <!-- Dentro del script en el HTML -->
+        <!-- Dentro del script en el HTML -->
 const routines = {
     pierna1: {
         title: 'Día de Pierna 1',
         exercises: [
-            { name: 'Sentadillas', weight: '50 kg', repetitions: 10 },
-            { name: 'Prensa de piernas', weight: '80 kg', repetitions: 8 },
-            { name: 'Zancadas con mancuernas', weight: '20 kg', repetitions: 10 },
-            { name: 'Extensiones de piernas en máquina', weight: '40 kg', repetitions: 12 },
-            { name: 'Elevación de talones en máquina', weight: '60 kg', repetitions: 15 }
+            { name: 'Sentadillas', weight: '50 kg', repetitions: 10, series: 3 },
+            { name: 'Prensa de piernas', weight: '80 kg', repetitions: 8, series: 3 },
+            { name: 'Zancadas con mancuernas', weight: '20 kg', repetitions: 10, series: 3 },
+            { name: 'Extensiones de piernas en máquina', weight: '40 kg', repetitions: 12, series: 3 },
+            { name: 'Elevación de talones en máquina', weight: '60 kg', repetitions: 15, series: 3 }
         ]
     },
-    pierna2: {
-        title: 'Día de Pierna 2',
-        exercises: [
-            { name: 'Peso muerto', weight: '70 kg', repetitions: 8 },
-            { name: 'Desplantes', weight: '20 kg', repetitions: 10 },
-            { name: 'Curl de piernas acostado', weight: '30 kg', repetitions: 12 },
-            { name: 'Elevación de talones con barra', weight: '50 kg', repetitions: 15 },
-            { name: 'Hip thrust', weight: '40 kg', repetitions: 10 }
-        ]
-    },
-    brazo1: {
-        title: 'Día de Brazo 1',
-        exercises: [
-            { name: 'Flexiones de bíceps con barra', weight: '20 kg', repetitions: 10 },
-            { name: 'Curl de bíceps con mancuernas', weight: '10 kg', repetitions: 12 },
-            { name: 'Extensiones de tríceps con mancuerna por encima de la cabeza', weight: '8 kg', repetitions: 12 },
-            { name: 'Fondos en paralelas', weight: 'cuerpo', repetitions: 10 },
-            { name: 'Elevaciones laterales con mancuernas', weight: '5 kg', repetitions: 12 }
-        ]
-    },
-    brazo2: {
-        title: 'Día de Brazo 2',
-        exercises: [
-            { name: 'Press de hombros con mancuernas', weight: '12 kg', repetitions: 10 },
-            { name: 'Tríceps en polea alta', weight: '25 kg', repetitions: 12 },
-            { name: 'Flexiones de tríceps en banco', weight: 'cuerpo', repetitions: 10 },
-            { name: 'Curl de bíceps con barra Z', weight: '15 kg', repetitions: 12 },
-            { name: 'Elevaciones frontales con mancuernas', weight: '8 kg', repetitions: 12 }
-        ]
-    }
+    // Añade el resto de las rutinas de la misma manera
 };
 
-        // Función para generar la tabla de ejercicios
-        function generateTable(routine) {
-            const exercises = routines[routine].exercises;
-            let tableHTML = '<table><tr><th>Ejercicio</th><th>Peso Aprox.</th><th>Repeticiones</th><th>Peso Realizado</th></tr>';
-            exercises.forEach(exercise => {
-                tableHTML += `<tr><td>${exercise.name}</td><td>${exercise.weight}</td><td>${exercise.repetitions}</td><td><input type="text" class="weightInput"></td></tr>`;
-            });
-            tableHTML += '</table>';
-            tableContainer.innerHTML = tableHTML;
+// Función para generar la tabla de ejercicios
+function generateTable(routine) {
+    const exercises = routines[routine].exercises;
+    let tableHTML = '<table><tr><th>Ejercicio</th><th>Peso Aprox.</th><th>Repeticiones</th>';
+    for (let i = 1; i <= 3; i++) {
+        tableHTML += `<th>Peso Serie ${i}</th>`;
+    }
+    tableHTML += '</tr>';
 
-            // Escuchar cambios en el peso realizado y guardarlos en el localStorage
-            const weightInputs = document.querySelectorAll('.weightInput');
-            weightInputs.forEach((input, index) => {
-                input.addEventListener('change', () => {
-                    const weight = input.value;
-                    localStorage.setItem(`${routine}-exercise-${index}`, weight);
-                });
-            });
+    exercises.forEach((exercise, index) => {
+        tableHTML += `<tr><td>${exercise.name}</td><td>${exercise.weight}</td><td>${exercise.repetitions}</td>`;
+        for (let i = 0; i < exercise.series; i++) {
+            tableHTML += `<td><input type="text" class="weightInput" data-exercise="${index}" data-series="${i}"></td>`;
         }
+        tableHTML += '</tr>';
+    });
 
-        // Event listener para cambios en la selección de rutina
-        selectRoutine.addEventListener('change', () => {
-            const selectedRoutine = selectRoutine.value;
-            generateTable(selectedRoutine);
+    tableHTML += '</table>';
+    tableContainer.innerHTML = tableHTML;
+
+    // Escuchar cambios en el peso realizado y guardarlos en el localStorage
+    const weightInputs = document.querySelectorAll('.weightInput');
+    weightInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const exerciseIndex = input.dataset.exercise;
+            const seriesIndex = input.dataset.series;
+            const weight = input.value;
+            localStorage.setItem(`${routine}-exercise-${exerciseIndex}-series-${seriesIndex}`, weight);
         });
-
-        // Al cargar la página, mostrar la tabla de la primera rutina por defecto
-        generateTable(selectRoutine.value);
+    });
+}
     </script>
 </body>
 </html>
