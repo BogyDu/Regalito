@@ -58,13 +58,18 @@ function updateRoutine(day) {
     exercisesTable.innerHTML = "";
 
     routineDay.exercises.forEach((exercise, index) => {
+        const reps = parseInt(exercise.reps.split('-')[1], 10); // Máximo número de repeticiones
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${exercise.name}</td>
             <td>${exercise.series}</td>
             <td>${exercise.reps}</td>
-            <td><input type="number" id="weight-${index}" data-exercise="${index}" class="weight-input"></td>
-            <td><input type="number" id="reps-${index}" data-exercise="${index}" class="reps-input"></td>
+            <td>
+                ${[...Array(reps).keys()].map(i => `<input type="number" id="weight-${index}-${i+1}" data-exercise="${index}" class="weight-input" placeholder="Set ${i+1}">`).join('')}
+            </td>
+            <td>
+                ${[...Array(reps).keys()].map(i => `<input type="number" id="reps-${index}-${i+1}" data-exercise="${index}" class="reps-input" placeholder="Set ${i+1}">`).join('')}
+            </td>
         `;
         exercisesTable.appendChild(row);
     });
@@ -72,8 +77,10 @@ function updateRoutine(day) {
     // Cargar datos desde el localStorage
     const savedData = JSON.parse(localStorage.getItem(`day-${currentDay}-data`)) || [];
     savedData.forEach((data, index) => {
-        document.getElementById(`weight-${index}`).value = data.weight || "";
-        document.getElementById(`reps-${index}`).value = data.reps || "";
+        data.weights.forEach((weight, i) => {
+            document.getElementById(`weight-${index}-${i+1}`).value = weight || "";
+            document.getElementById(`reps-${index}-${i+1}`).value = data.reps[i] || "";
+        });
     });
 
     // Mostrar campos de entrada solo en el día actual
@@ -86,9 +93,14 @@ function saveData() {
     const data = [];
     document.querySelectorAll('.weight-input').forEach(input => {
         const index = input.getAttribute('data-exercise');
+        const setIndex = parseInt(input.id.split('-')[2], 10) - 1;
         const weight = input.value;
-        const reps = document.getElementById(`reps-${index}`).value;
-        data.push({ weight, reps });
+        if (!data[index]) {
+            data[index] = { weights: [], reps: [] };
+        }
+        data[index].weights[setIndex] = weight;
+        const repsInput = document.getElementById(`reps-${index}-${setIndex + 1}`);
+        data[index].reps[setIndex] = repsInput ? repsInput.value : "";
     });
     localStorage.setItem(`day-${currentDay}-data`, JSON.stringify(data));
     alert("Datos guardados");
