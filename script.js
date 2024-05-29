@@ -46,7 +46,7 @@ const routine = {
     }
 };
 
-let currentDay = new Date().getDay(); // 0 (domingo) a 6 (sábado)
+let currentDay = new Date().getDay()-1; // 0 (domingo) a 6 (sábado)
 
 // Ajusta el índice del día para que coincida con la rutina (1-4)
 if (currentDay === 0 || currentDay === 6) currentDay = 1; // Descanso los domingos y sábados
