@@ -52,7 +52,7 @@ let currentDay = new Date().getDay()-1; // 0 (domingo) a 6 (sábado)
 if (currentDay === 0 || currentDay === 6) currentDay = 1; // Descanso los domingos y sábados
 
 function updateRoutine(day) {
-    const routineDay = routine[day];
+    const routineDay = routine[day-1];
     document.getElementById("day-title").innerText = routineDay.day;
     const exercisesTable = document.getElementById("exercises");
     exercisesTable.innerHTML = "";
