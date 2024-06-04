@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <style>
+        .card {
+            width: 100px;
+            height: 150px;
+            border: 1px solid black;
+            background-color: white;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .hand {
+            margin-bottom: 20px;
+        }
+
+        #hit-button, #stand-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="dealer-hand" class="hand">
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+        <div id="player-hand" class="hand">
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+        <button id="hit-button">Hit</button>
+        <button id="stand-button">Stand</button>
+    </div>
+
+    <script>
+        // Función para obtener una carta aleatoria
+        function getRandomCard() {
+            const cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            return cards[Math.floor(Math.random() * cards.length)];
+        }
+
+        // Función para dibujar una carta en el elemento especificado
+        function drawCard(hand) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.textContent = getRandomCard();
+            hand.appendChild(card);
+        }
+
+        // Event listener para el botón "Hit"
+        document.getElementById('hit-button').addEventListener('click', function() {
+            drawCard(document.getElementById('player-hand'));
+        });
+
+        // Event listener para el botón "Stand"
+        document.getElementById('stand-button').addEventListener('click', function() {
+            // Aquí podrías implementar la lógica para la jugada del dealer
+        });
+    </script>
+</body>
+</html>
