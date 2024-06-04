@@ -1,88 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beer Pong AR</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.6/aframe/build/aframe-ar.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
-    <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v3.3.0/dist/aframe-physics-system.min.js"></script>
+  <meta charset="utf-8">
+  <title>Juego de Dardos en Realidad Aumentada</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #message { position: absolute; top: 10px; width: 100%; text-align: center; color: white; font-size: 24px; }
+  </style>
 </head>
 <body>
-    <a-scene embedded arjs="sourceType: webcam;" physics="debug: false">
-        <a-marker preset="hiro">
-            <a-entity id="beer-pong" position="0 0 0">
-                <!-- Aquí irán los elementos del juego -->
-            </a-entity>
-        </a-marker>
-        <a-entity camera></a-entity>
-    </a-scene>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Selecciona el contenedor del juego
-            const gameContainer = document.querySelector('#beer-pong');
+  <div id="message">Apunta y lanza un dardo!</div>
+  <a-scene embedded arjs>
+    <a-marker preset="hiro">
+      <a-entity id="dartboard" geometry="primitive: circle; radius: 1.5" material="color: #000; src: #dartboardTexture"></a-entity>
+      <a-box id="dart" position="0 1 -5" geometry="depth: 0.1; height: 0.1; width: 0.5" material="color: red"></a-box>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+  <script>
+    const dart = document.querySelector('#dart');
+    let throwing = false;
 
-            // Añade las copas de beer pong
-            const createCup = (x, y, z) => {
-                const cup = document.createElement('a-cylinder');
-                cup.setAttribute('position', `${x} ${y} ${z}`);
-                cup.setAttribute('radius', '0.05');
-                cup.setAttribute('height', '0.1');
-                cup.setAttribute('color', 'blue');
-                cup.setAttribute('static-body', ''); // Estático para que no se muevan
-                return cup;
-            };
+    window.addEventListener('click', () => {
+      if (throwing) return;
 
-            const addCups = () => {
-                const positions = [
-                    {x: 0, y: 0.05, z: -0.2},
-                    {x: -0.1, y: 0.05, z: -0.1},
-                    {x: 0.1, y: 0.05, z: -0.1},
-                    {x: -0.2, y: 0.05, z: 0},
-                    {x: 0, y: 0.05, z: 0},
-                    {x: 0.2, y: 0.05, z: 0}
-                ];
+      throwing = true;
+      dart.setAttribute('animation', {
+        property: 'position',
+        to: '0 1 0',
+        dur: 1000,
+        easing: 'linear',
+      });
 
-                positions.forEach(pos => {
-                    const cup = createCup(pos.x, pos.y, pos.z);
-                    gameContainer.appendChild(cup);
-                });
-            };
-
-            addCups();
-
-            // Lógica para lanzar la pelota
-            const createBall = () => {
-                const ball = document.createElement('a-sphere');
-                ball.setAttribute('position', '0 1.5 0');
-                ball.setAttribute('radius', '0.05');
-                ball.setAttribute('color', 'white');
-                ball.setAttribute('dynamic-body', 'shape: sphere;');
-                ball.setAttribute('class', 'throwable');
-                return ball;
-            };
-
-            const throwBall = () => {
-                const ball = createBall();
-                gameContainer.appendChild(ball);
-
-                ball.addEventListener('click', () => {
-                    const impulse = new CANNON.Vec3(0, 2, -3);
-                    const worldPoint = new CANNON.Vec3().copy(ball.getAttribute('position'));
-                    ball.body.applyImpulse(impulse, worldPoint);
-                });
-            };
-
-            throwBall();
-        });
-    </script>
+      setTimeout(() => {
+        dart.setAttribute('position', '0 1 -5');
+        throwing = false;
+      }, 1000);
+    });
+  </script>
+  <img id="dartboardTexture" src="https://i.imgur.com/Ii2C4GI.png" style="display: none;">
 </body>
 </html>
