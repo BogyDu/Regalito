@@ -5,6 +5,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    background: #f0f0f0;
 }
 
 #game-container {
@@ -14,13 +15,20 @@ body {
 #dartboard-container {
     width: 300px;
     height: 300px;
-    background: url('dartboard.png') no-repeat center center;
-    background-size: cover;
     margin: 0 auto;
 }
 
 #controls {
     margin-top: 20px;
+}
+
+#darts {
+    position: relative;
+}
+
+#dart {
+    width: 50px;
+    cursor: grab;
 }
 
 #score {
