@@ -6,6 +6,11 @@
     <title>Blackjack</title>
     <style>
         /* Estilos CSS para las cartas y los botones */
+           body {
+            background-color: #2ecc71; /* Cambia el color de fondo */
+            font-family: Arial, sans-serif;
+        }
+
         .card {
             width: 100px;
             height: 150px;
@@ -16,6 +21,13 @@
             font-size: 20px;
             text-align: center;
             line-height: 150px;
+            backface-visibility: hidden; /* Oculta la parte trasera de las cartas durante la animación */
+            transform-style: preserve-3d; /* Mantiene la transformación 3D de las cartas */
+            transition: transform 0.5s; /* Añade una animación de giro */
+        }
+
+        .card.back {
+            transform: rotateY(180deg); /* Voltea la carta hacia atrás */
         }
 
         .hand {
@@ -23,6 +35,30 @@
         }
 
         #hit-button, #stand-button, #bet-input, #deal-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db; /* Color de fondo */
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Añade una transición de color al pasar el ratón */
+        }
+
+        #hit-button:hover, #stand-button:hover, #deal-button:hover {
+            background-color: #2980b9; /* Cambia el color de fondo al pasar el ratón */
+        }
+
+        #hit-button:disabled, #stand-button:disabled {
+            background-color: #7f8c8d; /* Color de fondo desactivado */
+            cursor: not-allowed;
+        }
+
+        #message {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
             margin-top: 20px;
         }
     </style>
