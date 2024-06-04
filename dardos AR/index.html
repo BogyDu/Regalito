@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dart Game with AR</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        #ar-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #dartboard {
-            width: 300px;
-            height: 300px;
-            background-image: url('dartboard.png');
-            background-size: cover;
-            border-radius: 50%;
-        }
-    </style>
+    <title>Juego de Dardos AR</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
 </head>
 <body>
-    <div id="ar-container">
-        <div id="dartboard"></div>
+    <div id="game-container">
+        <h1>Juego de Dardos AR</h1>
+        <div id="dartboard-container">
+            <a-scene embedded arjs>
+                <a-marker preset="hiro">
+                    <a-entity geometry="primitive: plane; width: 1; height: 1" material="src: dartboard.png"></a-entity>
+                </a-marker>
+                <a-entity camera></a-entity>
+            </a-scene>
+        </div>
+        <div id="controls">
+            <button id="throw-dart">Lanzar Dardo</button>
+            <div id="score">Puntuación: 0</div>
+        </div>
     </div>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        let score = 0;
+        document.getElementById('throw-dart').addEventListener('click', () => {
+            const hit = Math.floor(Math.random() * 60) + 1;
+            score += hit;
+            document.getElementById('score').innerText = `Puntuación: ${score}`;
+        });
+    </script>
 </body>
 </html>
