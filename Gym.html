@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de la Ruleta</title>
+    <title>Juego de la Ruleta 3D</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             background-color: #f5f5f5;
             margin: 0;
@@ -19,26 +20,8 @@
             text-align: center;
         }
 
-        .ruleta {
-            position: relative;
-            margin: 20px auto;
-        }
-
-        .flecha {
-            width: 0; 
-            height: 0; 
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 20px solid red;
-            position: absolute;
-            top: -30px;
-            left: 240px;
-        }
-
         canvas {
-            background-color: #ffffff;
-            border: 5px solid #000000;
-            border-radius: 50%;
+            display: block;
         }
 
         button {
@@ -57,88 +40,100 @@
 </head>
 <body>
     <div class="container">
-        <h1>Juego de la Ruleta</h1>
-        <div class="ruleta">
-            <div id="flecha" class="flecha"></div>
-            <canvas id="ruletaCanvas" width="500" height="500"></canvas>
-        </div>
+        <h1>Juego de la Ruleta 3D</h1>
+        <div id="ruletaContainer"></div>
         <button id="girarBtn">Girar</button>
         <div id="resultado"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        const canvas = document.getElementById("ruletaCanvas");
-        const ctx = canvas.getContext("2d");
-        const girarBtn = document.getElementById("girarBtn");
-        const resultadoDiv = document.getElementById("resultado");
+        const container = document.getElementById('ruletaContainer');
+        const girarBtn = document.getElementById('girarBtn');
+        const resultadoDiv = document.getElementById('resultado');
+
+        let camera, scene, renderer;
+        let ruleta, bola;
+        let anguloActual = 0;
+        let duracionGiro = 0;
+        let startTime;
 
         const numeros = [...Array(37).keys()]; // Números de la ruleta (0 a 36)
-        const colores = ["#ff0000", "#000000"]; // Colores de la ruleta (rojo y negro)
+        const colores = ["#00ff00", "#ff0000", "#000000"]; // Colores de la ruleta (verde, rojo y negro)
 
-        // Dibujar la ruleta
-        function dibujarRuleta() {
-            const radio = canvas.width / 2;
-            const angulo = (2 * Math.PI) / numeros.length;
+        init();
+        animate();
 
-            for (let i = 0; i < numeros.length; i++) {
-                const inicioAngulo = i * angulo;
-                const finAngulo = inicioAngulo + angulo;
-                ctx.beginPath();
-                ctx.moveTo(radio, radio);
-                ctx.arc(radio, radio, radio, inicioAngulo, finAngulo);
-                ctx.fillStyle = colores[i % 2];
-                ctx.fill();
-                ctx.stroke();
+        function init() {
+            scene = new THREE.Scene();
 
-                ctx.save();
-                ctx.translate(radio, radio);
-                ctx.rotate(inicioAngulo + angulo / 2);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "20px Arial";
-                ctx.fillText(numeros[i], radio - 30, 10);
-                ctx.restore();
-            }
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 600;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            const geometry = new THREE.CylinderGeometry(200, 200, 20, 37);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false });
+            ruleta = new THREE.Mesh(geometry, material);
+            scene.add(ruleta);
+
+            const bolaGeometry = new THREE.SphereGeometry(10, 32, 32);
+            const bolaMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            bola = new THREE.Mesh(bolaGeometry, bolaMaterial);
+            bola.position.set(0, 110, 10);
+            scene.add(bola);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            girarBtn.addEventListener('click', girarRuleta);
         }
 
-        // Girar la ruleta
-        function girarRuleta() {
-            const duracion = 5000; // Duración de la animación en milisegundos
-            const inicio = Date.now();
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
 
-            function animar() {
-                const tiempoTranscurrido = Date.now() - inicio;
-                const progreso = Math.min(tiempoTranscurrido / duracion, 1);
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
 
-                const anguloActual = progreso * 10 * 2 * Math.PI; // Girar varias veces
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.save();
-                ctx.translate(canvas.width / 2, canvas.height / 2);
-                ctx.rotate(anguloActual);
-                ctx.translate(-canvas.width / 2, -canvas.height / 2);
-                dibujarRuleta();
-                ctx.restore();
+        function render() {
+            if (duracionGiro > 0) {
+                const tiempoTranscurrido = Date.now() - startTime;
+                const progreso = Math.min(tiempoTranscurrido / duracionGiro, 1);
+                anguloActual = progreso * 10 * 2 * Math.PI; // Girar varias veces
+                ruleta.rotation.y = anguloActual;
 
-                if (progreso < 1) {
-                    requestAnimationFrame(animar);
-                } else {
+                const anguloBola = -progreso * 10 * 2 * Math.PI; // Bola en sentido contrario
+                bola.position.set(
+                    200 * Math.cos(anguloBola),
+                    110,
+                    200 * Math.sin(anguloBola)
+                );
+
+                if (progreso >= 1) {
                     mostrarResultado(anguloActual);
+                    duracionGiro = 0;
                 }
             }
 
-            animar();
+            renderer.render(scene, camera);
         }
 
-        // Mostrar el resultado
+        function girarRuleta() {
+            duracionGiro = 5000; // Duración de la animación en milisegundos
+            startTime = Date.now();
+        }
+
         function mostrarResultado(anguloFinal) {
             const anguloPorNumero = (2 * Math.PI) / numeros.length;
             const anguloSinGiros = anguloFinal % (2 * Math.PI);
-            const numeroGanador = Math.floor(anguloSinGiros / anguloPorNumero);
+            const numeroGanador = Math.floor((2 * Math.PI - anguloSinGiros) / anguloPorNumero) % numeros.length;
             resultadoDiv.textContent = `¡El número ganador es: ${numeros[numeroGanador]}!`;
         }
-
-        girarBtn.addEventListener("click", girarRuleta);
-
-        // Inicializar la ruleta
-        dibujarRuleta();
     </script>
 </body>
 </html>
