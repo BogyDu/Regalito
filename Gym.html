@@ -1,124 +1,87 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rutina de Ejercicios</title>
+    <title>Beer Pong AR</title>
     <style>
-    
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #ffffff;
-    color: #000000;
-}
-
-h1 {
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 10px;
-}
-
-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #000000;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    border: 1px solid #000000;
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #000000;
-    color: #ffffff;
-}
-
-.weightInput {
-    width: 50px;
-}
-    
-        /* Estilos CSS */
-        /* Agrega estilos según tus preferencias */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
     </style>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.6/aframe/build/aframe-ar.js"></script>
 </head>
 <body>
-    <h1>Rutina de Ejercicios</h1>
-    <label for="selectRoutine">Selecciona una opción:</label>
-    <select id="selectRoutine">
-        <option value="pierna1">Día de Pierna 1</option>
-        <option value="brazo1">Día de Brazo 1</option>
-        <option value="pierna2">Día de Pierna 2</option>
-        <option value="brazo2">Día de Brazo 2</option>
-    </select>
-
-    <div id="tableContainer">
-        <!-- Aquí se mostrará la tabla de ejercicios -->
-    </div>
-
+    <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <a-box position="0 0.5 0" color="red"></a-box>
+            <a-entity id="beer-pong" position="0 0 0">
+                <!-- Aquí irán los elementos del juego -->
+            </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
     <script>
-        <!-- Dentro del script en el HTML -->
-const routines = {
-    pierna1: {
-        title: 'Día de Pierna 1',
-        exercises: [
-            { name: 'Sentadillas', weight: '50 kg', repetitions: 10, series: 3 },
-            { name: 'Prensa de piernas', weight: '80 kg', repetitions: 8, series: 3 },
-            { name: 'Zancadas con mancuernas', weight: '20 kg', repetitions: 10, series: 3 },
-            { name: 'Extensiones de piernas en máquina', weight: '40 kg', repetitions: 12, series: 3 },
-            { name: 'Elevación de talones en máquina', weight: '60 kg', repetitions: 15, series: 3 }
-        ]
-    },
-    // Añade el resto de las rutinas de la misma manera
-};
+        document.addEventListener('DOMContentLoaded', () => {
+            // Selecciona el contenedor del juego
+            const gameContainer = document.querySelector('#beer-pong');
 
-// Función para generar la tabla de ejercicios
-function generateTable(routine) {
-    const exercises = routines[routine].exercises;
-    let tableHTML = '<table><tr><th>Ejercicio</th><th>Peso Aprox.</th><th>Repeticiones</th>';
-    for (let i = 1; i <= 3; i++) {
-        tableHTML += `<th>Peso Serie ${i}</th>`;
-    }
-    tableHTML += '</tr>';
+            // Añade las copas de beer pong
+            const createCup = (x, y, z) => {
+                const cup = document.createElement('a-cylinder');
+                cup.setAttribute('position', `${x} ${y} ${z}`);
+                cup.setAttribute('radius', '0.05');
+                cup.setAttribute('height', '0.1');
+                cup.setAttribute('color', 'blue');
+                cup.setAttribute('dynamic-body', '');
+                return cup;
+            };
 
-    exercises.forEach((exercise, index) => {
-        tableHTML += `<tr><td>${exercise.name}</td><td>${exercise.weight}</td><td>${exercise.repetitions}</td>`;
-        for (let i = 0; i < exercise.series; i++) {
-            tableHTML += `<td><input type="text" class="weightInput" data-exercise="${index}" data-series="${i}"></td>`;
-        }
-        tableHTML += '</tr>';
-    });
+            const addCups = () => {
+                const positions = [
+                    {x: 0, y: 0.05, z: -0.2},
+                    {x: -0.1, y: 0.05, z: -0.1},
+                    {x: 0.1, y: 0.05, z: -0.1},
+                    {x: -0.2, y: 0.05, z: 0},
+                    {x: 0, y: 0.05, z: 0},
+                    {x: 0.2, y: 0.05, z: 0}
+                ];
 
-    tableHTML += '</table>';
-    tableContainer.innerHTML = tableHTML;
+                positions.forEach(pos => {
+                    const cup = createCup(pos.x, pos.y, pos.z);
+                    gameContainer.appendChild(cup);
+                });
+            };
 
-    // Escuchar cambios en el peso realizado y guardarlos en el localStorage
-    const weightInputs = document.querySelectorAll('.weightInput');
-    weightInputs.forEach(input => {
-        input.addEventListener('change', () => {
-            const exerciseIndex = input.dataset.exercise;
-            const seriesIndex = input.dataset.series;
-            const weight = input.value;
-            localStorage.setItem(`${routine}-exercise-${exerciseIndex}-series-${seriesIndex}`, weight);
+            addCups();
+
+            // Lógica para lanzar la pelota
+            const createBall = () => {
+                const ball = document.createElement('a-sphere');
+                ball.setAttribute('position', '0 1.5 0');
+                ball.setAttribute('radius', '0.05');
+                ball.setAttribute('color', 'white');
+                ball.setAttribute('dynamic-body', 'shape: sphere;');
+                ball.setAttribute('class', 'throwable');
+                return ball;
+            };
+
+            const throwBall = () => {
+                const ball = createBall();
+                gameContainer.appendChild(ball);
+
+                ball.addEventListener('click', () => {
+                    const impulse = new CANNON.Vec3(0, 2, -3);
+                    const worldPoint = new CANNON.Vec3().copy(ball.getAttribute('position'));
+                    ball.body.applyImpulse(impulse, worldPoint);
+                });
+            };
+
+            throwBall();
         });
-    });
-}
     </script>
 </body>
 </html>
