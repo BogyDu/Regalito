@@ -13,7 +13,6 @@ dart.addEventListener('mousedown', (e) => {
     startY = e.clientY;
     dart.style.position = 'absolute';
     dart.style.cursor = 'grabbing';
-    document.addEventListener('touchmove', preventDefault, { passive: false });
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', onStopDrag);
 });
@@ -27,6 +26,7 @@ dart.addEventListener('touchstart', (e) => {
     dart.style.cursor = 'grabbing';
     document.addEventListener('touchmove', onDrag);
     document.addEventListener('touchend', onStopDrag);
+    document.addEventListener('touchmove', preventDefault, { passive: false });
 });
 
 function onDrag(e) {
@@ -65,10 +65,43 @@ function onStopDrag(e) {
         score += hit;
         document.getElementById('score').innerText = `Puntuación: ${score}`;
         
-        document.removeEventListener('touchmove', preventDefault, { passive: false });
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', onStopDrag);
         document.removeEventListener('touchmove', onDrag);
         document.removeEventListener('touchend', onStopDrag);
+        document.removeEventListener('touchmove', preventDefault, { passive: false });
     }
 }
+
+dart.addEventListener('touchend', (e) => {
+    if (isDragging) {
+        isDragging = false;
+        dart.style.cursor = 'grab';
+        dart.style.transition = 'transform 0.5s ease-out';
+
+        let touch = e.changedTouches[0];
+        let dx = touch.clientX - startX;
+        let dy = touch.clientY - startY;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        let angle = Math.atan2(dy, dx);
+        let velocity = distance / 10;
+
+        dart.style.transform = `translate(${dx + Math.cos(angle) * velocity}px, ${dy + Math.sin(angle) * velocity}px)`;
+
+        setTimeout(() => {
+            dart.style.transition = 'none';
+            dart.style.transform = 'none';
+            dart.style.position = 'static';
+        }, 500);
+
+        let hit = Math.floor(Math.random() * 60) + 1;
+        score += hit;
+        document.getElementById('score').innerText = `Puntuación: ${score}`;
+
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', onStopDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', onStopDrag);
+        document.removeEventListener('touchmove', preventDefault, { passive: false });
+    }
+});
