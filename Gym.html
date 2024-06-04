@@ -13,11 +13,12 @@
     </style>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.6/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v3.3.0/dist/aframe-physics-system.min.js"></script>
 </head>
 <body>
-    <a-scene embedded arjs>
+    <a-scene embedded arjs="sourceType: webcam;" physics="debug: false">
         <a-marker preset="hiro">
-            <a-box position="0 0.5 0" color="red"></a-box>
             <a-entity id="beer-pong" position="0 0 0">
                 <!-- Aquí irán los elementos del juego -->
             </a-entity>
@@ -36,7 +37,7 @@
                 cup.setAttribute('radius', '0.05');
                 cup.setAttribute('height', '0.1');
                 cup.setAttribute('color', 'blue');
-                cup.setAttribute('dynamic-body', '');
+                cup.setAttribute('static-body', ''); // Estático para que no se muevan
                 return cup;
             };
 
