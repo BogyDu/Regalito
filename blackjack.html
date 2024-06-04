@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack</title>
     <style>
-        /* Estilos CSS para las cartas y los botones */
-           body {
+        body {
             background-color: #2ecc71; /* Cambia el color de fondo */
             font-family: Arial, sans-serif;
         }
@@ -72,13 +71,17 @@
             <!-- Las cartas del jugador se agregarán aquí dinámicamente -->
         </div>
         <div>
-            <label for="bet-input">Bet:</label>
+            <label for="bet-input" style="color: white;">Bet:</label>
             <input type="number" id="bet-input" min="1" value="10">
             <button id="deal-button">Deal</button>
             <button id="hit-button" disabled>Hit</button>
             <button id="stand-button" disabled>Stand</button>
         </div>
         <div id="message"></div>
+        <div>
+            <label for="player-money" style="color: white;">Fichas disponibles:</label>
+            <span id="player-money">100</span>
+        </div>
     </div>
 
     <script>
@@ -102,6 +105,11 @@
                 cardElement.style.color = 'red';
             }
             hand.appendChild(cardElement);
+        }
+
+        // Función para voltear la carta
+        function flipCard(cardElement) {
+            cardElement.classList.toggle('back');
         }
 
         // Función para calcular el valor de una mano de cartas
@@ -159,11 +167,19 @@
             drawCard(document.getElementById('player-hand'), getRandomCard());
             drawCard(document.getElementById('dealer-hand'), getRandomCard());
             drawCard(document.getElementById('dealer-hand'), getRandomCard());
+
+            // Voltear la primera carta del dealer después de repartir las cartas
+            flipCard(document.getElementById('dealer-hand').querySelector('.card'));
         });
 
         // Event listener para el botón "Hit"
         document.getElementById('hit-button').addEventListener('click', function() {
-            drawCard(document.getElementById('player-hand'), getRandomCard());
+            const newCard = getRandomCard();
+            drawCard(document.getElementById('player-hand'), newCard);
+
+            // Voltear la nueva carta
+            const newCardElement = document.getElementById('player-hand').lastChild;
+            setTimeout(() => flipCard(newCardElement), 100);
 
             // Verificar si el jugador se ha pasado de 21
             if (calculateHandValue(document.getElementById('player-hand')) > 21) {
