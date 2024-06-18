@@ -3,34 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rutina de Entrenamiento</title>
+    <title>Selector de Rutinas</title>
     <link rel="stylesheet" href="styles.css">
-          <link rel="icon" href="icon.svg" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
-        <h1>Rutina de Entrenamiento</h1>
-        <div id="navigation">
-            <button id="prev">Anterior</button>
-            <button id="next">Siguiente</button>
-        </div>
-        <h2 id="day-title"></h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Ejercicio</th>
-                    <th>Series</th>
-                    <th>Repeticiones</th>
-                    <th>Peso (kg)</th>
-                    <th>Repeticiones Realizadas</th>
-                </tr>
-                
-            </thead>
-            <tbody id="exercises">
-                <!-- Los ejercicios se insertarán aquí dinámicamente -->
-            </tbody>
-        </table>
-        <button id="save">Guardar</button>
+        <h1>Selecciona tu rutina</h1>
+        <select id="routine-selector">
+            <option value="brazo-hombro">Brazo y Hombro</option>
+            <option value="brazo-abs">Brazo y Abs</option>
+            <option value="cuadriceps">Cuadriceps</option>
+            <option value="femoral">Femoral</option>
+        </select>
+        <button id="submit-btn">Seleccionar</button>
+        <div id="routine-info"></div>
+        <div id="table-container"></div>
     </div>
     <script src="script.js"></script>
 </body>
