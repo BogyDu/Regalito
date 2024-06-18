@@ -1,52 +1,57 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
+    margin: 0;
 }
 
 .container {
-    background-color: #fff;
+    background-color: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 100%;
-    width: 90%;
+    width: 80%;
+    max-width: 600px;
 }
 
 h1 {
     margin-bottom: 20px;
-    font-size: 1.5rem;
 }
 
-#navigation {
+select {
+    padding: 10px;
+    font-size: 16px;
     margin-bottom: 20px;
 }
 
 button {
     padding: 10px 20px;
-    margin: 0 10px;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
+    font-size: 16px;
     cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
     border-radius: 4px;
+    margin-bottom: 20px;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
+#routine-info {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    font-size: 0.9rem;
 }
 
 table, th, td {
@@ -54,30 +59,17 @@ table, th, td {
 }
 
 th, td {
-    padding: 10px;
+    padding: 8px;
     text-align: center;
 }
 
-input {
-    width: 60px;
+th {
+    background-color: #f2f2f2;
 }
 
-@media (max-width: 600px) {
-    table, th, td {
-        font-size: 0.8rem;
-        padding: 5px;
-    }
-
-    input {
-        width: 50px;
-    }
-
-    button {
-        padding: 8px 16px;
-        margin: 5px;
-    }
-
-    h1 {
-        font-size: 1.2rem;
-    }
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    padding: 5px;
 }
