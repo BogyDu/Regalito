@@ -1,127 +1,129 @@
-const routine = {
-    1: {
-        day: "Día 1: Pecho y Tríceps",
-        exercises: [
-            { name: "Press de banca con barra", series: 4, reps: "8-12" },
-            { name: "Press inclinado con mancuernas", series: 3, reps: "10-12" },
-            { name: "Fondos en paralelas", series: 3, reps: "8-10" },
-            { name: "Aperturas con mancuernas", series: 3, reps: 12 },
-            { name: "Press francés con barra", series: 3, reps: "10-12" },
-            { name: "Extensiones de tríceps con cable", series: 3, reps: 12 }
-        ]
-    },
-    2: {
-        day: "Día 2: Espalda y Bíceps",
-        exercises: [
-            { name: "Dominadas", series: 4, reps: "6-10" },
-            { name: "Remo con barra", series: 3, reps: "8-12" },
-            { name: "Remo con mancuernas a un brazo", series: 3, reps: "10-12" },
-            { name: "Jalón al pecho", series: 3, reps: 12 },
-            { name: "Curl con barra", series: 3, reps: "10-12" },
-            { name: "Curl de bíceps con mancuernas alterno", series: 3, reps: 12 }
-        ]
-    },
-    3: {
-        day: "Día 3: Piernas y Abdomen",
-        exercises: [
-            { name: "Sentadillas", series: 4, reps: "8-12" },
-            { name: "Prensa de pierna", series: 3, reps: "10-12" },
-            { name: "Peso muerto rumano", series: 3, reps: "10-12" },
-            { name: "Extensiones de cuádriceps", series: 3, reps: 12 },
-            { name: "Curl de pierna", series: 3, reps: 12 },
-            { name: "Elevación de talones (gemelos)", series: 4, reps: "15-20" },
-            { name: "Crunch abdominal", series: 3, reps: 20 },
-            { name: "Elevación de piernas", series: 3, reps: 15 }
-        ]
-    },
-    4: {
-        day: "Día 4: Hombros y Trapecios",
-        exercises: [
-            { name: "Press militar con barra", series: 4, reps: "8-12" },
-            { name: "Elevaciones laterales", series: 3, reps: 12 },
-            { name: "Elevaciones frontales", series: 3, reps: 12 },
-            { name: "Pájaros (elevaciones posteriores)", series: 3, reps: 12 },
-            { name: "Encogimientos de hombros con barra", series: 4, reps: 15 }
-        ]
+document.getElementById('submit-btn').addEventListener('click', function() {
+    const selector = document.getElementById('routine-selector');
+    const selectedValue = selector.value;
+    const routineInfo = document.getElementById('routine-info');
+    const tableContainer = document.getElementById('table-container');
+
+    let routineName = '';
+    let exercises = [];
+
+    switch(selectedValue) {
+        case 'brazo-hombro':
+            routineName = 'Brazo y Hombro';
+            exercises = [
+                'Laterales mancuernas', 
+                'Press maquina', 
+                'Extension triceps barra Z', 
+                'Lateral cable'
+            ];
+            break;
+        case 'brazo-abs':
+            routineName = 'Brazo y Abs';
+            exercises = [
+                'Patarriba', 
+                'Gamba', 
+                'Remo T', 
+                'Jalon pecho cerrado', 
+                'Remo polea', 
+                'Facepull'
+            ];
+            break;
+        case 'cuadriceps':
+            routineName = 'Cuadriceps';
+            exercises = [
+                'Abductores', 
+                'Hip', 
+                'Prensa', 
+                'Bulgara multi', 
+                'Patada culo'
+            ];
+            break;
+        case 'femoral':
+            routineName = 'Femoral';
+            exercises = [
+                'Curl tumbado', 
+                'Hip', 
+                'Peso rumano', 
+                'Patada culo', 
+                'Abductor'
+            ];
+            break;
+        default:
+            routineName = '';
     }
-};
 
-let currentDay = new Date().getDay(); // 0 (domingo) a 6 (sábado)
+    routineInfo.innerText = `Has seleccionado la rutina de ${routineName}.`;
+    createTable(exercises);
+});
 
-// Ajusta el índice del día para que coincida con la rutina (1-4)
-if (currentDay === 0 || currentDay === 6) currentDay = 1; // Descanso los domingos y sábados
+function createTable(exercises) {
+    const tableContainer = document.getElementById('table-container');
+    tableContainer.innerHTML = '';  // Clear previous table if any
 
-function updateRoutine(day) {
-    const routineDay = routine[day];
-    document.getElementById("day-title").innerText = routineDay.day;
-    const exercisesTable = document.getElementById("exercises");
-    exercisesTable.innerHTML = "";
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
 
-    routineDay.exercises.forEach((exercise, index) => {
-        const sets = exercise.series;
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${exercise.name}</td>
-            <td>${exercise.series}</td>
-            <td>${exercise.reps}</td>
-            <td>
-                ${[...Array(sets).keys()].map(i => `<input type="number" id="weight-${index}-${i+1}" data-exercise="${index}" class="weight-input" placeholder="Set ${i+1}">`).join('')}
-            </td>
-            <td>
-                ${[...Array(sets).keys()].map(i => `<input type="number" id="reps-${index}-${i+1}" data-exercise="${index}" class="reps-input" placeholder="Set ${i+1}">`).join('')}
-            </td>
-        `;
-        exercisesTable.appendChild(row);
+    const headerRow = document.createElement('tr');
+    const headers = ['Nombre ejercicio', 'Serie 1', 'Serie 2', 'Serie 3'];
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.innerText = headerText;
+        headerRow.appendChild(th);
     });
+    thead.appendChild(headerRow);
 
-    // Cargar datos desde el localStorage
-    const savedData = JSON.parse(localStorage.getItem(`day-${currentDay}-data`)) || [];
-    savedData.forEach((data, index) => {
-        data.weights.forEach((weight, i) => {
-            document.getElementById(`weight-${index}-${i+1}`).value = weight || "";
-            document.getElementById(`reps-${index}-${i+1}`).value = data.reps[i] || "";
-        });
-    });
+    exercises.forEach(exercise => {
+        const row = document.createElement('tr');
 
-    // Mostrar campos de entrada solo en el día actual
-    document.querySelectorAll('.weight-input, .reps-input').forEach(input => {
-        input.disabled = !(day === getDayIndex(new Date()));
-    });
-}
+        const nameCell = document.createElement('td');
+        nameCell.innerText = exercise;
+        row.appendChild(nameCell);
 
-function saveData() {
-    const data = [];
-    document.querySelectorAll('.weight-input').forEach(input => {
-        const index = input.getAttribute('data-exercise');
-        const setIndex = parseInt(input.id.split('-')[2], 10) - 1;
-        const weight = input.value;
-        if (!data[index]) {
-            data[index] = { weights: [], reps: [] };
+        for (let i = 0; i < 3; i++) {
+            const cell = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.dataset.exercise = exercise;
+            input.dataset.series = `serie${i + 1}`;
+            input.addEventListener('blur', saveData);
+            cell.appendChild(input);
+            row.appendChild(cell);
         }
-        data[index].weights[setIndex] = weight;
-        const repsInput = document.getElementById(`reps-${index}-${setIndex + 1}`);
-        data[index].reps[setIndex] = repsInput ? repsInput.value : "";
+        tbody.appendChild(row);
     });
-    localStorage.setItem(`day-${currentDay}-data`, JSON.stringify(data));
-    alert("Datos guardados");
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+    loadData(exercises);
 }
 
-function getDayIndex(date) {
-    const day = date.getDay();
-    return (day === 0 || day === 6) ? 1 : day; // Ajuste para días de descanso
+function saveData(event) {
+    const input = event.target;
+    const exercise = input.dataset.exercise;
+    const series = input.dataset.series;
+    const value = input.value;
+
+    let data = JSON.parse(localStorage.getItem('routineData')) || {};
+    if (!data[exercise]) {
+        data[exercise] = {};
+    }
+    data[exercise][series] = value;
+
+    localStorage.setItem('routineData', JSON.stringify(data));
 }
 
-document.getElementById("prev").addEventListener("click", () => {
-    currentDay = currentDay > 1 ? currentDay - 1 : 4;
-    updateRoutine(currentDay);
-});
+function loadData(exercises) {
+    let data = JSON.parse(localStorage.getItem('routineData')) || {};
 
-document.getElementById("next").addEventListener("click", () => {
-    currentDay = currentDay < 4 ? currentDay + 1 : 1;
-    updateRoutine(currentDay);
-});
-
-document.getElementById("save").addEventListener("click", saveData);
-
-// Inicializa la rutina con el día actual
-updateRoutine(currentDay);
+    exercises.forEach(exercise => {
+        for (let i = 0; i < 3; i++) {
+            const series = `serie${i + 1}`;
+            const input = document.querySelector(`input[data-exercise="${exercise}"][data-series="${series}"]`);
+            if (data[exercise] && data[exercise][series]) {
+                input.value = data[exercise][series];
+            }
+        }
+    });
+}
