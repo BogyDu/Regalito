@@ -13,7 +13,7 @@ document.getElementById('submit-btn').addEventListener('click', function() {
             exercises = [
                 'Laterales mancuernas', 
                 'Press maquina', 
-                'Extension triceps barra Z', 
+                'Extension triceps','barra Z', 
                 'Lateral cable'
             ];
             break;
