@@ -15,52 +15,26 @@
     <div id="result"></div>
 
     <script>
-    const express = require("express");
-const axios = require("axios");
-const app = express();
-const port = 3000;
+        const SHODAN_API_KEY = "00SNyYaiGViWtWtXbe3enawmqLrSdMMN";
+         // ⚠️ Inserta tu API Key aquí ⚠️
 
-// Reemplaza con tu API Key de Shodan
-const SHODAN_API_KEY = "00SNyYaiGViWtWtXbe3enawmqLrSdMMN";
-
-
-// Endpoint para buscar dispositivos IoT cercanos a una ubicación
-app.get("/api/search", async (req, res) => {
-    const { lat, lon } = req.query;
-
-    if (!lat || !lon) {
-        return res.status(400).send("Se requieren latitud y longitud");
-    }
-
-    try {
-        const response = await axios.get(`https://api.shodan.io/shodan/host/search`, {
-            params: {
-                key: SHODAN_API_KEY,
-                query: `geo:${lat},${lon}`
-            }
-        });
-        res.json(response.data);
-    } catch (error) {
-        res.status(500).send("Error al conectarse a Shodan");
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Servidor en ejecución en http://localhost:${port}`);
-});
-
-
-    
-    
-        function scanIoT() {
+        async function scanIoT() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    
-                    const response = await fetch(`/api/search?lat=${lat}&lon=${lon}`);
-                    const data = await response.json();
-                    displayResults(data);
+
+                    // Construimos la URL de la API de Shodan para la búsqueda por ubicación
+                    const url = `https://api.shodan.io/shodan/host/search?key=${SHODAN_API_KEY}&query=geo:${lat},${lon}`;
+
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        displayResults(data);
+                    } catch (error) {
+                        console.error("Error al conectarse a Shodan:", error);
+                        alert("No se pudo obtener resultados de Shodan.");
+                    }
                 });
             } else {
                 alert("Geolocalización no soportada en este navegador.");
