@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner IoT con Shodan</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Escáner IoT con Shodan</h1>
+    <button onclick="scanIoT()">Escanear Dispositivos IoT Cercanos</button>
+    <div id="result"></div>
+
+    <script>
+    const express = require("express");
+const axios = require("axios");
+const app = express();
+const port = 3000;
+
+// Reemplaza con tu API Key de Shodan
+const SHODAN_API_KEY = "00SNyYaiGViWtWtXbe3enawmqLrSdMMN";
+
+
+// Endpoint para buscar dispositivos IoT cercanos a una ubicación
+app.get("/api/search", async (req, res) => {
+    const { lat, lon } = req.query;
+
+    if (!lat || !lon) {
+        return res.status(400).send("Se requieren latitud y longitud");
+    }
+
+    try {
+        const response = await axios.get(`https://api.shodan.io/shodan/host/search`, {
+            params: {
+                key: SHODAN_API_KEY,
+                query: `geo:${lat},${lon}`
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).send("Error al conectarse a Shodan");
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Servidor en ejecución en http://localhost:${port}`);
+});
+
+
+    
+    
+        function scanIoT() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    const response = await fetch(`/api/search?lat=${lat}&lon=${lon}`);
+                    const data = await response.json();
+                    displayResults(data);
+                });
+            } else {
+                alert("Geolocalización no soportada en este navegador.");
+            }
+        }
+
+        function displayResults(data) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "<h2>Resultados:</h2>";
+
+            if (data.matches && data.matches.length > 0) {
+                data.matches.forEach(device => {
+                    const deviceInfo = `
+                        <p>IP: ${device.ip_str}</p>
+                        <p>Puerto: ${device.port}</p>
+                        <p>Organización: ${device.org || "N/A"}</p>
+                        <p>Ubicación: ${device.location.city || "N/A"}, ${device.location.country_name || "N/A"}</p>
+                        <hr>
+                    `;
+                    resultDiv.innerHTML += deviceInfo;
+                });
+            } else {
+                resultDiv.innerHTML += "<p>No se encontraron dispositivos.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
