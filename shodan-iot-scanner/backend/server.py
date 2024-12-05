@@ -3,7 +3,7 @@ import shodan
 import os
 
 app = Flask(__name__)
-SHODAN_API_KEY = os.getenv("00SNyYaiGViWtWtXbe3enawmqLrSdMMN")
+SHODAN_API_KEY = os.getenv("api")
 api = shodan.Shodan(SHODAN_API_KEY)
 
 @app.route('/search', methods=['GET'])
