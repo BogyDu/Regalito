@@ -96,14 +96,21 @@
       background: #2980b9;
     }
 
+    .interpretacion {
+      margin-top: 1rem;
+      font-style: italic;
+      color: #555;
+    }
+
   </style>
 </head>
 <body>
   <div class="popup" id="apiPopup">
     <div class="popup-content">
-      <h2>Introduce tu API Key de Stormglass</h2>
-      <input type="text" id="apiKeyInput" placeholder="API Key" style="width: 100%; padding: 0.5rem;" />
-      <button onclick="saveApiKey()" style="margin-top: 1rem;">Guardar</button>
+      <h2>Introduce tus claves API</h2>
+      <input type="text" id="apiKeyStormglass" placeholder="API Key Stormglass" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;" />
+      <input type="text" id="apiKeyOpenAI" placeholder="API Key OpenAI" style="width: 100%; padding: 0.5rem;" />
+      <button onclick="saveApiKeys()" style="margin-top: 1rem;">Guardar</button>
     </div>
   </div>
 
@@ -140,17 +147,20 @@
       { name: "Gandía", lat: 38.9685, lon: -0.1734 }
     ];
 
-    function saveApiKey() {
-      const key = document.getElementById("apiKeyInput").value;
-      if (key) {
-        localStorage.setItem("stormglass_api_key", key);
+    function saveApiKeys() {
+      const keyStormglass = document.getElementById("apiKeyStormglass").value;
+      const keyOpenAI = document.getElementById("apiKeyOpenAI").value;
+      if (keyStormglass && keyOpenAI) {
+        localStorage.setItem("stormglass_api_key", keyStormglass);
+        localStorage.setItem("openai_api_key", keyOpenAI);
         document.getElementById("apiPopup").style.display = "none";
       }
     }
 
     window.onload = function() {
-      const savedKey = localStorage.getItem("stormglass_api_key");
-      if (!savedKey) {
+      const savedKeyStormglass = localStorage.getItem("stormglass_api_key");
+      const savedKeyOpenAI = localStorage.getItem("openai_api_key");
+      if (!savedKeyStormglass || !savedKeyOpenAI) {
         document.getElementById("apiPopup").style.display = "flex";
       }
 
@@ -201,8 +211,29 @@
       return "Mucho viento o choppy";
     }
 
+    async function obtenerInterpretacionOpenAI(apiKeyOpenAI, resumenDatos) {
+      const prompt = `Dado el siguiente resumen de condiciones meteorológicas para surf: "${resumenDatos}", proporciona una interpretación detallada y recomendaciones para surfistas.`;
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKeyOpenAI}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7
+        })
+      });
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+
     async function fetchSpotData(userLat, userLon) {
-      const apiKey = localStorage.getItem("stormglass_api_key");
+      const apiKeyStormglass = localStorage.getItem("stormglass_api_key");
+      const apiKeyOpenAI = localStorage.getItem("openai_api_key");
       const distanceLimit = parseInt(document.getElementById("distance").value);
       const tableBody = document.getElementById("spotsBody");
       tableBody.innerHTML = "";
@@ -212,7 +243,7 @@
         if (distance <= distanceLimit) {
           try {
             const response = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${spot.lat}&lng=${spot.lon}&params=waveHeight,windSpeed,windDirection&source=sg`, {
-              headers: { 'Authorization': apiKey }
+              headers: { 'Authorization': apiKeyStormglass }
             });
 
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -222,27 +253,4 @@
             const windSpeed = data.hours[0].windSpeed?.sg;
             const windDirection = data.hours[0].windDirection?.sg;
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td><a href="https://www.google.com/maps?q=${encodeURIComponent(spot.name + ', Valencia')}" target="_blank">${spot.name}</a></td>
-              <td>${waveHeight ? waveHeight.toFixed(2) + " m" : "N/A"}</td>
-              <td>${windSpeed ? windSpeed.toFixed(1) + " km/h" : "N/A"} ${windDirection ? getCardinalDirection(windDirection) : ""}</td>
-              <td>${generateComment(waveHeight, windSpeed)}</td>
-            `;
-            tableBody.appendChild(row);
-
-          } catch (error) {
-            console.error(`Error al obtener datos para ${spot.name}:`, error);
-            const errorRow = document.createElement("tr");
-            errorRow.innerHTML = `
-              <td><a href="https://www.google.com/maps?q=${encodeURIComponent(spot.name + ', Valencia')}" target="_blank">${spot.name}</a></td>
-              <td colspan="3" style="color: red;">⚠️ Error al cargar los datos del spot</td>
-            `;
-            tableBody.appendChild(errorRow);
-          }
-        }
-      }
-    }
-  </script>
-</body>
-</html>
+            const comentario = generate 
