@@ -57,9 +57,60 @@
       box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
       margin-top: 20px;
     }
+
+    /* Popup */
+    #apiPopup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #apiPopupContent {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    #apiPopupContent input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    #apiPopupContent button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0077b6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #apiPopupContent button:hover {
+      background: #005f8f;
+    }
   </style>
 </head>
 <body>
+  <div id="apiPopup">
+    <div id="apiPopupContent">
+      <h2>🔐 Introduce tu API Key de OpenAI</h2>
+      <input type="password" id="apiInput" placeholder="sk-..." />
+      <button onclick="guardarApiKey()">Guardar y continuar</button>
+    </div>
+  </div>
+
   <header>
     <h1>🌊 Boletín de Surf - Valencia</h1>
     <p>Reporte diario para surfistas intermedios</p>
@@ -79,7 +130,26 @@
   </main>
 
   <script>
-    const API_KEY = 'TU_API_KEY_AQUI'; // ⚠️ Sustituye esto con tu propia API key de OpenAI
+    let apiKey = '';
+
+    function guardarApiKey() {
+      const input = document.getElementById('apiInput').value.trim();
+      if (input.startsWith('sk-')) {
+        localStorage.setItem('openai_api_key', input);
+        apiKey = input;
+        document.getElementById('apiPopup').style.display = 'none';
+      } else {
+        alert("Por favor, introduce una API key válida que empiece con 'sk-'");
+      }
+    }
+
+    function verificarApiKey() {
+      const key = localStorage.getItem('openai_api_key');
+      if (key && key.startsWith('sk-')) {
+        apiKey = key;
+        document.getElementById('apiPopup').style.display = 'none';
+      }
+    }
 
     async function generarBoletin() {
       const prompt = `
@@ -125,13 +195,11 @@ Escribe ahora el boletín de surf para hoy.
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${API_KEY}`
+            "Authorization": `Bearer ${apiKey}`
           },
           body: JSON.stringify({
             model: "gpt-4",
-            messages: [
-              { role: "user", content: prompt }
-            ],
+            messages: [{ role: "user", content: prompt }],
             temperature: 0.7
           })
         });
@@ -144,6 +212,8 @@ Escribe ahora el boletín de surf para hoy.
         console.error(error);
       }
     }
+
+    window.onload = verificarApiKey;
   </script>
 </body>
 </html>
