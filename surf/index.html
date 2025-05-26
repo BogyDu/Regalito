@@ -253,4 +253,32 @@
             const windSpeed = data.hours[0].windSpeed?.sg;
             const windDirection = data.hours[0].windDirection?.sg;
 
-            const comentario = generate 
+            const comentario = generateComment(waveHeight, windSpeed);
+            const resumen = `Spot: ${spot.name}, Olas: ${waveHeight?.toFixed(2)}m, Viento: ${windSpeed?.toFixed(1)} km/h desde ${getCardinalDirection(windDirection)}`;
+            const interpretacion = await obtenerInterpretacionOpenAI(apiKeyOpenAI, resumen);
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><a href="https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lon}" target="_blank">${spot.name}</a></td>
+              <td>${waveHeight?.toFixed(2)} m</td>
+              <td>${windSpeed?.toFixed(1)} km/h ${getCardinalDirection(windDirection)}</td>
+              <td>
+                ${comentario}
+                <div class="interpretacion">${interpretacion}</div>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          } catch (err) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td colspan="4" style="color: red;">
+                Error al cargar datos para ${spot.name}: ${err.message}
+              </td>`;
+            tableBody.appendChild(row);
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
