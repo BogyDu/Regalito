@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boletín Surf Valencia</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      background: #eaf7fb;
+      color: #333;
+    }
+
+    header {
+      background-color: #0077b6;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .spot {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      background: #0077b6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #005f8f;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌊 Boletín de Surf - Valencia</h1>
+    <p>Reporte diario para surfistas intermedios</p>
+  </header>
+
+  <main>
+    <section class="spot">
+      <h2>Spots y condiciones del día</h2>
+      <ul>
+        <li><strong>Les Deveses:</strong> 0.7 m | 5s | Swell 85° | Viento 12 km/h E | Fondo: Arena</li>
+        <li><strong>El Chivas:</strong> 0.4 m | 3s | Swell 70° | Viento 9 km/h NNO | Fondo: Arena y roca</li>
+        <li><strong>Gandía:</strong> 0.6 m | 6s | Swell 95° | Viento 16 km/h E | Fondo: Arena</li>
+      </ul>
+      <button class="btn" onclick="generarBoletin()">🧠 Generar Boletín Inteligente</button>
+      <pre id="reporte">Haz clic para generar el reporte...</pre>
+    </section>
+  </main>
+
+  <script>
+    const API_KEY = 'TU_API_KEY_AQUI'; // ⚠️ Sustituye esto con tu propia API key de OpenAI
+
+    async function generarBoletin() {
+      const prompt = `
+Eres un surfista profesional y analista de olas. A continuación te paso los datos meteorológicos para varios spots de surf cerca de Valencia.
+
+Tu tarea es:
+- Elegir el mejor spot para un surfista intermedio.
+- Evaluar tamaño de ola, periodo, dirección del swell, viento, y fondo.
+- Recomendar la mejor hora del día para surfear.
+- Dar una calificación general del día de surf (1 a 5 estrellas).
+- Escribir el reporte en tono amigable, claro y con jerga surfer.
+
+Datos del día:
+Spot: Les Deveses
+- Olas: 0.7 m
+- Periodo: 5s
+- Dirección del swell: 85° (Este)
+- Viento: 12 km/h E (onshore)
+- Fondo: Arena
+
+Spot: El Chivas
+- Olas: 0.4 m
+- Periodo: 3s
+- Dirección del swell: 70° (ENE)
+- Viento: 9 km/h NNO (offshore)
+- Fondo: Arena y roca
+
+Spot: Playa de Gandía
+- Olas: 0.6 m
+- Periodo: 6s
+- Dirección del swell: 95° (ESE)
+- Viento: 16 km/h E (onshore)
+- Fondo: Arena
+
+Escribe ahora el boletín de surf para hoy.
+`;
+
+      const respuestaElemento = document.getElementById("reporte");
+      respuestaElemento.textContent = "Generando reporte... 🌊";
+
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "gpt-4",
+            messages: [
+              { role: "user", content: prompt }
+            ],
+            temperature: 0.7
+          })
+        });
+
+        const data = await res.json();
+        const mensaje = data.choices?.[0]?.message?.content;
+        respuestaElemento.textContent = mensaje || "Error al generar el reporte.";
+      } catch (error) {
+        respuestaElemento.textContent = "⚠️ Error al conectar con OpenAI API.";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
