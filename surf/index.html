@@ -37,6 +37,16 @@
       color: white;
     }
 
+    a {
+      color: #0077b6;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
     #popup {
       position: fixed;
       top: 0;
@@ -84,8 +94,8 @@
 <body>
   <div id="popup">
     <div id="popupContent">
-      <h3>Introduce tu API Key de OpenAI</h3>
-      <input type="password" id="apiKeyInput" placeholder="sk-..."/>
+      <h3>Introduce tu API Key de Stormglass</h3>
+      <input type="password" id="apiKeyInput" placeholder="tu-api-key"/>
       <button onclick="saveApiKey()">Guardar</button>
     </div>
   </div>
@@ -97,7 +107,7 @@
     <input type="range" id="distance" min="10" max="200" value="100" oninput="document.getElementById('distVal').textContent = this.value"/>
   </div>
 
-  <table>
+  <table id="spotsTable">
     <thead>
       <tr>
         <th>Spot</th>
@@ -107,73 +117,35 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Malvarrosa Beach</td>
-        <td>0.3 - 0.5 m</td>
-        <td>15 - 20 km/h NE</td>
-        <td>Olas pequeñas y consistentes; ideal para principiantes e intermedios.</td>
-      </tr>
-      <tr>
-        <td>Playa de Levante</td>
-        <td>0.3 - 0.5 m</td>
-        <td>15 - 20 km/h NE</td>
-        <td>Condiciones similares a Malvarrosa; fácil acceso y ambiente urbano.</td>
-      </tr>
-      <tr>
-        <td>El Saler</td>
-        <td>0.3 - 0.5 m</td>
-        <td>15 - 20 km/h NE</td>
-        <td>Playa tranquila con olas suaves; adecuada para sesiones relajadas.</td>
-      </tr>
-      <tr>
-        <td>Playa de las Arenas</td>
-        <td>0.3 - 0.5 m</td>
-        <td>15 - 20 km/h NE</td>
-        <td>Spot popular en verano; olas pequeñas y consistentes.</td>
-      </tr>
-      <tr>
-        <td>Cullera/Júcar</td>
-        <td>Plano</td>
-        <td>5 km/h NNW</td>
-        <td>Actualmente sin olas; mejor en invierno o con condiciones específicas.</td>
-      </tr>
-      <tr>
-        <td>Sagunto</td>
-        <td>Plano</td>
-        <td>4 km/h N</td>
-        <td>Sin actividad de olas en este momento; consultar pronósticos futuros.</td>
-      </tr>
-      <tr>
-        <td>Platja de Xeraco</td>
-        <td>0.3 - 0.5 m</td>
-        <td>5 km/h NNW</td>
-        <td>Olas pequeñas; adecuado para principiantes.</td>
-      </tr>
-      <tr>
-        <td>El Perelló</td>
-        <td>0.3 - 0.5 m</td>
-        <td>15 - 20 km/h NE</td>
-        <td>Spot menos concurrido; ideal para evitar multitudes.</td>
-      </tr>
+      <!-- Los datos se insertarán aquí dinámicamente -->
     </tbody>
   </table>
 
   <script>
-    // Guardar la API Key
+    const spots = [
+      { name: "Malvarrosa Beach", lat: 39.4789, lon: -0.3306 },
+      { name: "Playa de Levante", lat: 39.4702, lon: -0.3768 },
+      { name: "El Saler", lat: 39.3958, lon: -0.3194 },
+      { name: "Playa de las Arenas", lat: 39.4655, lon: -0.3302 },
+      { name: "Cullera/Júcar", lat: 39.1667, lon: -0.2500 },
+      { name: "Sagunto", lat: 39.6800, lon: -0.2667 },
+      { name: "Platja de Xeraco", lat: 39.0333, lon: -0.2000 },
+      { name: "El Perelló", lat: 39.2833, lon: -0.2833 }
+    ];
+
     function saveApiKey() {
       const key = document.getElementById("apiKeyInput").value.trim();
-      if (key.startsWith("sk-")) {
-        localStorage.setItem("openai_api_key", key);
+      if (key) {
+        localStorage.setItem("stormglass_api_key", key);
         document.getElementById("popup").style.display = "none";
         getLocation();
       } else {
-        alert("Introduce una API key válida que empiece con 'sk-'");
+        alert("Introduce una API key válida.");
       }
     }
 
-    // Mostrar popup si no hay key guardada
     window.onload = () => {
-      const savedKey = localStorage.getItem("openai_api_key");
+      const savedKey = localStorage.getItem("stormglass_api_key");
       if (!savedKey) {
         document.getElementById("popup").style.display = "flex";
       } else {
@@ -182,15 +154,13 @@
       }
     }
 
-    // Obtener ubicación del usuario
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            console.log("Ubicación:", lat, lon);
-            // Aquí puedes integrar llamadas a APIs de spots usando la ubicación
+            fetchSpotData(lat, lon);
           },
           err => {
             alert("No se pudo obtener tu ubicación.");
@@ -201,6 +171,72 @@
         alert("Tu navegador no soporta geolocalización.");
       }
     }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        0.5 - Math.cos(dLat)/2 + 
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        (1 - Math.cos(dLon))/2;
+
+      return R * 2 * Math.asin(Math.sqrt(a));
+    }
+
+    async function fetchSpotData(userLat, userLon) {
+      const apiKey = localStorage.getItem("stormglass_api_key");
+      const distanceLimit = parseInt(document.getElementById("distance").value);
+      const now = new Date();
+      const isoDate = now.toISOString();
+
+      const tableBody = document.querySelector("#spotsTable tbody");
+      tableBody.innerHTML = "";
+
+      for (const spot of spots) {
+        const distance = calculateDistance(userLat, userLon, spot.lat, spot.lon);
+        if (distance <= distanceLimit) {
+          try {
+            const response = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${spot.lat}&lng=${spot.lon}&params=waveHeight,windSpeed,windDirection&source=sg`, {
+              headers: {
+                'Authorization': apiKey
+              }
+            });
+            const data = await response.json();
+            const waveHeight = data.hours[0].waveHeight.sg;
+            const windSpeed = data.hours[0].windSpeed.sg;
+            const windDirection = data.hours[0].windDirection.sg;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><a href="https://www.google.com/maps?q=${encodeURIComponent(spot.name + ', Valencia')}" target="_blank">${spot.name}</a></td>
+              <td>${waveHeight ? waveHeight.toFixed(2) + " m" : "N/A"}</td>
+              <td>${windSpeed ? windSpeed.toFixed(1) + " km/h" : "N/A"} ${windDirection ? getCardinalDirection(windDirection) : ""}</td>
+              <td>${generateComment(waveHeight, windSpeed)}</td>
+            `;
+            tableBody.appendChild(row);
+          } catch (error) {
+            console.error(`Error al obtener datos para ${spot.name}:`, error);
+          }
+        }
+      }
+    }
+
+    function getCardinalDirection(angle) {
+      const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+      return directions[Math.round(angle / 45) % 8];
+    }
+
+    function generateComment(waveHeight, windSpeed) {
+      if (!waveHeight || !windSpeed) return "Datos no disponibles.";
+      if (waveHeight < 0.3) return "Olas pequeñas; ideal para principiantes.";
+      if (waveHeight < 1.0) return "Condiciones moderadas; adecuado para intermedios.";
+      return "Olas grandes; recomendado para surfistas experimentados.";
+    }
+
+    document.getElementById("distance").addEventListener("change", () => {
+      getLocation();
+    });
   </script>
 </body>
 </html>
