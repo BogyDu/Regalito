@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Boletín Surf Valencia</title>
+  <meta charset="UTF-8">
+  <title>Surf Radar Valencia 🌊</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
       margin: 0;
-      background: #eaf7fb;
+      padding: 0;
       color: #333;
     }
 
     header {
-      background-color: #0077b6;
+      background: #00796b;
       color: white;
       padding: 20px;
       text-align: center;
@@ -25,45 +26,38 @@
       padding: 20px;
     }
 
-    .spot {
-      background: white;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
     .btn {
-      display: inline-block;
       padding: 10px 20px;
-      margin-top: 20px;
-      font-size: 16px;
-      background: #0077b6;
+      background: #00796b;
       color: white;
       border: none;
       border-radius: 5px;
+      margin-top: 10px;
       cursor: pointer;
     }
 
     .btn:hover {
-      background: #005f8f;
+      background: #004d40;
+    }
+
+    input[type="range"] {
+      width: 100%;
     }
 
     pre {
-      white-space: pre-wrap;
-      background: #fff;
+      background: white;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
       margin-top: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
     }
 
-    /* Popup */
     #apiPopup {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,21 +79,6 @@
       margin-top: 10px;
       font-size: 16px;
     }
-
-    #apiPopupContent button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #0077b6;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #apiPopupContent button:hover {
-      background: #005f8f;
-    }
   </style>
 </head>
 <body>
@@ -107,30 +86,33 @@
     <div id="apiPopupContent">
       <h2>🔐 Introduce tu API Key de OpenAI</h2>
       <input type="password" id="apiInput" placeholder="sk-..." />
-      <button onclick="guardarApiKey()">Guardar y continuar</button>
+      <button class="btn" onclick="guardarApiKey()">Guardar</button>
     </div>
   </div>
 
   <header>
-    <h1>🌊 Boletín de Surf - Valencia</h1>
-    <p>Reporte diario para surfistas intermedios</p>
+    <h1>🌊 Surf Radar - Valencia</h1>
+    <p>Spots recomendados cerca de tu ubicación</p>
   </header>
 
   <main>
-    <section class="spot">
-      <h2>Spots y condiciones del día</h2>
-      <ul>
-        <li><strong>Les Deveses:</strong> 0.7 m | 5s | Swell 85° | Viento 12 km/h E | Fondo: Arena</li>
-        <li><strong>El Chivas:</strong> 0.4 m | 3s | Swell 70° | Viento 9 km/h NNO | Fondo: Arena y roca</li>
-        <li><strong>Gandía:</strong> 0.6 m | 6s | Swell 95° | Viento 16 km/h E | Fondo: Arena</li>
-      </ul>
-      <button class="btn" onclick="generarBoletin()">🧠 Generar Boletín Inteligente</button>
-      <pre id="reporte">Haz clic para generar el reporte...</pre>
-    </section>
+    <label for="distancia">Distancia máxima (km): <span id="kmTexto">100</span> km</label>
+    <input type="range" id="distancia" min="10" max="200" step="10" value="100" oninput="document.getElementById('kmTexto').textContent = this.value" />
+
+    <button class="btn" onclick="obtenerUbicacion()">📍 Buscar spots cercanos</button>
+
+    <pre id="reporte">Esperando ubicación y generación del boletín...</pre>
   </main>
 
   <script>
     let apiKey = '';
+
+    const spotsBase = [
+      { nombre: "Les Deveses", lat: 38.8595, lon: 0.0164, condiciones: "0.7m, 5s, 85°, 12 km/h E, fondo de arena" },
+      { nombre: "El Chivas", lat: 39.0032, lon: -0.1221, condiciones: "0.4m, 3s, 70°, 9 km/h NNO, fondo de arena y roca" },
+      { nombre: "Gandía", lat: 38.9951, lon: -0.1600, condiciones: "0.6m, 6s, 95°, 16 km/h E, fondo de arena" },
+      { nombre: "El Perelló", lat: 39.2717, lon: -0.2775, condiciones: "0.5m, 4s, 80°, 14 km/h SE, fondo de arena" }
+    ];
 
     function guardarApiKey() {
       const input = document.getElementById('apiInput').value.trim();
@@ -139,7 +121,7 @@
         apiKey = input;
         document.getElementById('apiPopup').style.display = 'none';
       } else {
-        alert("Por favor, introduce una API key válida que empiece con 'sk-'");
+        alert("API key inválida. Debe comenzar con 'sk-'");
       }
     }
 
@@ -151,44 +133,56 @@
       }
     }
 
-    async function generarBoletin() {
+    function obtenerUbicacion() {
+      if (!navigator.geolocation) {
+        alert("Tu navegador no soporta geolocalización");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const radio = parseInt(document.getElementById("distancia").value);
+        const cercanos = spotsBase.filter(spot => calcularDistancia(lat, lon, spot.lat, spot.lon) <= radio);
+        generarReporte(cercanos);
+      }, err => {
+        alert("No se pudo obtener la ubicación. Permisos denegados.");
+      });
+    }
+
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    async function generarReporte(spots) {
+      const contenedor = document.getElementById("reporte");
+
+      if (!spots.length) {
+        contenedor.textContent = "⚠️ No se encontraron spots dentro del rango seleccionado.";
+        return;
+      }
+
       const prompt = `
-Eres un surfista profesional y analista de olas. A continuación te paso los datos meteorológicos para varios spots de surf cerca de Valencia.
+Eres un analista de surf profesional. A continuación se listan varios spots cerca de Valencia con sus condiciones actuales. Evalúa cuál es mejor para un surfista intermedio hoy.
 
-Tu tarea es:
-- Elegir el mejor spot para un surfista intermedio.
-- Evaluar tamaño de ola, periodo, dirección del swell, viento, y fondo.
-- Recomendar la mejor hora del día para surfear.
-- Dar una calificación general del día de surf (1 a 5 estrellas).
-- Escribir el reporte en tono amigable, claro y con jerga surfer.
+Spots disponibles:
+${spots.map(s => `- ${s.nombre}: ${s.condiciones}`).join('\n')}
 
-Datos del día:
-Spot: Les Deveses
-- Olas: 0.7 m
-- Periodo: 5s
-- Dirección del swell: 85° (Este)
-- Viento: 12 km/h E (onshore)
-- Fondo: Arena
-
-Spot: El Chivas
-- Olas: 0.4 m
-- Periodo: 3s
-- Dirección del swell: 70° (ENE)
-- Viento: 9 km/h NNO (offshore)
-- Fondo: Arena y roca
-
-Spot: Playa de Gandía
-- Olas: 0.6 m
-- Periodo: 6s
-- Dirección del swell: 95° (ESE)
-- Viento: 16 km/h E (onshore)
-- Fondo: Arena
-
-Escribe ahora el boletín de surf para hoy.
+Analiza:
+- ¿Cuál es el mejor y por qué?
+- ¿Qué hora recomiendas surfear?
+- ¿Qué calificación le das (1-5 estrellas)?
+- Usa lenguaje surfer, relajado pero técnico.
 `;
 
-      const respuestaElemento = document.getElementById("reporte");
-      respuestaElemento.textContent = "Generando reporte... 🌊";
+      contenedor.textContent = "🌊 Analizando spots...";
 
       try {
         const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -206,13 +200,12 @@ Escribe ahora el boletín de surf para hoy.
 
         const data = await res.json();
         const mensaje = data.choices?.[0]?.message?.content;
-        respuestaElemento.textContent = mensaje || "Error al generar el reporte.";
+        contenedor.textContent = mensaje || "⚠️ Error en la respuesta.";
       } catch (error) {
-        respuestaElemento.textContent = "⚠️ Error al conectar con OpenAI API.";
+        contenedor.textContent = "⚠️ Error al conectar con la API.";
         console.error(error);
       }
     }
-    
 
     window.onload = verificarApiKey;
   </script>
