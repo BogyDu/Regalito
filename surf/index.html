@@ -73,6 +73,7 @@
       margin-top: 1rem;
       border: 1px solid #ccc;
       border-radius: 5px;
+      font-size: 1rem;
     }
 
     label {
@@ -88,6 +89,17 @@
 
     .controls input[type=range] {
       width: 50%;
+    }
+
+    #searchBtn {
+      background-color: #0077b6;
+      color: white;
+      cursor: pointer;
+      max-width: 200px;
+    }
+
+    #searchBtn:hover {
+      background-color: #005f8d;
     }
   </style>
 </head>
@@ -105,6 +117,8 @@
   <div class="controls">
     <label for="distance">Distancia máx. desde tu ubicación (km): <span id="distVal">100</span></label>
     <input type="range" id="distance" min="10" max="200" value="100" oninput="document.getElementById('distVal').textContent = this.value"/>
+    <br>
+    <button id="searchBtn" onclick="handleSearch()">Buscar spots</button>
   </div>
 
   <table id="spotsTable">
@@ -117,7 +131,7 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Los datos se insertarán aquí dinámicamente -->
+      <!-- Datos dinámicos -->
     </tbody>
   </table>
 
@@ -133,6 +147,9 @@
       { name: "El Perelló", lat: 39.2833, lon: -0.2833 }
     ];
 
+    let userLat = null;
+    let userLon = null;
+
     function saveApiKey() {
       const key = document.getElementById("apiKeyInput").value.trim();
       if (key) {
@@ -141,6 +158,14 @@
         getLocation();
       } else {
         alert("Introduce una API key válida.");
+      }
+    }
+
+    function handleSearch() {
+      if (userLat && userLon) {
+        fetchSpotData(userLat, userLon);
+      } else {
+        alert("Ubicación aún no disponible.");
       }
     }
 
@@ -158,9 +183,8 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            fetchSpotData(lat, lon);
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
           },
           err => {
             alert("No se pudo obtener tu ubicación.");
@@ -173,23 +197,20 @@
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a = 
         0.5 - Math.cos(dLat)/2 + 
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
         (1 - Math.cos(dLon))/2;
-
       return R * 2 * Math.asin(Math.sqrt(a));
     }
 
     async function fetchSpotData(userLat, userLon) {
       const apiKey = localStorage.getItem("stormglass_api_key");
       const distanceLimit = parseInt(document.getElementById("distance").value);
-      const now = new Date();
-      const isoDate = now.toISOString();
-
+      const now = new Date().toISOString();
       const tableBody = document.querySelector("#spotsTable tbody");
       tableBody.innerHTML = "";
 
@@ -198,14 +219,12 @@
         if (distance <= distanceLimit) {
           try {
             const response = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${spot.lat}&lng=${spot.lon}&params=waveHeight,windSpeed,windDirection&source=sg`, {
-              headers: {
-                'Authorization': apiKey
-              }
+              headers: { 'Authorization': apiKey }
             });
             const data = await response.json();
-            const waveHeight = data.hours[0].waveHeight.sg;
-            const windSpeed = data.hours[0].windSpeed.sg;
-            const windDirection = data.hours[0].windDirection.sg;
+            const waveHeight = data.hours[0].waveHeight?.sg;
+            const windSpeed = data.hours[0].windSpeed?.sg;
+            const windDirection = data.hours[0].windDirection?.sg;
 
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -233,10 +252,6 @@
       if (waveHeight < 1.0) return "Condiciones moderadas; adecuado para intermedios.";
       return "Olas grandes; recomendado para surfistas experimentados.";
     }
-
-    document.getElementById("distance").addEventListener("change", () => {
-      getLocation();
-    });
   </script>
 </body>
 </html>
