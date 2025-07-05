@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dieta y Entrenamiento</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0 20px;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scroll-snap-type: x mandatory;
+    }
+    .carousel-item {
+      scroll-snap-align: start;
+      flex: 0 0 300px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .carousel-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .carousel-item h4 {
+      padding: 10px;
+      margin: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #2980b9;
+    }
+    .workout-box {
+      background-color: #e0f7fa;
+      padding: 10px;
+      border-left: 5px solid #00796b;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Dieta & Entrenamiento Semanal</h1>
+    <p id="dayName"></p>
+    <div class="workout-box" id="workoutOfTheDay"></div>
+  </header>
+
+  <div class="section">
+    <h2>Comida del día</h2>
+    <div class="carousel" id="lunchCarousel">
+      <!-- JavaScript Insertará aquí -->
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Cena del día</h2>
+    <div class="carousel" id="dinnerCarousel">
+      <!-- JavaScript Insertará aquí -->
+    </div>
+  </div>
+
+  <script>
+    // Datos de entrenamiento
+    const entrenamientos = {
+      0: "Descanso total o paseo largo",
+      1: "Pecho y tríceps",
+      2: "Espalda y bíceps",
+      3: "Piernas (cuádriceps + glúteo)",
+      4: "Descanso activo (cardio suave o movilidad)",
+      5: "Hombros y abdomen",
+      6: "Pierna posterior (femorales, glúteos) + Core"
+    };
+
+    const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+    // Recetas por día
+    const recetas = {
+      comida: {
+        1: [
+          {
+            nombre: "Pollo con arroz integral",
+            url: "https://fitmencook.com/spicy-chicken-broccoli-rice/",
+            imagen: "https://www.themealdb.com/images/media/meals/1529444830.jpg"
+          },
+          {
+            nombre: "Ensalada de atún con garbanzos",
+            url: "https://www.eatingwell.com/recipe/252652/tuna-chickpea-salad/",
+            imagen: "https://www.eatingwell.com/thmb/NJmeVZsT4MKrUfhMvT8y9K4ZJyw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/tuna-chickpea-salad-hero-08-2ed60e4f109342c6aeec06b85fbb0e8e.jpg"
+          },
+          {
+            nombre: "Tacos de ternera con guacamole",
+            url: "https://www.eatingwell.com/recipe/7918055/beef-tacos-with-guacamole/",
+            imagen: "https://www.eatingwell.com/thmb/xHPefgBWQU8FRFSAoiY2EBoPHT4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Beef-Tacos-with-Guacamole-0a7e7b670b81486ba4f78f9e1e1e1e7f.jpg"
+          }
+        ],
+        2: [
+          {
+            nombre: "Pasta integral con pavo",
+            url: "https://fitmencook.com/healthy-pasta-with-spinach-and-turkey/",
+            imagen: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg"
+          },
+          {
+            nombre: "Lentejas guisadas con verduras",
+            url: "https://www.feastingathome.com/indian-lentil-soup-masoor-dal/",
+            imagen: "https://www.feastingathome.com/wp-content/uploads/2021/03/Lentil-soup-19.jpg"
+          },
+          {
+            nombre: "Bowl de arroz, salmón y verduras",
+            url: "https://www.eatingwell.com/recipe/7942607/salmon-rice-bowl/",
+            imagen: "https://www.eatingwell.com/thmb/bZaZ9ATMW0gzCnM_0YWDpjoFFBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Salmon-Rice-Bowl-0fbf1930dfb9428890456b4c8c087d11.jpg"
+          }
+        ]
+        // Puedes agregar días adicionales aquí
+      },
+      cena: {
+        1: [
+          {
+            nombre: "Revuelto de claras con espinacas",
+            url: "https://www.feastingnotfasting.com/spinach-egg-white-scramble/",
+            imagen: "https://www.feastingnotfasting.com/wp-content/uploads/2015/03/spinach-egg-white-scramble-4.jpg"
+          },
+          {
+            nombre: "Merluza al horno con calabacín",
+            url: "https://www.eatingwell.com/recipe/279350/lemon-herb-baked-cod/",
+            imagen: "https://www.eatingwell.com/thmb/U5rK_T6-JaKa0zjqWwxdIjF9nyA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/lemon-herb-baked-cod-hero-13-2000-5edb35f5d0f7417fb6dfeb6dfbf8a3e1.jpg"
+          },
+          {
+            nombre: "Ensalada de tofu con quinoa",
+            url: "https://simpleveganblog.com/quinoa-salad/",
+            imagen: "https://simpleveganblog.com/wp-content/uploads/2014/07/Quinoa-salad-7.jpg"
+          }
+        ],
+        2: [
+          {
+            nombre: "Tortilla francesa con champiñones",
+            url: "https://www.bbcgoodfood.com/recipes/mushroom-omelette",
+            imagen: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/mushroom-omelette-2eddfae.jpg"
+          },
+          {
+            nombre: "Pollo al curry con calabaza",
+            url: "https://www.slenderkitchen.com/recipe/healthy-chicken-curry",
+            imagen: "https://www.slenderkitchen.com/sites/default/files/styles/recipe_image/public/recipe_images/healthy-chicken-curry-1.jpg"
+          },
+          {
+            nombre: "Hamburguesa de pavo con pan integral",
+            url: "https://fitmencook.com/healthy-ground-turkey-burgers/",
+            imagen: "https://fitmencook.com/wp-content/uploads/2021/01/healthy-ground-turkey-burgers.jpg"
+          }
+        ]
+      }
+    };
+
+    const today = new Date().getDay();
+    document.getElementById('dayName').innerText = "Hoy es: " + dias[today];
+    document.getElementById('workoutOfTheDay').innerText = "Entrenamiento: " + entrenamientos[today];
+
+    function renderCarousel(carouselId, data) {
+      const container = document.getElementById(carouselId);
+      if (!data[today]) {
+        container.innerHTML = "<p>No hay recetas para hoy.</p>";
+        return;
+      }
+
+      data[today].forEach(receta => {
+        const item = document.createElement("div");
+        item.className = "carousel-item";
+        item.innerHTML = `
+          <a href="${receta.url}" target="_blank">
+            <img src="${receta.imagen}" alt="${receta.nombre}" />
+            <h4>${receta.nombre}</h4>
+          </a>`;
+        container.appendChild(item);
+      });
+    }
+
+    renderCarousel("lunchCarousel", recetas.comida);
+    renderCarousel("dinnerCarousel", recetas.cena);
+  </script>
+</body>
+</html>
