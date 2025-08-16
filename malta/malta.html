@@ -1,1 +1,302 @@
-  
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mdina & Rabat – Historia y Curiosidades</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+  html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; }
+  #map { height: 60vh; }
+  .panel { padding: 12px; }
+  .poi { border-bottom: 1px solid #ddd; padding: 8px 0; }
+  .badge { display:inline-block; padding:2px 6px; border:1px solid #999; border-radius:4px; font-size:12px; }
+  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .muted { color:#666; }
+  details summary { cursor: pointer; font-weight: bold; margin-top: 4px; }
+  button { padding:6px 12px; border:1px solid #444; border-radius:4px; background:#f4f4f4; cursor:pointer; }
+  button:hover { background:#ddd; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Mdina & Rabat – Historia, Monumentos y Curiosidades</h1>
+    <p class="muted">Explora los lugares más emblemáticos de la antigua capital y sus alrededores.</p>
+    <div class="controls">
+      <label>Radio (km): <input type="number" id="radiusKm" value="3" step="0.5" min="0.5" max="10"></label>
+      <button id="btnUseGeo">Usar mi geolocalización</button>
+      <button id="btnShowAll">Mostrar todo</button>
+      <button id="btnNarrar">📢 Contar historia (5 min)</button>
+      <span id="status" class="muted"></span>
+    </div>
+  </div>
+
+  <div id="map"></div>
+  <div class="panel">
+    <h2>Lugares destacados</h2>
+    <div id="list"></div>
+  </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+// --- JSON enriquecido con más lugares ---
+const pois = [
+  {
+    "id":"mdina_gate",
+    "name":"Mdina Gate (Puerta Principal)",
+    "city":"Mdina",
+    "category":"Monumento",
+    "lat":35.8869,"lng":14.4034,
+    "summary":"Entrada barroca icónica a la Ciudad Silenciosa.",
+    "history":"Construida en 1724 por el Gran Maestre António Manoel de Vilhena.",
+    "facts":"Escenario en Game of Thrones como Desembarco del Rey.",
+    "tips":"Mejores fotos a primera hora.",
+    "opening_hours":"Exterior siempre visible.",
+    "est_time_min":10,"ticket_eur":0
+  },
+  {
+    "id":"st_pauls_cathedral_mdina",
+    "name":"Catedral de San Pablo (Mdina)",
+    "city":"Mdina",
+    "category":"Iglesia/Museo",
+    "lat":35.8862,"lng":14.4039,
+    "summary":"Templo barroco con museo anexo.",
+    "history":"Reconstruida tras el terremoto de 1693 por Lorenzo Gafà.",
+    "facts":"Contiene pinturas de Mattia Preti y tesoros de los Caballeros.",
+    "tips":"Entrada combinada con museo.",
+    "opening_hours":"Lu–Sa 09:30–16:30.",
+    "est_time_min":40,"ticket_eur":15
+  },
+  {
+    "id":"palacio_vilhena",
+    "name":"Palacio Vilhena",
+    "city":"Mdina",
+    "category":"Palacio/Museo",
+    "lat":35.8867,"lng":14.4046,
+    "summary":"Residencia barroca del siglo XVIII.",
+    "history":"Construido en 1726 como residencia del Gran Maestre Vilhena.",
+    "facts":"Hoy alberga el Museo de Historia Natural.",
+    "tips":"Ideal combinar tras visitar la Puerta Principal.",
+    "opening_hours":"Horario de museo.",
+    "est_time_min":30,"ticket_eur":5
+  },
+  {
+    "id":"bastion_square",
+    "name":"Bastion Square",
+    "city":"Mdina",
+    "category":"Mirador",
+    "lat":35.8857,"lng":14.4061,
+    "summary":"Mirador con vistas panorámicas sobre Malta.",
+    "history":"Parte de las fortificaciones medievales de Mdina.",
+    "facts":"En días despejados se divisa hasta el mar.",
+    "tips":"Visita al atardecer.",
+    "opening_hours":"Acceso libre.",
+    "est_time_min":15,"ticket_eur":0
+  },
+  {
+    "id":"st_pauls_catacombs",
+    "name":"Catacumbas de San Pablo",
+    "city":"Rabat",
+    "category":"Sitio arqueológico",
+    "lat":35.8816,"lng":14.3983,
+    "summary":"Extenso complejo de catacumbas paleocristianas.",
+    "history":"Usadas desde el siglo IV como enterramientos.",
+    "facts":"Contienen mesas de banquete funerario.",
+    "tips":"Calzado cómodo.",
+    "opening_hours":"09:00–17:00.",
+    "est_time_min":40,"ticket_eur":6
+  },
+  {
+    "id":"domus_romana",
+    "name":"Domus Romana",
+    "city":"Rabat",
+    "category":"Museo/Sitio arqueológico",
+    "lat":35.8869,"lng":14.401,
+    "summary":"Villa romana con mosaicos.",
+    "history":"Descubierta en 1881, del siglo I a.C.",
+    "facts":"Mosaicos helenísticos únicos en Malta.",
+    "tips":"Visítala antes de entrar a Mdina.",
+    "opening_hours":"Horario de museo.",
+    "est_time_min":20,"ticket_eur":6
+  },
+  {
+    "id":"st_pauls_grotto",
+    "name":"Gruta de San Pablo",
+    "city":"Rabat",
+    "category":"Santuario",
+    "lat":35.8818,"lng":14.399,
+    "summary":"Cueva donde predicó San Pablo.",
+    "history":"Asociada al naufragio de San Pablo en Malta en el año 60 d.C.",
+    "facts":"Visitada por papas y peregrinos.",
+    "tips":"Entrada combinada con complejo parroquial.",
+    "opening_hours":"Según parroquia.",
+    "est_time_min":15,"ticket_eur":0
+  },
+  {
+    "id":"wignacourt_museum",
+    "name":"Museo Wignacourt",
+    "city":"Rabat",
+    "category":"Museo",
+    "lat":35.8822,"lng":14.3996,
+    "summary":"Antigua residencia barroca de canónigos.",
+    "history":"Fundado en el siglo XVII por el Gran Maestre Alof de Wignacourt.",
+    "facts":"Conecta con la Gruta de San Pablo mediante pasadizos.",
+    "tips":"Muy recomendado para amantes del arte sacro.",
+    "opening_hours":"10:00–17:00.",
+    "est_time_min":30,"ticket_eur":5
+  }
+];
+
+// --- Historia narrada de Mdina y Rabat ---
+const historiaTexto = `
+Mdina, conocida como la Ciudad del Silencio, es la antigua capital de Malta. 
+Su historia se remonta a más de 3.000 años, habitada primero por fenicios y luego 
+fortificada por romanos, árabes y los Caballeros de San Juan. 
+Durante siglos fue el centro político y religioso de la isla, famosa por sus 
+murallas y sus palacios nobles.
+
+Rabat, que significa suburbio en árabe, creció alrededor de Mdina. 
+Aquí se encuentran las Catacumbas de San Pablo y la Gruta donde, según la tradición, 
+el apóstol predicó tras su naufragio en Malta en el año 60 d.C. 
+En Rabat florecieron iglesias, conventos y casas señoriales, convirtiéndola en 
+un lugar de devoción y cultura.
+
+Hoy, Mdina y Rabat forman un conjunto único: una ciudad amurallada que parece detenida 
+en el tiempo, y un pueblo vibrante lleno de historia, fe y tradiciones.
+`;
+
+// --- MAPA ---
+const DEFAULT_CENTER = [35.8865, 14.4035];
+const DEFAULT_ZOOM = 15;
+let map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
+
+let userMarker = null;
+let radiusCircle = null;
+let markers = [];
+
+function haversineKm(a, b) {
+  const toRad = d => d * Math.PI / 180;
+  const R = 6371;
+  const dLat = toRad(b[0]-a[0]);
+  const dLon = toRad(b[1]-a[1]);
+  const lat1 = toRad(a[0]);
+  const lat2 = toRad(b[0]);
+  const sinDLat = Math.sin(dLat/2);
+  const sinDLon = Math.sin(dLon/2);
+  const c = 2 * Math.asin(Math.sqrt(sinDLat*sinDLat + Math.cos(lat1)*Math.cos(lat2)*sinDLon*sinDLon));
+  return R * c;
+}
+
+function clearMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  if (radiusCircle) map.removeLayer(radiusCircle);
+  radiusCircle = null;
+}
+
+function renderPOI(poi) {
+  const popup = `
+    <strong>${poi.name}</strong><br>
+    <span class="badge">${poi.city}</span> · <span class="badge">${poi.category}</span><br>
+    ${poi.summary}<br><em>${poi.history}</em><br>
+    <small><strong>Curiosidad:</strong> ${poi.facts}</small>
+  `;
+  const m = L.marker([poi.lat, poi.lng]).bindPopup(popup);
+  m.addTo(map);
+  markers.push(m);
+}
+
+function renderList(list) {
+  const container = document.getElementById('list');
+  container.innerHTML = '';
+  list.forEach(poi => {
+    const div = document.createElement('div');
+    div.className = 'poi';
+    div.innerHTML = `
+      <strong>${poi.name}</strong> <span class="badge">${poi.city}</span> · <span class="badge">${poi.category}</span><br>
+      ${poi.summary}<br>
+      <details><summary>Historia</summary><p>${poi.history}</p></details>
+      <details><summary>Curiosidades</summary><p>${poi.facts}</p></details>
+      <em>Tiempo:</em> ${poi.est_time_min} min · <em>Entrada:</em> €${poi.ticket_eur} <br>
+      <a href="https://www.google.com/maps?q=${poi.lat},${poi.lng}" target="_blank">Abrir en Google Maps</a>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function showAll() {
+  clearMarkers();
+  pois.forEach(renderPOI);
+  renderList(pois);
+  if (pois.length) {
+    map.fitBounds(L.latLngBounds(pois.map(p => [p.lat, p.lng])), { padding: [20,20] });
+  }
+  document.getElementById('status').textContent = `Mostrando ${pois.length} lugares`;
+}
+
+function filterByRadius(center, km) {
+  clearMarkers();
+  const within = pois.filter(p => haversineKm(center, [p.lat, p.lng]) <= km);
+  within.forEach(renderPOI);
+  renderList(within);
+  if (within.length) {
+    map.fitBounds(L.latLngBounds(within.map(p => [p.lat, p.lng]).concat([center])), { padding: [20,20] });
+  } else {
+    map.setView(center, DEFAULT_ZOOM);
+  }
+  radiusCircle = L.circle(center, { radius: km*1000 }).addTo(map);
+  document.getElementById('status').textContent = `En un radio de ${km} km: ${within.length} lugares`;
+}
+
+function setUserLocation(lat, lng) {
+  const pos = [lat, lng];
+  if (userMarker) map.removeLayer(userMarker);
+  userMarker = L.marker(pos).addTo(map).bindPopup('Tu ubicación');
+  const km = parseFloat(document.getElementById('radiusKm').value)||3;
+  filterByRadius(pos, km);
+}
+
+// Narrador con SpeechSynthesis
+document.getElementById('btnNarrar').addEventListener('click', () => {
+  if (!window.speechSynthesis) {
+    alert("Tu navegador no soporta narración.");
+    return;
+  }
+  const utterance = new SpeechSynthesisUtterance(historiaTexto);
+  utterance.lang = "es-ES";
+  utterance.rate = 0.9; // velocidad para aproximar a 5 minutos
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+});
+
+document.getElementById('btnUseGeo').addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    document.getElementById('status').textContent = 'Geolocalización no soportada.';
+    return;
+  }
+  document.getElementById('status').textContent = 'Obteniendo ubicación...';
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      setUserLocation(latitude, longitude);
+      document.getElementById('status').textContent = 'Ubicación establecida.';
+    },
+    () => {
+      document.getElementById('status').textContent = 'No se pudo obtener tu ubicación. Mostrando todo.';
+      showAll();
+    },
+    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+  );
+});
+
+document.getElementById('btnShowAll').addEventListener('click', showAll);
+
+// Mostrar todo al inicio
+showAll();
+</script>
+</body>
+</html>
