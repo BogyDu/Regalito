@@ -70,6 +70,62 @@ const sospechosos = {
   `
 };
 
+
+// Respuestas posibles
+const respuestas = {
+  sofia: {
+    donde: "Estaba en casa leyendo según mi testigo.",
+    motivo: "No tenía motivo alguno.",
+    relacion: "No conozco a nadie involucrado."
+  },
+  mateo: {
+    donde: "Estaba faenando en el mar, nadie puede contradecirme.",
+    motivo: "Jamás dañaría al farero.",
+    relacion: "Sí, sé de personas involucradas en contrabando."
+  },
+  camila: {
+    donde: "Hacía entrevistas, no recuerdo a quién exactamente.",
+    motivo: "Solo busco la verdad, no daño.",
+    relacion: "Sí, tenía información de contrabando para mi investigación."
+  },
+  ernesto: {
+    donde: "Rondas nocturnas, hueco de 45 minutos en mi registro.",
+    motivo: "Ortega descubrió algo que debía quedar en secreto.",
+    relacion: "Sí, conozco a los involucrados."
+  },
+  padre: {
+    donde: "Estaba en la sacristía rezando.",
+    motivo: "Solo protejo a mi comunidad.",
+    relacion: "Sí, algunos feligreses tienen asuntos turbios."
+  }
+};
+
+// Interrogatorio
+function interrogar() {
+  const sospechoso = document.getElementById("inter-sospechoso").value;
+  const pregunta = document.getElementById("inter-pregunta").value;
+  const div = document.getElementById("respuesta-interrogatorio");
+
+  if (!sospechoso || !pregunta) {
+    div.innerHTML = "<p style='color:red;'>Selecciona sospechoso y pregunta.</p>";
+    return;
+  }
+
+  const respuesta = respuestas[sospechoso][pregunta];
+  div.innerHTML = `<p><strong>${sospechoso} responde:</strong> ${respuesta}</p>`;
+
+  // Guardar en localStorage que se interrogó
+  let interrogados = JSON.parse(localStorage.getItem("interrogadosCaso1")) || [];
+  if (!interrogados.includes(sospechoso)) {
+    interrogados.push(sospechoso);
+    localStorage.setItem("interrogadosCaso1", JSON.stringify(interrogados));
+  }
+
+  // Actualizar dossier con sospechosos interrogados
+  actualizarDossier();
+}
+
+
 // --- Resúmenes de sospechosos ---
 const resumenSospechosos = {
   sofia: "Sofía Ortega: sobrina, herencia y deudas. Coartada dudosa, vista en el puerto.",
