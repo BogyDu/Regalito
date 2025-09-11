@@ -122,6 +122,12 @@ function interrogar() {
   }
 
   // Actualizar dossier con sospechosos interrogados
+  // Guardar la respuesta completa en localStorage
+let respuestasInterrogatorio = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
+if (!respuestasInterrogatorio[sospechoso]) respuestasInterrogatorio[sospechoso] = {};
+respuestasInterrogatorio[sospechoso][pregunta] = respuesta;
+localStorage.setItem("respuestasInterrogatorio", JSON.stringify(respuestasInterrogatorio));
+
   actualizarDossier();
 }
 
