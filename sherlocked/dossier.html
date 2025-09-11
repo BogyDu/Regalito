@@ -5,18 +5,30 @@
 <title>Dossier del Detective</title>
 <link rel="stylesheet" href="estilo.css">
 <style>
-/* Pestañas estilo carpetas */
+body { font-family: "Segoe UI", sans-serif; background: #f0f0f0; margin: 20px; }
+h2 { text-align: center; }
 .tab-header { display: flex; gap: 10px; margin-bottom: 20px; }
-.tab-header button { padding: 8px 15px; border: 2px solid #333; background: #f5f5f5; cursor: pointer; font-weight: bold; }
-.tab-header button.active { background: #c8a165; border-color: #8a5a2d; }
+.tab-header button { padding: 8px 15px; border: 2px solid #333; background: #eee; cursor: pointer; font-weight: bold; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+.tab-header button.active { background: #c8a165; border-color: #8a5a2d; color: #fff; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* Detalles de pistas y sospechosos */
+/* Carpetas estilo detective */
+.carpeta { margin: 10px 0; background: #fff; border-radius: 5px; padding: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.15); }
+.etiqueta { font-weight: bold; margin-bottom: 5px; font-size: 1.1em; }
+.contenido { padding-left: 10px; }
+
+/* Listas y alertas */
 ul { list-style: none; padding-left: 0; }
-li { margin-bottom: 5px; }
-.secretas { color: #d9534f; font-weight: bold; }
+li { margin-bottom: 5px; padding: 3px; border-left: 5px solid transparent; }
+.secretas { color: #d9534f; font-weight: bold; border-left-color: #d9534f; }
+.nueva { background: #fff3cd; }
 .resuelto { color: #5cb85c; font-weight: bold; }
+
+/* Estado caso */
+.estado { font-weight: bold; margin-bottom: 10px; }
+.estado.resuelto { color: #5cb85c; }
+.estado.pendiente { color: #ff9800; }
 </style>
 </head>
 <body>
@@ -28,13 +40,13 @@ li { margin-bottom: 5px; }
 </div>
 
 <div id="caso1" class="tab-content active">
-  <h3>Estado del Caso: <span id="estado-caso1"></span></h3>
+  <div class="estado">Estado del Caso: <span id="estado-caso1"></span></div>
   <div class="carpeta">
     <div class="etiqueta">Pistas Descubiertas</div>
     <div class="contenido"><ul id="pistas-caso1"></ul></div>
   </div>
   <div class="carpeta">
-    <div class="etiqueta">Pistas Secretas</div>
+    <div class="etiqueta">Pistas Secretas 🔴</div>
     <div class="contenido"><ul id="secretas-caso1"></ul></div>
   </div>
   <div class="carpeta">
@@ -44,20 +56,20 @@ li { margin-bottom: 5px; }
   <div class="carpeta">
     <div class="etiqueta">Notas del Detective</div>
     <div class="contenido">
-      <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..."></textarea>
+      <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..." rows="5" style="width: 100%;"></textarea>
       <button onclick="guardarNotas('caso1')">Guardar Notas</button>
     </div>
   </div>
 </div>
 
 <div id="caso2" class="tab-content">
-  <h3>Estado del Caso: <span id="estado-caso2"></span></h3>
+  <div class="estado">Estado del Caso: <span id="estado-caso2"></span></div>
   <div class="carpeta">
     <div class="etiqueta">Pistas Descubiertas</div>
     <div class="contenido"><ul id="pistas-caso2"></ul></div>
   </div>
   <div class="carpeta">
-    <div class="etiqueta">Pistas Secretas</div>
+    <div class="etiqueta">Pistas Secretas 🔴</div>
     <div class="contenido"><ul id="secretas-caso2"></ul></div>
   </div>
   <div class="carpeta">
@@ -67,7 +79,7 @@ li { margin-bottom: 5px; }
   <div class="carpeta">
     <div class="etiqueta">Notas del Detective</div>
     <div class="contenido">
-      <textarea id="notas-caso2" placeholder="Escribe tus notas aquí..."></textarea>
+      <textarea id="notas-caso2" placeholder="Escribe tus notas aquí..." rows="5" style="width: 100%;"></textarea>
       <button onclick="guardarNotas('caso2')">Guardar Notas</button>
     </div>
   </div>
@@ -85,23 +97,24 @@ tabs.forEach(tab => {
   });
 });
 
-// Función para cargar dossier
+// Cargar dossier con detalles visuales
 function cargarDossier(){
   ["caso1","caso2"].forEach(caso=>{
-    // Estado del caso
     const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
-    const estado = progreso[caso] ? "Resuelto" : "Pendiente";
-    document.getElementById("estado-"+caso).textContent = estado;
-    document.getElementById("estado-"+caso).className = progreso[caso] ? "resuelto" : "";
+    const estadoSpan = document.getElementById("estado-"+caso);
+    const estado = progreso[caso] ? "Resuelto ✅" : "Pendiente 🟡";
+    estadoSpan.textContent = estado;
+    estadoSpan.className = progreso[caso] ? "resuelto" : "pendiente";
 
-    // Pistas descubiertas
+    // Pistas
     const pistas = JSON.parse(localStorage.getItem("pistas"+caso)) || [];
     const ulPistas = document.getElementById("pistas-"+caso);
     ulPistas.innerHTML="";
     pistas.forEach(p=>{
-      let desc = localStorage.getItem("desc-"+caso+"-"+p) || p;
-      let li=document.createElement("li");
+      const desc = localStorage.getItem("desc-"+caso+"-"+p) || p;
+      let li = document.createElement("li");
       li.textContent = desc;
+      li.className="nueva";
       ulPistas.appendChild(li);
     });
 
@@ -110,14 +123,14 @@ function cargarDossier(){
     const ulSecretas = document.getElementById("secretas-"+caso);
     ulSecretas.innerHTML="";
     secretas.forEach(s=>{
-      let desc = localStorage.getItem("desc-"+caso+"-"+s) || s;
-      let li=document.createElement("li");
+      const desc = localStorage.getItem("desc-"+caso+"-"+s) || s;
+      let li = document.createElement("li");
       li.textContent = desc;
       li.className="secretas";
       ulSecretas.appendChild(li);
     });
 
-    // Sospechosos interrogados con respuestas
+    // Sospechosos
     const sospechosos = JSON.parse(localStorage.getItem("interrogados"+caso)) || [];
     const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
     const ulSos = document.getElementById("sospechosos-"+caso);
@@ -146,7 +159,7 @@ function guardarNotas(caso){
   alert("Notas guardadas para " + caso);
 }
 
-// Actualización automática cada segundo
+// Actualización automática
 setInterval(cargarDossier,500);
 cargarDossier();
 </script>
