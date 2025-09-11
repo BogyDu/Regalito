@@ -5,79 +5,86 @@
 <title>Caso 2 - El Museo</title>
 <link rel="stylesheet" href="estilo.css">
 </head>
-<body>
+<body class="caso">
 <h1>Caso 2: El Museo</h1>
-<!-- Misma estructura que caso1.html -->
-<div class="carpeta">
-  <div class="etiqueta">Pistas</div>
-  <div class="contenido" id="pistas-seccion"></div>
-  <div id="pistas"></div>
-</div>
-<div class="carpeta">
-  <div class="etiqueta">Sospechosos</div>
-  <div class="contenido" id="sospechosos-seccion"></div>
-  <div id="sospechosos"></div>
-</div>
-<div class="carpeta">
-  <div class="etiqueta">Confrontaciones</div>
-  <div class="contenido">
-    <p>Selecciona dos sospechosos:</p>
-    <select id="conf1"></select>
-    <select id="conf2"></select>
-    <button onclick="confrontar()">Confrontar</button>
-    <div id="confrontacion"></div>
+
+<div id="panel-izquierdo">
+  <div class="carpeta"><div class="etiqueta">Pistas</div><div class="contenido" id="pistas-seccion"></div></div>
+  <div class="carpeta"><div class="etiqueta">Sospechosos</div><div class="contenido" id="sospechosos-seccion"></div></div>
+  <div class="carpeta"><div class="etiqueta">Confrontaciones</div>
+    <div class="contenido"><select id="conf1"></select><select id="conf2"></select><button onclick="confrontar()">Confrontar</button></div>
   </div>
-</div>
-<div class="carpeta">
-  <div class="etiqueta">Interrogatorio</div>
-  <div class="contenido">
-    <select id="inter-sospechoso"></select>
+  <div class="carpeta"><div class="etiqueta">Interrogatorio</div>
+    <div class="contenido"><select id="inter-sospechoso"></select>
     <select id="inter-pregunta">
       <option value="">-- Selecciona pregunta --</option>
-      <option value="donde">¿Dónde estabas la noche del robo?</option>
+      <option value="donde">¿Dónde estabas la noche del crimen?</option>
       <option value="motivo">¿Tenías algún motivo?</option>
       <option value="relacion">¿Conocías a alguien involucrado?</option>
     </select>
     <button onclick="interrogar()">Interrogar</button>
-    <div id="respuesta-interrogatorio"></div>
+    </div>
+  </div>
+  <div class="carpeta"><div class="etiqueta">Resolver Caso</div>
+    <div class="contenido"><select id="culpable"></select><button onclick="resolverCaso()">Resolver</button></div>
   </div>
 </div>
-<div class="carpeta">
-  <div class="etiqueta">Resolver Caso</div>
-  <div class="contenido">
-    <select id="culpable"></select>
-    <button onclick="resolverCaso()">Resolver</button>
-    <div id="resultado"></div>
-  </div>
+
+<div id="panel-derecho">
+  <div class="carpeta"><div class="etiqueta">Pistas Mostradas</div><div class="contenido" id="pistas"></div></div>
+  <div class="carpeta"><div class="etiqueta">Sospechosos Mostrados</div><div class="contenido" id="sospechosos"></div></div>
+  <div class="carpeta"><div class="etiqueta">Confrontación / Resultados</div><div class="contenido" id="confrontacion"></div></div>
+  <div class="carpeta"><div class="etiqueta">Respuestas Interrogatorio</div><div class="contenido" id="respuesta-interrogatorio"></div></div>
+  <div class="carpeta"><div class="etiqueta">Resultado del Caso</div><div class="contenido" id="resultado"></div></div>
 </div>
+
 <button onclick="abrirDossier()">📂 Abrir Dossier</button>
+
 <script src="caso-generico.js"></script>
 <script>
-/* Datos específicos del caso 2 */
+const casoActual="caso2";
+
 const pistas = {
-  forense: "Informe: muerte por asfixia, evidencia de robo.",
-  escena: "Sala principal con objetos removidos.",
-  bitacora: "Registro del guardia: alarmas desactivadas.",
-  ramirez: "Notas del detective: sospecha de complicidad interna."
+  huellas:"Huellas de pisadas en la sala de exposición.",
+  video:"Cámara captó sombra sospechosa a las 21:15.",
+  vitrina:"Vitrina forzada, cerradura rota.",
+  nota:"Nota encontrada: 'No confíes en nadie'."
 };
+
 const sospechosos = {
-  ana:"Ana López: curadora, tenía acceso a llaves.",
-  juan:"Juan Pérez: guardia nocturno, antecedentes leves.",
-  luis:"Luis Martínez: visitante frecuente, coartada dudosa.",
-  carla:"Carla Ruiz: asistente del museo, testigos contradictorios.",
-  pablo:"Pablo Ortega: experto en arte, pudo manipular seguridad."
+  luis:"Luis Ortega: curator del museo, conoce seguridad.",
+  ana:"Ana Vega: restauradora, llegó tarde esa noche.",
+  pedro:"Pedro Rojas: guardia nocturno, acceso a todas las salas.",
+  carla:"Carla Díaz: experta en arte, interesada en la obra robada.",
+  diego:"Diego Torres: visitante, quedó encerrado accidentalmente."
 };
+
 const respuestas = {
-  ana:{donde:"En oficina.",motivo:"Solo trabajo.",relacion:"No conozco a involucrados."},
-  juan:{donde:"Rondando.",motivo:"Solo cumplir deber.",relacion:"Sí, conocía seguridad."},
-  luis:{donde:"Galería.",motivo:"Interés en obra.",relacion:"No conozco a nadie."},
-  carla:{donde:"Archivo.",motivo:"Trabajo administrativo.",relacion:"Sí, testigos contradictorios."},
-  pablo:{donde:"Sala privada.",motivo:"Protección de obras.",relacion:"Sí, conocía sistemas."}
+  luis:{donde:"En su oficina revisando inventario.",motivo:"Nada que me involucre.",relacion:"Solo conozco al personal."},
+  ana:{donde:"Restaurando obras.",motivo:"Solo mi trabajo.",relacion:"Conozco a los coleccionistas."},
+  pedro:{donde:"Patrullando galerías.",motivo:"Protejo el museo.",relacion:"Sí, a los demás guardias."},
+  carla:{donde:"Estudio privado.",motivo:"Quería la obra para investigación.",relacion:"Sí, sé quién podría robar."},
+  diego:{donde:"Visitando exposiciones.",motivo:"Solo observaba.",relacion:"No conozco a nadie del personal."}
 };
+
 const culpableReal="carla";
+
 const contradicciones = {
-  "juan-carla":{texto:"Juan y Carla contradicen versión del robo",pista:"Cámaras ocultas"}
+  "ana-pedro":{texto:"Ana y Pedro no coinciden en horarios de patrulla/restauración",pista:"Registro del reloj de entrada"}
 };
+
+// Inicializar botones y selects
+document.addEventListener("DOMContentLoaded",()=>{
+  const pistasSec = document.getElementById("pistas-seccion");
+  for(const id in pistas){ let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarPista(id); pistasSec.appendChild(btn); }
+
+  const sospSec = document.getElementById("sospechosos-seccion");
+  const selects = [document.getElementById("conf1"),document.getElementById("conf2"),document.getElementById("inter-sospechoso"),document.getElementById("culpable")];
+  for(const id in sospechosos){
+    let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarSospechoso(id); sospSec.appendChild(btn);
+    selects.forEach(s=>{let opt=document.createElement("option"); opt.value=id; opt.textContent=id; s.appendChild(opt);});
+  }
+});
 </script>
 </body>
 </html>
