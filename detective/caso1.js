@@ -1,36 +1,33 @@
-// Caso 1 - El Faro
 window.casoActual = "caso1";
 
-// Sospechosos y resumen
 const sospechosos = ["Sofia","Mateo","Clara","Javier","Lucas"];
 const infoSospechosos = {
-  "Sofia": "Edad: 28, Profesión: Bióloga marina, Relación con la víctima: Vecina del faro",
-  "Mateo": "Edad: 35, Profesión: Periodista, Relación con la víctima: Conocido de vista",
-  "Clara": "Edad: 30, Profesión: Fotógrafa, Relación con la víctima: Sin relación directa",
-  "Javier": "Edad: 40, Profesión: Historiador, Relación con la víctima: Amigo cercano",
-  "Lucas": "Edad: 32, Profesión: Guardián del faro, Relación con la víctima: Trabajaba allí"
+  "Sofia": "Edad: 28, Profesión: Bióloga marina, Vecina del faro",
+  "Mateo": "Edad: 35, Periodista, Conocido de vista",
+  "Clara": "Edad: 30, Fotógrafa, Sin relación directa",
+  "Javier": "Edad: 40, Historiador, Amigo cercano",
+  "Lucas": "Edad: 32, Guardián del faro, Trabajaba allí"
 };
 
 const preguntas = [
   "¿Dónde estabas la noche del crimen?",
   "¿Con quién estabas?",
-  "¿Qué estabas haciendo en el lugar?",
-  "¿Viste algo extraño o sospechoso?",
-  "¿Tienes alguna relación con la víctima o alguien más implicado?"
+  "¿Qué estabas haciendo?",
+  "¿Viste algo extraño?",
+  "¿Tienes relación con la víctima o alguien más implicado?"
 ];
 
 const respuestas = {
-  "Sofia":["Estaba en el faro sola","No estaba con nadie","Observando el mar","Vi a alguien cerca del faro","No conocía a nadie directamente"],
-  "Mateo":["Estaba revisando la torre","Con Clara","Tomando notas","Sofia estaba cerca","Conocía a la víctima de vista"],
+  "Sofia":["Estaba en el faro sola","No estaba con nadie","Observando el mar","Vi a alguien cerca","No conocía a nadie directamente"],
+  "Mateo":["Revisando la torre","Con Clara","Tomando notas","Sofia estaba cerca","Conocía a la víctima de vista"],
   "Clara":["Tomando fotos","Con Mateo","Fotografiando la torre","Nada extraño","No relacionada"],
-  "Javier":["Explorando el faro","Solo","Buscando documentos antiguos","Vi a Lucas salir apresurado","Amigo de la víctima"],
+  "Javier":["Explorando el faro","Solo","Buscando documentos","Vi a Lucas salir apresurado","Amigo de la víctima"],
   "Lucas":["Revisando puertas","Solo","Verificando seguridad","Todo normal","Trabajaba allí"]
 };
 
-// Objetos que se pueden analizar
 const objetos = ["Huella en la ventana","Llave del faro","Zapato roto","Cuchillo"];
 
-// Inicializar localStorage
+// Inicialización localStorage
 if(!localStorage.getItem("respuestas"+casoActual)) localStorage.setItem("respuestas"+casoActual, JSON.stringify({}));
 if(!localStorage.getItem("preguntasHechas"+casoActual)) localStorage.setItem("preguntasHechas"+casoActual, JSON.stringify({}));
 if(!localStorage.getItem("pistas"+casoActual)) localStorage.setItem("pistas"+casoActual, JSON.stringify([]));
@@ -39,7 +36,7 @@ if(!localStorage.getItem("notas"+casoActual)) localStorage.setItem("notas"+casoA
 if(!localStorage.getItem("resumenSospechosos"+casoActual)) localStorage.setItem("resumenSospechosos"+casoActual, JSON.stringify([]));
 if(!localStorage.getItem("conversacion"+casoActual)) localStorage.setItem("conversacion"+casoActual, JSON.stringify({}));
 
-// Crear listado de sospechosos con resumen
+// Crear listado de sospechosos
 function crearListadoSospechosos(){
   const cont = document.getElementById("listado-sospechosos");
   cont.innerHTML="";
@@ -47,30 +44,24 @@ function crearListadoSospechosos(){
     const btn = document.createElement("button");
     btn.textContent = s;
     btn.className="interaccion-boton";
-    btn.onclick = ()=>mostrarResumen(s);
+    btn.onclick = ()=>iniciarInterrogatorio(s);
     cont.appendChild(btn);
   });
 }
 
-// Mostrar resumen y registrar en dosier
-function mostrarResumen(sospechoso){
-  alert(infoSospechosos[sospechoso]);
+// Interrogatorio al pulsar sospechoso
+function iniciarInterrogatorio(sospechoso){
+  mostrarPreguntas(sospechoso);
+  mostrarRegistroConversacion(sospechoso);
+  // Guardar resumen
   let registros = JSON.parse(localStorage.getItem("resumenSospechosos"+casoActual)) || [];
   if(!registros.includes(sospechoso)){
     registros.push(sospechoso);
     localStorage.setItem("resumenSospechosos"+casoActual, JSON.stringify(registros));
   }
-  cargarCaso();
 }
 
-// Crear select de sospechosos para interrogatorio
-const selectSos = document.getElementById("selectSospechoso");
-sospechosos.forEach(s=> {
-  let opt = document.createElement("option"); opt.value=s; opt.text=s; selectSos.appendChild(opt);
-});
-selectSos.addEventListener("change",()=>mostrarPreguntas(selectSos.value));
-
-// Mostrar preguntas no hechas
+// Mostrar preguntas disponibles
 function mostrarPreguntas(sospechoso){
   const cont = document.getElementById("preguntas-container");
   cont.innerHTML="";
@@ -87,40 +78,45 @@ function mostrarPreguntas(sospechoso){
   });
 }
 
-// Hacer pregunta y registrar conversación
+// Hacer pregunta
 function hacerPregunta(sospechoso,index){
   const resp = respuestas[sospechoso][index];
 
+  // Guardar respuesta
   const resps = JSON.parse(localStorage.getItem("respuestas"+casoActual));
   if(!resps[sospechoso]) resps[sospechoso]={};
   resps[sospechoso][preguntas[index]] = resp;
   localStorage.setItem("respuestas"+casoActual, JSON.stringify(resps));
 
+  // Marcar pregunta hecha
   const preguntasHechas = JSON.parse(localStorage.getItem("preguntasHechas"+casoActual));
   preguntasHechas[sospechoso].push(index);
   localStorage.setItem("preguntasHechas"+casoActual, JSON.stringify(preguntasHechas));
 
-  // Registrar en conversación
+  // Registrar conversación
   const conversacion = JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
   if(!conversacion[sospechoso]) conversacion[sospechoso]=[];
   conversacion[sospechoso].push({pregunta:preguntas[index], respuesta:resp});
   localStorage.setItem("conversacion"+casoActual, JSON.stringify(conversacion));
 
-  mostrarRegistroConversacion(sospechoso);
-
+  // Generar pistas
   generarPistas(sospechoso,index,resp);
+
+  // Actualizar UI
+  mostrarRegistroConversacion(sospechoso);
   mostrarPreguntas(sospechoso);
 }
 
-// Mostrar conversación en UI
+// Mostrar conversación
 function mostrarRegistroConversacion(sospechoso){
   const cont = document.getElementById("registro-conversacion");
   cont.innerHTML="";
   const conversacion = JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
   if(conversacion[sospechoso]){
-    conversacion[sospechoso].forEach(c=>{
+    conversacion[sospechoso].forEach((c,i)=>{
       const div = document.createElement("div");
       div.innerHTML = `<strong>P:</strong> ${c.pregunta}<br><strong>R:</strong> ${c.respuesta}`;
+      if(i===conversacion[sospechoso].length-1) div.className="pista-nueva";
       div.style.marginBottom="5px";
       cont.appendChild(div);
     });
@@ -129,28 +125,42 @@ function mostrarRegistroConversacion(sospechoso){
 
 // Generar pistas progresivas
 function generarPistas(sospechoso,index,resp){
-  let pistas = JSON.parse(localStorage.getItem("pistas"+casoActual));
-  let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual));
+  let pistas = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
+  let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
+  let nueva = false;
 
-  if(resp.includes("Mateo") && !secretas.includes("Documento secreto")) secretas.push("Documento secreto");
-  if(resp.includes("Lucas") && !pistas.includes("Zapato roto detectado")) pistas.push("Zapato roto detectado");
+  if(resp.includes("Mateo") && !secretas.includes("Documento secreto")) {
+    secretas.push("Documento secreto");
+    nueva = true;
+  }
+  if(resp.includes("Lucas") && !pistas.includes("Zapato roto detectado")) {
+    pistas.push("Zapato roto detectado");
+    nueva = true;
+  }
 
   localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
   localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
+
+  if(nueva){
+    const ulPistas = document.getElementById("pistas");
+    const ulSecretas = document.getElementById("secretas");
+    ulPistas.classList.add("pista-nueva");
+    ulSecretas.classList.add("pista-nueva");
+  }
 }
 
 // Analizar objetos
 function analizarObjeto(obj){
-  let pistas = JSON.parse(localStorage.getItem("pistas"+casoActual));
-  let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual));
-  if(obj=="Cuchillo" && !pistas.includes("Cuchillo roto")) pistas.push("Cuchillo roto encontrado");
+  let pistas = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
+  let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
+  if(obj=="Cuchillo" && !pistas.includes("Cuchillo roto encontrado")) pistas.push("Cuchillo roto encontrado");
   if(obj=="Huella en la ventana" && !secretas.includes("Huella coincide con Lucas")) secretas.push("Huella coincide con Lucas");
   localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
   localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
   cargarCaso();
 }
 
-// Crear botones de análisis
+// Crear botones objetos
 function crearBotonesObjetos(){
   const cont = document.getElementById("objetos-container");
   objetos.forEach(obj=>{
@@ -201,5 +211,3 @@ crearListadoSospechosos();
 crearBotonesObjetos();
 setInterval(cargarCaso,500);
 cargarCaso();
-mostrarPreguntas(selectSos.value);
-mostrarRegistroConversacion(selectSos.value);
