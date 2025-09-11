@@ -34,7 +34,11 @@ select { width:100%; padding:4px; margin-bottom:5px; }
   <!-- IZQUIERDA: INTERACCIONES -->
   <div class="interacciones">
     <div class="carpeta">
-      <div class="etiqueta">Seleccionar Sospechoso</div>
+      <div class="etiqueta">Listado de Sospechosos</div>
+      <div class="contenido" id="listado-sospechosos"></div>
+    </div>
+    <div class="carpeta">
+      <div class="etiqueta">Seleccionar Sospechoso para Interrogatorio</div>
       <div class="contenido">
         <select id="selectSospechoso"></select>
         <div id="preguntas-container"></div>
@@ -59,6 +63,10 @@ select { width:100%; padding:4px; margin-bottom:5px; }
     <div class="carpeta">
       <div class="etiqueta">Pistas Secretas 🔴</div>
       <div class="contenido"><ul id="secretas"></ul></div>
+    </div>
+    <div class="carpeta">
+      <div class="etiqueta">Resumen Sospechosos Vistos</div>
+      <div class="contenido"><ul id="resumen-sospechosos"></ul></div>
     </div>
     <div class="carpeta">
       <div class="etiqueta">Notas del Detective</div>
