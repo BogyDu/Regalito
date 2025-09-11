@@ -16,6 +16,16 @@
     { "id": "l12", "texto": "¿Has visto a alguien con botas embarradas?", "respuesta": "Vi huellas cerca del cobertizo, pero no sé de quién son.", "desbloqueada": false, "pistas": ["Huellas cerca del cobertizo"], "desbloquea": ["l13"] },
     { "id": "l13", "texto": "¿Por qué preguntas tanto por la linterna?", "respuesta": "Porque es la clave del caso. Alguien la usó como arma.", "desbloqueada": false, "pistas": ["La linterna es clave en el caso"], "desbloquea": ["l14"] },
     { "id": "l14", "texto": "¿Has visto a alguien discutir con Julián?", "respuesta": "Vi a Elías y a Mateo discutiendo con él en días distintos.", "desbloqueada": false, "desbloquea": ["l15"] },
-    { "id": "l15", "texto": "¿Qué opinas de Inés?", "respuesta": "Siempre parecía preocupada, pero no creo que tenga nada que ver con el crimen.", "desbloqueada": false }
+    { "id": "l15", "texto": "¿Qué opinas de Inés?", "respuesta": "Siempre parecía preocupada, pero no creo que tenga nada que ver con el crimen.", "desbloqueada": false },
+
+    { "id": "l16", "texto": "¿Por qué preguntabas tanto por el contrabando?", "respuesta": "Porque escuché rumores y vi a Mateo muy nervioso. Elías también parecía saber algo.", "desbloqueada": true, "pistas": ["Mateo y Elías relacionados con rumores de contrabando"], "desbloquea": ["mateo", "elias", "l17"] },
+    { "id": "l17", "texto": "¿Crees que Mateo oculta algo?", "respuesta": "No lo sé, pero evitaba hablar conmigo esa noche.", "desbloqueada": false, "desbloquea": ["l18"] },
+    { "id": "l18", "texto": "¿Viste a alguien más cerca del faro?", "respuesta": "Vi una figura, pero no pude distinguir quién era. Puede que no tenga nada que ver.", "desbloqueada": false },
+
+    { "id": "l19", "texto": "¿Por qué desconfías de Sofía?", "respuesta": "La vi salir del despacho de Julián muy alterada.", "desbloqueada": false, "desbloquea": ["sofia", "l20"] },
+    { "id": "l20", "texto": "¿Crees que Sofía tenía motivos?", "respuesta": "No lo sé, pero discutió con Julián poco antes del crimen.", "desbloqueada": false },
+
+    { "id": "l21", "texto": "¿Has visto a Roberto manipular la linterna?", "respuesta": "Sí, pero solo la revisaba. No parecía sospechoso.", "desbloqueada": true, "desbloquea": ["l22"] },
+    { "id": "l22", "texto": "¿Crees que Roberto podría estar implicado?", "respuesta": "No lo creo, pero últimamente estaba muy callado.", "desbloqueada": false }
     ]
 }

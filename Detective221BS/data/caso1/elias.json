@@ -17,6 +17,16 @@
     { "id": "e12", "texto": "¿Has visto a alguien con heridas recientes?", "respuesta": "Vi a Mateo con un rasguño en la mano, pero dijo que era del muelle.", "desbloqueada": false, "desbloquea": ["e13"] },
     { "id": "e13", "texto": "¿Por qué discutías con Julián últimamente?", "respuesta": "No soportaba que me tratara como a un niño. Quería demostrarle que podía confiar en mí.", "desbloqueada": false, "desbloquea": ["e14"] },
     { "id": "e14", "texto": "¿Has notado cambios en los demás?", "respuesta": "Todos están tensos. Clara apenas habla, Mateo bebe más de lo normal, y Carlos está siempre vigilante.", "desbloqueada": false, "desbloquea": ["e15"] },
-    { "id": "e15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false }
+    { "id": "e15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false },
+
+    { "id": "e16", "texto": "¿Por qué preguntabas por la cuerda cortada?", "respuesta": "Porque la encontré tirada en el muelle. Sofía también la vio.", "desbloqueada": true, "pistas": ["Sofía vio la cuerda cortada"], "desbloquea": ["sofia", "e17"] },
+    { "id": "e17", "texto": "¿Crees que Sofía oculta algo?", "respuesta": "No lo sé, pero estaba muy nerviosa esa noche.", "desbloqueada": false, "desbloquea": ["e18"] },
+    { "id": "e18", "texto": "¿Viste a alguien más en el muelle?", "respuesta": "Vi una figura, pero no pude distinguir quién era. Puede que no tenga nada que ver.", "desbloqueada": false },
+
+    { "id": "e19", "texto": "¿Por qué desconfías de Lucía?", "respuesta": "Hace demasiadas preguntas y siempre aparece en los peores momentos.", "desbloqueada": false, "desbloquea": ["lucia", "e20"] },
+    { "id": "e20", "texto": "¿Crees que Lucía tenía motivos?", "respuesta": "No lo sé, pero investigaba algo grande sobre el faro.", "desbloqueada": false },
+
+    { "id": "e21", "texto": "¿Has visto a Roberto manipular la linterna?", "respuesta": "Sí, pero solo la revisaba. No parecía sospechoso.", "desbloqueada": true, "desbloquea": ["e22"] },
+    { "id": "e22", "texto": "¿Crees que Roberto podría estar implicado?", "respuesta": "No lo creo, pero últimamente estaba muy callado.", "desbloqueada": false }
     ]
 }

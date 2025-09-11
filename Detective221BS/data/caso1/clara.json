@@ -17,6 +17,16 @@
     { "id": "c12", "texto": "¿Por qué discutiste con Carlos?", "respuesta": "Carlos me acusó de cosas que no hice. Creo que sospechaba de todos, estaba muy tenso.", "desbloqueada": false, "desbloquea": ["c13"] },
     { "id": "c13", "texto": "¿Qué recuerdas de la carta anónima?", "respuesta": "Vi a Julián leerla varias veces. Parecía asustado y la guardó en su bolsillo.", "desbloqueada": false, "desbloquea": ["c14"] },
     { "id": "c14", "texto": "¿Has visto a alguien manipular la bitácora?", "respuesta": "Vi a Elías cerca del despacho de Julián, pero no sé si entró.", "desbloqueada": false, "desbloquea": ["c15"] },
-    { "id": "c15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false }
+    { "id": "c15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false },
+
+    { "id": "c16", "texto": "¿Por qué preguntabas por la carta anónima?", "respuesta": "Porque Julián estaba muy asustado después de recibirla. Inés también parecía preocupada.", "desbloqueada": true, "pistas": ["Inés preocupada por la carta anónima"], "desbloquea": ["ines", "c17"] },
+    { "id": "c17", "texto": "¿Crees que Inés sabe más de lo que dice?", "respuesta": "No lo sé, pero la vi hablar con Julián en secreto.", "desbloqueada": false, "desbloquea": ["c18"] },
+    { "id": "c18", "texto": "¿Viste a alguien más con Julián esa noche?", "respuesta": "Vi a Sofía cerca del despacho, pero no sé si entró.", "desbloqueada": false },
+
+    { "id": "c19", "texto": "¿Por qué desconfías de Mateo?", "respuesta": "Lo vi nervioso y bebiendo más de lo normal. No sé si tiene algo que ver.", "desbloqueada": false, "desbloquea": ["mateo", "c20"] },
+    { "id": "c20", "texto": "¿Crees que Mateo tenía motivos?", "respuesta": "Discutió con Julián varias veces, pero no sé si sería capaz de matarlo.", "desbloqueada": false },
+
+    { "id": "c21", "texto": "¿Has visto a Roberto manipular la cuerda?", "respuesta": "Sí, pero solo la revisaba. No parecía sospechoso.", "desbloqueada": true, "desbloquea": ["c22"] },
+    { "id": "c22", "texto": "¿Crees que Roberto podría estar implicado?", "respuesta": "No lo creo, pero últimamente estaba muy callado.", "desbloqueada": false }
     ]
 }
