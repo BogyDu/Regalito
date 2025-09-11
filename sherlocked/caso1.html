@@ -16,6 +16,8 @@
     <button onclick="mostrarPista('bitacora')">Bitácora del Faro</button>
     <button onclick="mostrarPista('ramirez')">Notas del detective Ramírez</button>
     <div id="pistas"></div>
+
+    <div id="pistas-secretas"></div> <!-- Aquí aparecerán las nuevas pistas -->
   </section>
 
   <section>
@@ -26,6 +28,31 @@
     <button onclick="mostrarSospechoso('ernesto')">Ernesto Vega (guardia portuario)</button>
     <button onclick="mostrarSospechoso('padre')">Padre Anselmo (cura local)</button>
     <div id="sospechosos"></div>
+  </section>
+
+  <section>
+    <h2>Confrontar declaraciones</h2>
+    <p>Selecciona dos sospechosos para comparar sus declaraciones y buscar contradicciones:</p>
+    <select id="conf1">
+      <option value="">-- Selecciona sospechoso --</option>
+      <option value="sofia">Sofía Ortega</option>
+      <option value="mateo">Mateo Duarte</option>
+      <option value="camila">Camila Torres</option>
+      <option value="ernesto">Ernesto Vega</option>
+      <option value="padre">Padre Anselmo</option>
+    </select>
+
+    <select id="conf2">
+      <option value="">-- Selecciona sospechoso --</option>
+      <option value="sofia">Sofía Ortega</option>
+      <option value="mateo">Mateo Duarte</option>
+      <option value="camila">Camila Torres</option>
+      <option value="ernesto">Ernesto Vega</option>
+      <option value="padre">Padre Anselmo</option>
+    </select>
+
+    <button onclick="confrontar()">Confrontar</button>
+    <div id="confrontacion"></div>
   </section>
 
   <section>
