@@ -2,39 +2,42 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Archivo de Casos - División de Homicidios</title>
+<title>Detective - Casos</title>
 <link rel="stylesheet" href="estilo.css">
+<style>
+body { font-family: "Segoe UI", sans-serif; background: #e0e0e0; padding: 20px; }
+h1 { text-align: center; margin-bottom: 30px; }
+.caso-carpeta { display: inline-block; width: 200px; height: 120px; background: #f5f5f5; border: 2px solid #333; border-radius: 8px; margin: 15px; text-align: center; vertical-align: top; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; position: relative; }
+.caso-carpeta:hover { transform: scale(1.05); }
+.caso-carpeta .titulo { font-weight: bold; margin-top: 20px; }
+.caso-carpeta .estado { position: absolute; bottom: 10px; width: 100%; font-size: 0.9em; }
+</style>
 </head>
 <body>
-<h1>ARCHIVO DE CASOS</h1>
-
-<div class="archivador" id="lista-casos">
-  <div class="carpeta" onclick="abrirCaso('caso1.html')" id="caso1">
-    <div class="etiqueta" id="etiqueta-caso1">Pendiente</div>
-    <div class="contenido"><strong>El Faro</strong><br>Homicidio del farero Julián Ortega.</div>
-  </div>
-  <div class="carpeta" onclick="abrirCaso('caso2.html')" id="caso2">
-    <div class="etiqueta" id="etiqueta-caso2">Pendiente</div>
-    <div class="contenido"><strong>El Museo</strong><br>Robo y asesinato en exposición privada.</div>
-  </div>
-</div>
-
-<button onclick="abrirDossier()">📂 Abrir Dossier</button>
+<h1>Detective - Casos</h1>
+<div id="lista-casos"></div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
-  for(const id in progreso){
-    const etiqueta = document.getElementById("etiqueta-"+id);
-    if(etiqueta){
-      etiqueta.textContent = progreso[id]?"Resuelto":"Pendiente";
-      etiqueta.className = progreso[id]?"etiqueta resuelto":"etiqueta pendiente";
-    }
-  }
-});
+const casos = [
+  {id:"caso1", nombre:"El Faro", archivo:"caso1.html"},
+  {id:"caso2", nombre:"El Museo", archivo:"caso2.html"}
+];
 
-function abrirCaso(html){ window.location.href=html; }
-function abrirDossier(){ window.open("dossier.html","Dossier","width=800,height=600,scrollbars=yes"); }
+function cargarCasos(){
+  const lista = document.getElementById("lista-casos");
+  lista.innerHTML="";
+  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+  casos.forEach(c=>{
+    const div = document.createElement("div");
+    div.className="caso-carpeta";
+    div.onclick = ()=> window.open(c.archivo,"_blank");
+    div.innerHTML = `<div class="titulo">${c.nombre}</div>
+                     <div class="estado">${progreso[c.id] ? "Resuelto ✅" : "Pendiente 🟡"}</div>`;
+    lista.appendChild(div);
+  });
+}
+
+cargarCasos();
 </script>
 </body>
 </html>
