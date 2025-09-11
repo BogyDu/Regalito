@@ -1,4 +1,4 @@
-// --- Pistas ---
+// --- Pistas iniciales ---
 const pistas = {
   forense: `
     <h3>Informe Forense</h3>
@@ -113,10 +113,29 @@ function confrontar() {
 
 // --- Desbloquear nueva pista secreta ---
 function desbloquearPista(texto) {
+  let pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+
+  // Evitar duplicados
+  if (!pistasSecretas.includes(texto)) {
+    pistasSecretas.push(texto);
+    localStorage.setItem("pistasSecretasCaso1", JSON.stringify(pistasSecretas));
+  }
+
+  renderizarPistasSecretas();
+}
+
+// --- Renderizar pistas secretas desde localStorage ---
+function renderizarPistasSecretas() {
   const divSecretas = document.getElementById("pistas-secretas");
-  const p = document.createElement("p");
-  p.innerHTML = `<strong>Pista secreta desbloqueada:</strong> ${texto}`;
-  divSecretas.appendChild(p);
+  divSecretas.innerHTML = ""; // Limpiar antes de pintar
+
+  const pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+
+  pistasSecretas.forEach(p => {
+    const parrafo = document.createElement("p");
+    parrafo.innerHTML = `<strong>Pista secreta desbloqueada:</strong> ${p}`;
+    divSecretas.appendChild(parrafo);
+  });
 }
 
 // --- Resolver ---
@@ -141,9 +160,14 @@ function resolverCaso() {
   }
 }
 
-// --- Guardar progreso ---
+// --- Guardar progreso de caso ---
 function marcarCasoResuelto(idCaso) {
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
   progreso[idCaso] = true;
   localStorage.setItem("progresoCasos", JSON.stringify(progreso));
 }
+
+// --- Al cargar la página ---
+document.addEventListener("DOMContentLoaded", () => {
+  renderizarPistasSecretas();
+});
