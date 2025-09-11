@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Caso 1 - El Asesinato de Arturo Salcedo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Caso 1: El Asesinato de Arturo Salcedo</h1>
+  <p>Eres el detective asignado al caso. Examina las pistas, interroga a los sospechosos y resuelve quién es el culpable.</p>
+
+  <section>
+    <h2>Pistas</h2>
+    <button onclick="mostrarPista('forense')">Informe Forense</button>
+    <button onclick="mostrarPista('escena')">Escena del Crimen</button>
+    <button onclick="mostrarPista('ramirez')">Notas del detective Ramírez</button>
+    <div id="pistas"></div>
+  </section>
+
+  <section>
+    <h2>Sospechosos</h2>
+    <button onclick="mostrarSospechoso('claudia')">Claudia Méndez</button>
+    <button onclick="mostrarSospechoso('diego')">Diego Salcedo</button>
+    <button onclick="mostrarSospechoso('gabriela')">Gabriela Rivas</button>
+    <button onclick="mostrarSospechoso('hector')">Héctor Linares</button>
+    <button onclick="mostrarSospechoso('valeria')">Valeria Soto</button>
+    <div id="sospechosos"></div>
+  </section>
+
+  <section>
+    <h2>¿Quién es el culpable?</h2>
+    <select id="culpable">
+      <option value="">-- Selecciona un sospechoso --</option>
+      <option value="claudia">Claudia Méndez</option>
+      <option value="diego">Diego Salcedo</option>
+      <option value="gabriela">Gabriela Rivas</option>
+      <option value="hector">Héctor Linares</option>
+      <option value="valeria">Valeria Soto</option>
+    </select>
+    <button onclick="resolverCaso()">Resolver</button>
+    <div id="resultado"></div>
+  </section>
+
+  <p><a href="index.html">← Volver al listado de casos</a></p>
+
+  <script src="caso1.js"></script>
+</body>
+</html>
