@@ -4,121 +4,133 @@
 <meta charset="UTF-8">
 <title>Dossier del Detective</title>
 <link rel="stylesheet" href="estilo.css">
+<style>
+/* Pestañas estilo carpetas */
+.tab-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.tab-header button {
+  padding: 8px 15px;
+  border: 2px solid #333;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-weight: bold;
+}
+.tab-header button.active { background: #c8a165; border-color: #8a5a2d; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+</style>
 </head>
 <body>
 <h2>Dossier del Detective</h2>
 
-<div class="carpeta">
-  <div class="etiqueta">Seleccionar Caso</div>
-  <div class="contenido">
-    <select id="select-caso"></select>
+<div class="tab-header">
+  <button data-tab="caso1" class="active">Caso 1 - El Faro</button>
+  <button data-tab="caso2">Caso 2 - El Museo</button>
+</div>
+
+<div id="caso1" class="tab-content active">
+  <div class="carpeta">
+    <div class="etiqueta">Pistas Descubiertas</div>
+    <div class="contenido"><ul id="pistas-caso1"></ul></div>
+  </div>
+  <div class="carpeta">
+    <div class="etiqueta">Pistas Secretas</div>
+    <div class="contenido"><ul id="secretas-caso1"></ul></div>
+  </div>
+  <div class="carpeta">
+    <div class="etiqueta">Sospechosos Interrogados</div>
+    <div class="contenido"><ul id="sospechosos-caso1"></ul></div>
+  </div>
+  <div class="carpeta">
+    <div class="etiqueta">Notas del Detective</div>
+    <div class="contenido">
+      <textarea id="notas-caso1"></textarea>
+      <button onclick="guardarNotas('caso1')">Guardar Notas</button>
+    </div>
   </div>
 </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Pistas Descubiertas</div>
-  <div class="contenido">
-    <ul id="dossier-pistas"></ul>
+<div id="caso2" class="tab-content">
+  <div class="carpeta">
+    <div class="etiqueta">Pistas Descubiertas</div>
+    <div class="contenido"><ul id="pistas-caso2"></ul></div>
   </div>
-</div>
-
-<div class="carpeta">
-  <div class="etiqueta">Pistas Secretas</div>
-  <div class="contenido">
-    <ul id="dossier-secretas"></ul>
+  <div class="carpeta">
+    <div class="etiqueta">Pistas Secretas</div>
+    <div class="contenido"><ul id="secretas-caso2"></ul></div>
   </div>
-</div>
-
-<div class="carpeta">
-  <div class="etiqueta">Sospechosos Interrogados</div>
-  <div class="contenido">
-    <ul id="dossier-sospechosos"></ul>
+  <div class="carpeta">
+    <div class="etiqueta">Sospechosos Interrogados</div>
+    <div class="contenido"><ul id="sospechosos-caso2"></ul></div>
   </div>
-</div>
-
-<div class="carpeta">
-  <div class="etiqueta">Notas del Detective</div>
-  <div class="contenido">
-    <textarea id="notas"></textarea>
-    <button onclick="guardarNotas()">Guardar Notas</button>
+  <div class="carpeta">
+    <div class="etiqueta">Notas del Detective</div>
+    <div class="contenido">
+      <textarea id="notas-caso2"></textarea>
+      <button onclick="guardarNotas('caso2')">Guardar Notas</button>
+    </div>
   </div>
 </div>
 
 <script>
-// Lista de casos disponibles
-const casosDisponibles = ["caso1","caso2"];
-
-// Cargar select de casos
-const select = document.getElementById("select-caso");
-casosDisponibles.forEach(caso=>{
-  const opt = document.createElement("option");
-  opt.value = caso;
-  opt.textContent = caso;
-  select.appendChild(opt);
+// Cambiar pestañas
+const tabs = document.querySelectorAll(".tab-header button");
+tabs.forEach(tab => {
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab-header button").forEach(b=>b.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+    document.getElementById(tab.dataset.tab).classList.add("active");
+  });
 });
 
-// Actualizar visualización al cambiar caso
-select.addEventListener("change", cargarDossier);
-
+// Cargar datos desde localStorage
 function cargarDossier(){
-  const caso = select.value;
-  if(!caso) return;
+  ["caso1","caso2"].forEach(caso=>{
+    const pistas = JSON.parse(localStorage.getItem("pistas"+caso)) || [];
+    const secretas = JSON.parse(localStorage.getItem("pistasSecretas"+caso)) || [];
+    const sospechosos = JSON.parse(localStorage.getItem("interrogados"+caso)) || [];
+    const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
+    const notas = JSON.parse(localStorage.getItem("notas"+caso)) || "";
 
-  const pistas = JSON.parse(localStorage.getItem("pistas"+caso)) || [];
-  const secretas = JSON.parse(localStorage.getItem("pistasSecretas"+caso)) || [];
-  const sospechosos = JSON.parse(localStorage.getItem("interrogados"+caso)) || [];
-  const notas = JSON.parse(localStorage.getItem("notas"+caso)) || "";
-  const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
+    const ulPistas = document.getElementById("pistas-"+caso);
+    ulPistas.innerHTML = "";
+    pistas.forEach(p=>{ let li=document.createElement("li"); li.textContent=p; ulPistas.appendChild(li); });
 
-  // Pistas descubiertas
-  const ulPistas = document.getElementById("dossier-pistas");
-  ulPistas.innerHTML = "";
-  pistas.forEach(p => { 
-    const li = document.createElement("li"); 
-    li.textContent = p; 
-    ulPistas.appendChild(li);
+    const ulSecretas = document.getElementById("secretas-"+caso);
+    ulSecretas.innerHTML = "";
+    secretas.forEach(s=>{ let li=document.createElement("li"); li.textContent=s; ulSecretas.appendChild(li); });
+
+    const ulSos = document.getElementById("sospechosos-"+caso);
+    ulSos.innerHTML = "";
+    sospechosos.forEach(s=>{
+      let li = document.createElement("li");
+      li.innerHTML = `<strong>${s}</strong>:<br>`;
+      if(respuestas[caso] && respuestas[caso][s]){
+        Object.keys(respuestas[caso][s]).forEach(preg=>{
+          li.innerHTML += `- ${preg}: ${respuestas[caso][s][preg]}<br>`;
+        });
+      } else { li.innerHTML += "No hay respuestas registradas.<br>"; }
+      ulSos.appendChild(li);
+    });
+
+    document.getElementById("notas-"+caso).value = notas;
   });
-
-  // Pistas secretas
-  const ulSecretas = document.getElementById("dossier-secretas");
-  ulSecretas.innerHTML = "";
-  secretas.forEach(s => {
-    const li = document.createElement("li"); 
-    li.textContent = s; 
-    ulSecretas.appendChild(li);
-  });
-
-  // Sospechosos interrogados
-  const ulSos = document.getElementById("dossier-sospechosos");
-  ulSos.innerHTML = "";
-  sospechosos.forEach(s => {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${s}</strong>:<br>`;
-    if(respuestas[s]){
-      Object.keys(respuestas[s]).forEach(preg => {
-        li.innerHTML += `- ${preg}: ${respuestas[s][preg]}<br>`;
-      });
-    } else { li.innerHTML += "No hay respuestas registradas.<br>"; }
-    ulSos.appendChild(li);
-  });
-
-  // Notas
-  document.getElementById("notas").value = notas;
 }
 
-function guardarNotas(){
-  const caso = select.value;
-  if(!caso) return alert("Selecciona un caso primero");
-  const notas = document.getElementById("notas").value;
+// Guardar notas
+function guardarNotas(caso){
+  const notas = document.getElementById("notas-"+caso).value;
   localStorage.setItem("notas"+caso, JSON.stringify(notas));
   alert("Notas guardadas para " + caso);
 }
 
-// Inicializar con primer caso
-document.addEventListener("DOMContentLoaded", ()=>{
-  select.selectedIndex = 0;
-  cargarDossier();
-});
+// Actualización automática
+setInterval(cargarDossier,1000);
+cargarDossier();
 </script>
 </body>
 </html>
