@@ -3,132 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <title>Archivo de Casos - División de Homicidios</title>
-<style>
-body {
-  font-family: "Courier New", monospace;
-  background: #e5dfd4;
-  margin: 0;
-  padding: 20px;
-}
-h1 {
-  text-align: center;
-  color: #2d2d2d;
-  margin-bottom: 30px;
-  text-transform: uppercase;
-}
-.archivador {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-.carpeta {
-  width: 200px;
-  height: 160px;
-  background: #c8a165;
-  border: 2px solid #8a5a2d;
-  border-radius: 5px 5px 0 0;
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.2s;
-  box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-}
-.carpeta:hover {
-  transform: translateY(-5px);
-}
-.etiqueta {
-  position: absolute;
-  top: -25px;
-  left: 10px;
-  width: 80px;
-  height: 25px;
-  background: #b38952;
-  border: 2px solid #8a5a2d;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  text-align: center;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 22px;
-}
-.etiqueta.pendiente {
-  background: #d9534f; 
-  border-color: #a94442;
-}
-.etiqueta.resuelto {
-  background: #5cb85c; 
-  border-color: #4cae4c;
-}
-.contenido {
-  padding: 10px;
-  color: #2d2d2d;
-  font-size: 14px;
-}
-button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-  border: 2px solid #333;
-  background: #f5f5f5;
-  cursor: pointer;
-}
-footer {
-  margin-top: 40px;
-  text-align: center;
-  font-size: 13px;
-  color: #444;
-}
-</style>
+<link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 <h1>ARCHIVO DE CASOS</h1>
 
 <div class="archivador" id="lista-casos">
-  <!-- Carpeta de ejemplo: Caso 1 -->
   <div class="carpeta" onclick="abrirCaso('caso1.html')" id="caso1">
     <div class="etiqueta" id="etiqueta-caso1">Pendiente</div>
-    <div class="contenido">
-      <p><strong>El Faro</strong></p>
-      <p>Homicidio del farero Julián Ortega.</p>
-    </div>
+    <div class="contenido"><p><strong>El Faro</strong><br>Homicidio del farero Julián Ortega.</p></div>
   </div>
-  <!-- Carpeta de ejemplo: Caso 2 -->
   <div class="carpeta" onclick="abrirCaso('caso2.html')" id="caso2">
     <div class="etiqueta" id="etiqueta-caso2">Pendiente</div>
-    <div class="contenido">
-      <p><strong>El Museo</strong></p>
-      <p>Robo y asesinato en exposición privada.</p>
-    </div>
+    <div class="contenido"><p><strong>El Museo</strong><br>Robo y asesinato en exposición privada.</p></div>
   </div>
 </div>
 
 <button onclick="abrirDossier()">📂 Abrir Dossier</button>
 
-<footer>
-División de Homicidios - Acceso Restringido
-</footer>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
-  for (const id in progreso) {
-    const etiqueta = document.getElementById("etiqueta-" + id);
-    if (etiqueta) {
-      etiqueta.textContent = progreso[id] ? "Resuelto" : "Pendiente";
-      etiqueta.className = progreso[id] ? "etiqueta resuelto" : "etiqueta pendiente";
+  for(const id in progreso){
+    const etiqueta = document.getElementById("etiqueta-"+id);
+    if(etiqueta){
+      etiqueta.textContent = progreso[id]?"Resuelto":"Pendiente";
+      etiqueta.className = progreso[id]?"etiqueta resuelto":"etiqueta pendiente";
     }
   }
 });
 
-function abrirCaso(html) {
-  window.location.href = html;
-}
-
-function abrirDossier() {
-  window.open("dossier.html", "Dossier", "width=800,height=600,scrollbars=yes");
-}
+function abrirCaso(html){ window.location.href=html; }
+function abrirDossier(){ window.open("dossier.html","Dossier","width=800,height=600,scrollbars=yes"); }
 </script>
 </body>
 </html>
