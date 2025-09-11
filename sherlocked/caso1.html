@@ -29,6 +29,29 @@
     <button onclick="mostrarSospechoso('padre')">Padre Anselmo (cura local)</button>
     <div id="sospechosos"></div>
   </section>
+<section>
+<h2>Interrogar Sospechosos</h2>
+<p>Selecciona un sospechoso y una pregunta para interrogar:</p>
+
+<select id="inter-sospechoso">
+  <option value="">-- Selecciona sospechoso --</option>
+  <option value="sofia">Sofía Ortega</option>
+  <option value="mateo">Mateo Duarte</option>
+  <option value="camila">Camila Torres</option>
+  <option value="ernesto">Ernesto Vega</option>
+  <option value="padre">Padre Anselmo</option>
+</select>
+
+<select id="inter-pregunta">
+  <option value="">-- Selecciona pregunta --</option>
+  <option value="donde">¿Dónde estabas la noche del crimen?</option>
+  <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
+  <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
+</select>
+
+<button onclick="interrogar()">Interrogar</button>
+<div id="respuesta-interrogatorio"></div>
+</section>
 
   <section>
     <h2>Confrontar declaraciones</h2>
