@@ -1,61 +1,105 @@
+/* Estilo general del cuerpo y tipografía */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f5f5f5;
-  color: #333;
+  font-family: "Courier New", monospace;
+  background: #e5dfd4;
+  margin: 0;
+  padding: 20px;
+  color: #2d2d2d;
 }
 
 h1, h2 {
-  color: #222;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-button {
-  margin: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-  border: none;
-  background: #0077cc;
-  color: white;
-  border-radius: 5px;
+/* Contenedor de carpetas */
+.archivador {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
-button:hover {
-  background: #005fa3;
-}
-
-.resuelto {
-  color: green;
-  margin-left: 10px;
-}
-
-.pendiente {
-  color: orange;
-  margin-left: 10px;
-}
-
-#pistas, #sospechosos, #resultado {
-  margin-top: 15px;
+/* Carpetas de casos o secciones */
+.carpeta {
+  width: 220px;
+  background: #c8a165;
+  border: 2px solid #8a5a2d;
+  border-radius: 5px 5px 0 0;
   padding: 10px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  margin: 10px 0;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+}
+.carpeta:hover {
+  transform: translateY(-5px);
 }
 
-.dossier {
-  display: none;
-  position: fixed;
-  top: 10%;
-  left: 10%;
-  right: 10%;
-  bottom: 10%;
-  background: #fff;
+/* Etiquetas de carpetas */
+.etiqueta {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #b38952;
+  border: 2px solid #8a5a2d;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  font-weight: bold;
+}
+
+/* Etiquetas de estado */
+.etiqueta.pendiente {
+  background: #d9534f;
+  border-color: #a94442;
+}
+.etiqueta.resuelto {
+  background: #5cb85c;
+  border-color: #4cae4c;
+}
+
+/* Contenido dentro de las carpetas */
+.contenido {
+  padding: 10px;
+  background: #fffdf6;
+  border: 1px solid #333;
+  margin-top: 5px;
+}
+
+/* Botones */
+button {
+  padding: 8px 15px;
+  margin: 5px 0;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  cursor: pointer;
   border: 2px solid #333;
-  padding: 20px;
-  overflow-y: auto;
-  box-shadow: 0 0 20px rgba(0,0,0,0.7);
-  z-index: 1000;
+  background: #f5f5f5;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-.dossier h2 {
-  margin-top: 0;
+/* Formularios y selects */
+select, textarea {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  padding: 5px;
+}
+
+/* Textarea para notas */
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+/* Secciones de dossier o interrogatorio */
+section {
+  margin-bottom: 20px;
+}
+
+/* Pistas, sospechosos, resultados, respuestas */
+#pistas, #sospechosos, #confrontacion, #resultado, #respuesta-interrogatorio, #dossier-pistas, #dossier-secretas, #dossier-sospechosos {
+  background: #fffdf6;
+  border: 1px solid #333;
+  padding: 10px;
+  margin-top: 5px;
 }
