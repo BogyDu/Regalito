@@ -40,3 +40,22 @@ button:hover {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+
+.dossier {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  bottom: 10%;
+  background: #fff;
+  border: 2px solid #333;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+  z-index: 1000;
+}
+
+.dossier h2 {
+  margin-top: 0;
+}
