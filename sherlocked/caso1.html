@@ -17,7 +17,7 @@
     <button onclick="mostrarPista('ramirez')">Notas del detective Ramírez</button>
     <div id="pistas"></div>
 
-    <div id="pistas-secretas"></div> <!-- Aquí aparecerán las nuevas pistas -->
+    <div id="pistas-secretas"></div>
   </section>
 
   <section>
@@ -68,6 +68,24 @@
     <button onclick="resolverCaso()">Resolver</button>
     <div id="resultado"></div>
   </section>
+
+  <!-- Botón para abrir el dossier -->
+  <button onclick="abrirDossier()" style="margin-top:20px;">📂 Abrir Dossier del Caso</button>
+
+  <!-- Panel flotante del dossier -->
+  <div id="dossier" class="dossier">
+    <h2>Dossier del Caso</h2>
+    <h3>Pistas descubiertas</h3>
+    <ul id="dossier-pistas"></ul>
+
+    <h3>Pistas secretas</h3>
+    <ul id="dossier-secretas"></ul>
+
+    <h3>Sospechosos interrogados</h3>
+    <ul id="dossier-sospechosos"></ul>
+
+    <button onclick="cerrarDossier()">Cerrar</button>
+  </div>
 
   <p><a href="index.html">← Volver al listado de casos</a></p>
 
