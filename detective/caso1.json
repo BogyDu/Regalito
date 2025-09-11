@@ -17,10 +17,12 @@
   "preguntasBasicas": {
     "Sofia":[
       {"texto":"¿Con quién estabas la noche del crimen?","respuesta":"Estaba sola revisando la torre y asegurando el faro; Mateo estuvo conmigo solo unos minutos antes de retirarse. Más tarde escuché pasos desconocidos."},
-      {"texto":"¿Qué hora estabas en el faro?","respuesta":"Llegué a las 21:00 y me retiré a las 23:30, observando movimientos extraños cerca del muelle."}
+      {"texto":"¿Qué hora estabas en el faro?","respuesta":"Llegué a las 21:00 y me retiré a las 23:30, observando movimientos extraños cerca del muelle."},
+      {"texto":"¿Viste algún objeto fuera de lugar?","respuesta":"Sí, noté que el cuchillo estaba fuera de su lugar habitual, doblado y con sangre."}
     ],
     "Mateo":[
-      {"texto":"¿Qué hacías durante la noche del crimen?","respuesta":"Inspeccionaba los niveles inferiores. Observé a Clara tomando fotos y a alguien desconocido rondando."}
+      {"texto":"¿Qué hacías durante la noche del crimen?","respuesta":"Inspeccionaba los niveles inferiores. Observé a Clara tomando fotos y a alguien desconocido rondando."},
+      {"texto":"¿Alguien te siguió?","respuesta":"Sí, noté una sombra cerca del muelle, parecía un visitante desconocido."}
     ],
     "Lucas":[
       {"texto":"¿Dónde estabas la noche del crimen?","respuesta":"Patrullaba el muelle y revisaba la cerradura del faro. Noté sombras sospechosas detrás del faro."}
@@ -29,17 +31,17 @@
       {"texto":"¿Qué hacías esa noche?","respuesta":"Fotografiaba el faro y alrededores. Vi a Mateo y Lucas moverse cautelosamente."}
     ],
     "Javier":[
-      {"texto":"¿Qué observaste en el faro?","respuesta":"Exploraba los niveles superiores. Vi movimientos extraños y sombras detrás del faro."},
-      {"texto":"¿Alguien más estaba allí?","respuesta":"Noté a un desconocido merodeando, parece un nuevo sospechoso potencial."}
+      {"texto":"¿Qué observaste en el faro?","respuesta":"Exploraba los niveles superiores. Vi movimientos extraños y sombras detrás del faro."}
     ],
     "Ricardo":[
-      {"texto":"¿Qué hacías en el faro?","respuesta":"Solo pasaba por el muelle, pero vi cómo Lucas y Mateo se movían nerviosos. No interactué con nadie."}
+      {"texto":"¿Qué hacías en el muelle?","respuesta":"Solo pasaba por el muelle, pero vi cómo Lucas y Mateo se movían nerviosos. No interactué con nadie."}
     ]
   },
   "preguntasAvanzadas": {
     "Sofia":[
       {"texto":"¿Quién podría ser el nuevo sospechoso?","respuesta":"Era alguien vestido de oscuro, moviéndose sigilosamente. Esto añade a Ricardo como sospechoso.","desbloqueo":[{"sospechoso":"Ricardo","nuevaPregunta":"¿Quién eres y qué hacías cerca del muelle?"}]},
-      {"texto":"¿Notas algo extraño sobre Lucas?","respuesta":"Parecía nervioso cerca de la cerradura, contradiciendo su declaración inicial.","desbloqueo":[{"sospechoso":"Lucas","nuevaPregunta":"¿Por qué estabas nervioso cerca de la cerradura?"}]}
+      {"texto":"¿Notas algo extraño sobre Lucas?","respuesta":"Parecía nervioso cerca de la cerradura, contradiciendo su declaración inicial.","desbloqueo":[{"sospechoso":"Lucas","nuevaPregunta":"¿Por qué estabas nervioso cerca de la cerradura?"}]},
+      {"texto":"¿Qué escuchaste en la torre?","respuesta":"Escuché murmullos y pasos rápidos, lo que indica actividad sospechosa."}
     ],
     "Mateo":[
       {"texto":"¿Qué hiciste al ver al intruso?","respuesta":"Intenté observar sin ser notado, confirmando que hay un nuevo sospechoso.","desbloqueo":[{"sospechoso":"Ricardo","nuevaPregunta":"¿Por qué estabas rondando el muelle?"}]}
