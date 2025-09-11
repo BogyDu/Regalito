@@ -7,71 +7,99 @@
 <style>
 body { font-family: "Courier New", monospace; background:#e5e2d0; margin:20px; }
 h1 { text-align:center; color:#3e3a2f; margin-bottom:20px; }
-button { cursor:pointer; padding:5px 10px; margin-top:5px; border-radius:4px; border:1px solid #3e3a2f; background:#d4c89d; font-weight:bold; }
-button:hover { background:#b59f71; color:#fff; }
 
-/* Carpetas de secciones */
-.carpeta { background:#fdf6e3; border:2px solid #a77b4d; border-radius:6px; padding:12px; margin:10px 0; box-shadow:4px 4px 8px rgba(0,0,0,0.3); }
+/* Layout 50/50 */
+.container {
+  display: flex;
+  gap:20px;
+}
+
+/* Izquierda: interacciones */
+.interacciones {
+  width:50%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Derecha: pistas y notas */
+.informacion {
+  width:50%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Carpetas estilo detective */
+.carpeta { background:#fdf6e3; border:2px solid #a77b4d; border-radius:6px; padding:12px; margin-bottom:10px; box-shadow:4px 4px 8px rgba(0,0,0,0.3); }
 .etiqueta { font-weight:bold; font-size:1.2em; margin-bottom:8px; color:#5d4730; text-shadow:1px 1px 0 #fff; }
 .contenido { padding-left:12px; font-size:0.95em; }
 ul { list-style:none; padding-left:0; }
 li { margin-bottom:5px; padding:5px; border-left:5px solid transparent; }
 .nueva { background:#fff3cd; border-left-color:#f0ad4e; }
 .secretas { color:#d9534f; font-weight:bold; border-left-color:#d9534f; }
+button { cursor:pointer; padding:5px 10px; margin-top:5px; border-radius:4px; border:1px solid #3e3a2f; background:#d4c89d; font-weight:bold; }
+button:hover { background:#b59f71; color:#fff; }
 .estado { font-weight:bold; margin-bottom:10px; }
 .estado.resuelto { color:#5cb85c; }
 .estado.pendiente { color:#ff9800; }
+
+.interaccion-boton { margin-bottom:5px; }
 </style>
 </head>
 <body>
 <h1>Caso 1 - El Faro</h1>
 <button onclick="window.open('dossier.html','_blank')">Abrir Dossier</button>
 
-<div class="carpeta">
-  <div class="etiqueta">Estado del Caso</div>
-  <div class="contenido"><span id="estado-caso" class="estado"></span></div>
-</div>
+<div class="container">
+  <!-- IZQUIERDA: INTERACCIONES -->
+  <div class="interacciones">
+    <div class="carpeta">
+      <div class="etiqueta">Interrogar Sospechosos</div>
+      <div class="contenido" id="botones-sospechosos"></div>
+    </div>
+  </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Pistas Descubiertas</div>
-  <div class="contenido"><ul id="pistas"></ul></div>
-</div>
+  <!-- DERECHA: PISTAS, SECRETAS Y NOTAS -->
+  <div class="informacion">
+    <div class="carpeta">
+      <div class="etiqueta">Estado del Caso</div>
+      <div class="contenido"><span id="estado-caso" class="estado"></span></div>
+    </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Pistas Secretas 🔴</div>
-  <div class="contenido"><ul id="secretas"></ul></div>
-</div>
+    <div class="carpeta">
+      <div class="etiqueta">Pistas Descubiertas</div>
+      <div class="contenido"><ul id="pistas"></ul></div>
+    </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Sospechosos Interrogados</div>
-  <div class="contenido"><ul id="sospechosos"></ul></div>
-</div>
+    <div class="carpeta">
+      <div class="etiqueta">Pistas Secretas 🔴</div>
+      <div class="contenido"><ul id="secretas"></ul></div>
+    </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Notas del Detective</div>
-  <div class="contenido">
-    <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..." rows="5" style="width:100%;"></textarea>
-    <button onclick="guardarNotas()">Guardar Notas</button>
+    <div class="carpeta">
+      <div class="etiqueta">Notas del Detective</div>
+      <div class="contenido">
+        <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..." rows="5" style="width:100%;"></textarea>
+        <button onclick="guardarNotas()">Guardar Notas</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-// Datos del caso 1
+// Datos del caso
 window.casoActual = "caso1";
 
-const pistas = ["Huella en la ventana","Llave del faro","Zapato roto"];
-const pistasSecretas = ["Documento Secreto: Diario del Faro","Carta del Historiador"];
 const sospechosos = ["Sofia","Mateo","Clara","Javier","Lucas"];
 const respuestas = {
-  "Sofia":{"¿Qué viste la noche del crimen?":"Vi a Mateo salir del faro a las 10 pm.","¿Conoces a los demás sospechosos?":"Sí, los he visto varias veces en el faro."},
+  "Sofia":{"¿Qué viste la noche del crimen?":"Vi a Mateo salir del faro a las 10 pm.","¿Conoces a los demás sospechosos?":"Sí, los he visto varias veces."},
   "Mateo":{"¿Dónde estabas a las 10 pm?":"Estaba con Clara… pero el diario del faro muestra que eso no coincide.","¿Ves a alguien sospechoso?":"No puedo decir, todos parecen normales."},
   "Clara":{"¿Qué estabas haciendo en el faro?":"Tomando fotos de la torre.","¿Viste algo extraño?":"No, todo parecía tranquilo."},
   "Javier":{"¿Cuál era tu propósito en el faro?":"Investigar la historia del faro.","¿Alguien más estaba allí?":"Sí, vi a Mateo y Lucas."},
-  "Lucas":{"¿Guardabas el faro esa noche?":"Sí, estuve revisando cada hora.","¿Alguien entró sin permiso?":"No estoy seguro, pero la puerta estaba cerrada."},
-  "Victor":{"¿Qué sabes del asesinato?":"He revisado la torre y hay evidencias que solo yo conozco.","¿Alguien más estuvo involucrado?":"Parece que Mateo tenía ayuda."}
+  "Lucas":{"¿Guardabas el faro esa noche?":"Sí, estuve revisando cada hora.","¿Alguien entró sin permiso?":"No estoy seguro, pero la puerta estaba cerrada."}
 };
 
-const culpableReal = "Mateo";
+const pistas = ["Huella en la ventana","Llave del faro","Zapato roto"];
+const pistasSecretas = ["Documento Secreto: Diario del Faro","Carta del Historiador"];
 
 // Inicializar localStorage
 if(!localStorage.getItem("pistas"+casoActual)) localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
@@ -79,6 +107,44 @@ if(!localStorage.getItem("pistasSecretas"+casoActual)) localStorage.setItem("pis
 if(!localStorage.getItem("interrogados"+casoActual)) localStorage.setItem("interrogados"+casoActual, JSON.stringify([]));
 if(!localStorage.getItem("notas"+casoActual)) localStorage.setItem("notas"+casoActual, JSON.stringify(""));
 
+// Crear botones de sospechosos
+function crearBotonesSospechosos(){
+  const cont = document.getElementById("botones-sospechosos");
+  cont.innerHTML="";
+  sospechosos.forEach(s=>{
+    const btn = document.createElement("button");
+    btn.textContent = s;
+    btn.className="interaccion-boton";
+    btn.onclick = ()=>interrogar(s);
+    cont.appendChild(btn);
+  });
+}
+
+// Interrogar sospechoso
+function interrogar(nombre){
+  let interrogados = JSON.parse(localStorage.getItem("interrogados"+casoActual)) || [];
+  if(!interrogados.includes(nombre)) interrogados.push(nombre);
+  localStorage.setItem("interrogados"+casoActual, JSON.stringify(interrogados));
+
+  // Agregar pista secreta si hay documento secreto
+  if(nombre==="Mateo"){
+    let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
+    if(!secretas.includes("Documento Secreto: Diario del Faro")){
+      secretas.push("Documento Secreto: Diario del Faro");
+      localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
+      alert("Se ha descubierto una pista secreta!");
+    }
+  }
+}
+
+// Guardar notas
+function guardarNotas(){
+  const notas = document.getElementById("notas-caso1").value;
+  localStorage.setItem("notas"+casoActual, JSON.stringify(notas));
+  alert("Notas guardadas");
+}
+
+// Cargar caso
 function cargarCaso(){
   // Estado del caso
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
@@ -109,35 +175,11 @@ function cargarCaso(){
     ulSecretas.appendChild(li);
   });
 
-  // Sospechosos interrogados
-  const ulSos = document.getElementById("sospechosos");
-  const interrogados = JSON.parse(localStorage.getItem("interrogados"+casoActual)) || [];
-  ulSos.innerHTML="";
-  interrogados.forEach(s=>{
-    let li = document.createElement("li");
-    li.innerHTML = `<strong>${s}</strong><br>`;
-    if(respuestas[s]){
-      Object.keys(respuestas[s]).forEach(preg=>{
-        li.innerHTML += `- ${preg}: ${respuestas[s][preg]}<br>`;
-      });
-    } else {
-      li.innerHTML += "- No hay respuestas registradas.<br>";
-    }
-    ulSos.appendChild(li);
-  });
-
   // Notas
   document.getElementById("notas-caso1").value = JSON.parse(localStorage.getItem("notas"+casoActual)) || "";
 }
 
-// Guardar notas
-function guardarNotas(){
-  const notas = document.getElementById("notas-caso1").value;
-  localStorage.setItem("notas"+casoActual, JSON.stringify(notas));
-  alert("Notas guardadas");
-}
-
-// Actualización automática
+crearBotonesSospechosos();
 setInterval(cargarCaso,500);
 cargarCaso();
 </script>
