@@ -38,7 +38,7 @@
   <div class="carpeta"><div class="etiqueta">Resultado del Caso</div><div class="contenido" id="resultado"></div></div>
 </div>
 
-<button onclick="window.open('dossier.html','Dossier','width=800,height=600,scrollbars=yes')">📂 Abrir Dossier</button>
+<button onclick="window.open('dossier.html','Dossier','width=900,height=600,scrollbars=yes')">📂 Abrir Dossier</button>
 
 <script src="caso-generico.js"></script>
 <script>
@@ -69,6 +69,19 @@ const respuestas = {
 
 const culpableReal="ernesto";
 const contradicciones={"sofia-mateo":{texto:"Sofía y Mateo contradicen coartadas",pista:"Documento secreto"}};
+
+// Sobrescribimos mostrarPista para guardar descripción
+function mostrarPista(id){
+  const contenido = pistas[id];
+  document.getElementById("pistas").innerHTML = contenido;
+
+  let lista = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
+  if(!lista.includes(id)) lista.push(id);
+  localStorage.setItem("pistas"+casoActual, JSON.stringify(lista));
+
+  // Guardamos descripción completa para el dossier
+  localStorage.setItem("desc-"+casoActual+"-"+id, contenido);
+}
 
 document.addEventListener("DOMContentLoaded",()=>{ inicializarCaso(); });
 </script>
