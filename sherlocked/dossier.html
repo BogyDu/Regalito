@@ -6,21 +6,17 @@
 <link rel="stylesheet" href="estilo.css">
 <style>
 /* Pestañas estilo carpetas */
-.tab-header {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.tab-header button {
-  padding: 8px 15px;
-  border: 2px solid #333;
-  background: #f5f5f5;
-  cursor: pointer;
-  font-weight: bold;
-}
+.tab-header { display: flex; gap: 10px; margin-bottom: 20px; }
+.tab-header button { padding: 8px 15px; border: 2px solid #333; background: #f5f5f5; cursor: pointer; font-weight: bold; }
 .tab-header button.active { background: #c8a165; border-color: #8a5a2d; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+
+/* Detalles de pistas y sospechosos */
+ul { list-style: none; padding-left: 0; }
+li { margin-bottom: 5px; }
+.secretas { color: #d9534f; font-weight: bold; }
+.resuelto { color: #5cb85c; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -32,6 +28,7 @@
 </div>
 
 <div id="caso1" class="tab-content active">
+  <h3>Estado del Caso: <span id="estado-caso1"></span></h3>
   <div class="carpeta">
     <div class="etiqueta">Pistas Descubiertas</div>
     <div class="contenido"><ul id="pistas-caso1"></ul></div>
@@ -47,13 +44,14 @@
   <div class="carpeta">
     <div class="etiqueta">Notas del Detective</div>
     <div class="contenido">
-      <textarea id="notas-caso1"></textarea>
+      <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..."></textarea>
       <button onclick="guardarNotas('caso1')">Guardar Notas</button>
     </div>
   </div>
 </div>
 
 <div id="caso2" class="tab-content">
+  <h3>Estado del Caso: <span id="estado-caso2"></span></h3>
   <div class="carpeta">
     <div class="etiqueta">Pistas Descubiertas</div>
     <div class="contenido"><ul id="pistas-caso2"></ul></div>
@@ -69,54 +67,74 @@
   <div class="carpeta">
     <div class="etiqueta">Notas del Detective</div>
     <div class="contenido">
-      <textarea id="notas-caso2"></textarea>
+      <textarea id="notas-caso2" placeholder="Escribe tus notas aquí..."></textarea>
       <button onclick="guardarNotas('caso2')">Guardar Notas</button>
     </div>
   </div>
 </div>
 
 <script>
-// Cambiar pestañas
+// Pestañas
 const tabs = document.querySelectorAll(".tab-header button");
 tabs.forEach(tab => {
   tab.addEventListener("click",()=>{
-    document.querySelectorAll(".tab-header button").forEach(b=>b.classList.remove("active"));
+    tabs.forEach(b=>b.classList.remove("active"));
     tab.classList.add("active");
     document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
     document.getElementById(tab.dataset.tab).classList.add("active");
   });
 });
 
-// Cargar datos desde localStorage
+// Función para cargar dossier
 function cargarDossier(){
   ["caso1","caso2"].forEach(caso=>{
+    // Estado del caso
+    const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+    const estado = progreso[caso] ? "Resuelto" : "Pendiente";
+    document.getElementById("estado-"+caso).textContent = estado;
+    document.getElementById("estado-"+caso).className = progreso[caso] ? "resuelto" : "";
+
+    // Pistas descubiertas
     const pistas = JSON.parse(localStorage.getItem("pistas"+caso)) || [];
+    const ulPistas = document.getElementById("pistas-"+caso);
+    ulPistas.innerHTML="";
+    pistas.forEach(p=>{
+      let desc = localStorage.getItem("desc-"+caso+"-"+p) || p;
+      let li=document.createElement("li");
+      li.textContent = desc;
+      ulPistas.appendChild(li);
+    });
+
+    // Pistas secretas
     const secretas = JSON.parse(localStorage.getItem("pistasSecretas"+caso)) || [];
+    const ulSecretas = document.getElementById("secretas-"+caso);
+    ulSecretas.innerHTML="";
+    secretas.forEach(s=>{
+      let desc = localStorage.getItem("desc-"+caso+"-"+s) || s;
+      let li=document.createElement("li");
+      li.textContent = desc;
+      li.className="secretas";
+      ulSecretas.appendChild(li);
+    });
+
+    // Sospechosos interrogados con respuestas
     const sospechosos = JSON.parse(localStorage.getItem("interrogados"+caso)) || [];
     const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
-    const notas = JSON.parse(localStorage.getItem("notas"+caso)) || "";
-
-    const ulPistas = document.getElementById("pistas-"+caso);
-    ulPistas.innerHTML = "";
-    pistas.forEach(p=>{ let li=document.createElement("li"); li.textContent=p; ulPistas.appendChild(li); });
-
-    const ulSecretas = document.getElementById("secretas-"+caso);
-    ulSecretas.innerHTML = "";
-    secretas.forEach(s=>{ let li=document.createElement("li"); li.textContent=s; ulSecretas.appendChild(li); });
-
     const ulSos = document.getElementById("sospechosos-"+caso);
-    ulSos.innerHTML = "";
+    ulSos.innerHTML="";
     sospechosos.forEach(s=>{
       let li = document.createElement("li");
-      li.innerHTML = `<strong>${s}</strong>:<br>`;
+      li.innerHTML = `<strong>${s}</strong><br>`;
       if(respuestas[caso] && respuestas[caso][s]){
         Object.keys(respuestas[caso][s]).forEach(preg=>{
           li.innerHTML += `- ${preg}: ${respuestas[caso][s][preg]}<br>`;
         });
-      } else { li.innerHTML += "No hay respuestas registradas.<br>"; }
+      } else li.innerHTML += "- No hay respuestas registradas.<br>";
       ulSos.appendChild(li);
     });
 
+    // Notas
+    const notas = JSON.parse(localStorage.getItem("notas"+caso)) || "";
     document.getElementById("notas-"+caso).value = notas;
   });
 }
@@ -128,8 +146,8 @@ function guardarNotas(caso){
   alert("Notas guardadas para " + caso);
 }
 
-// Actualización automática
-setInterval(cargarDossier,1000);
+// Actualización automática cada segundo
+setInterval(cargarDossier,500);
 cargarDossier();
 </script>
 </body>
