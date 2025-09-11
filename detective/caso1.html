@@ -23,8 +23,10 @@ button:hover { background:#b59f71; color:#fff; }
 .estado.resuelto { color:#5cb85c; }
 .estado.pendiente { color:#ff9800; }
 .interaccion-boton { margin-bottom:5px; }
-select { width:100%; padding:4px; margin-bottom:5px; }
-#registro-conversacion { margin-top:10px; max-height:200px; overflow-y:auto; background:#fff8dc; padding:5px; border:1px solid #a77b4d; }
+.pista-nueva { animation: parpadeo 1s ease-in-out 3; }
+@keyframes parpadeo { 0% { background-color: #fff3cd; } 50% { background-color: #ffe0a3; } 100% { background-color: #fff3cd; }
+}
+#registro-conversacion { margin-top:10px; max-height:250px; overflow-y:auto; background:#fff8dc; padding:5px; border:1px solid #a77b4d; }
 </style>
 </head>
 <body>
@@ -39,9 +41,8 @@ select { width:100%; padding:4px; margin-bottom:5px; }
       <div class="contenido" id="listado-sospechosos"></div>
     </div>
     <div class="carpeta">
-      <div class="etiqueta">Seleccionar Sospechoso para Interrogatorio</div>
+      <div class="etiqueta">Interrogatorio y Conversación</div>
       <div class="contenido">
-        <select id="selectSospechoso"></select>
         <div id="preguntas-container"></div>
         <div id="registro-conversacion"></div>
       </div>
