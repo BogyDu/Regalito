@@ -1,0 +1,22 @@
+{
+    "id": "clara",
+    "nombre": "Clara - Hija del Capitán",
+    "oculta": true,
+    "preguntas": [
+    { "id": "c1", "texto": "¿Qué hacías en el faro esa noche?", "respuesta": "Vine a hablar con Julián. Él sabía algo de mi padre que podía arruinarlo. Pero cuando llegué, ya estaba muerto.", "desbloqueada": true, "pistas": ["Clara tenía un secreto con Julián relacionado con su padre"], "desbloquea": ["c2"] , "alibi": { "hora": "01:30", "lugar": "faro", "persona": "Clara" } },
+    { "id": "c2", "texto": "¿Por qué tu llavero estaba en la escalera?", "respuesta": "Lo perdí cuando corrí escaleras abajo. Entré en pánico al ver su cuerpo. No quería que nadie supiera que estuve ahí.", "desbloqueada": false, "pistas": ["Clara estuvo en la escena del crimen"], "desbloquea": ["c3"] },
+    { "id": "c3", "texto": "¿Qué relación tenías con Sofía y Mateo?", "respuesta": "Sofía me ayudó cuando era niña, pero no la conozco mucho. Mateo es amigo de mi padre, pero últimamente discutía con Julián.", "desbloqueada": false, "desbloquea": ["c4"] },
+    { "id": "c4", "texto": "¿Por qué discutiste con Julián?", "respuesta": "Julián me acusó de algo que no hice. Me sentí muy mal, pero no fui capaz de hacerle daño.", "desbloqueada": false, "desbloquea": ["c5"] },
+    { "id": "c5", "texto": "¿Conocías a Elías?", "respuesta": "Sí, era amigo de mi padre. Pero últimamente estaba muy distante y discutía con Julián.", "desbloqueada": false, "pistas": ["Elías discutía con Julián y estaba distante"], "desbloquea": ["c6"] },
+    { "id": "c6", "texto": "¿Por qué discutiste con tu padre?", "respuesta": "No quería que viniera al faro, pero insistió. Discutimos por eso y por Julián.", "desbloqueada": false, "desbloquea": ["c7"] },
+    { "id": "c7", "texto": "¿Qué recuerdas de la noche anterior?", "respuesta": "Vi a Julián y a mi padre hablando en voz baja. Parecían preocupados.", "desbloqueada": false, "desbloquea": ["c8"] },
+    { "id": "c8", "texto": "¿Has visto a alguien manipular la cuerda de amarre?", "respuesta": "Vi a Roberto cerca del muelle, pero no sé qué hacía.", "desbloqueada": false, "desbloquea": ["c9"] },
+    { "id": "c9", "texto": "¿Qué opinas de Lucía?", "respuesta": "Me hace sentir incómoda, siempre está observando y anotando cosas.", "desbloqueada": false, "desbloquea": ["c10"] },
+    { "id": "c10", "texto": "¿Qué recuerdas de la última vez que viste a tu padre?", "respuesta": "Estaba preocupado por Julián y por la seguridad del faro.", "desbloqueada": false, "desbloquea": ["c11"] },
+    { "id": "c11", "texto": "¿Has visto a alguien con botas embarradas?", "respuesta": "Vi huellas cerca del cobertizo, pero no sé de quién son.", "desbloqueada": false, "desbloquea": ["c12"] },
+    { "id": "c12", "texto": "¿Por qué discutiste con Carlos?", "respuesta": "Carlos me acusó de cosas que no hice. Creo que sospechaba de todos, estaba muy tenso.", "desbloqueada": false, "desbloquea": ["c13"] },
+    { "id": "c13", "texto": "¿Qué recuerdas de la carta anónima?", "respuesta": "Vi a Julián leerla varias veces. Parecía asustado y la guardó en su bolsillo.", "desbloqueada": false, "desbloquea": ["c14"] },
+    { "id": "c14", "texto": "¿Has visto a alguien manipular la bitácora?", "respuesta": "Vi a Elías cerca del despacho de Julián, pero no sé si entró.", "desbloqueada": false, "desbloquea": ["c15"] },
+    { "id": "c15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false }
+    ]
+}

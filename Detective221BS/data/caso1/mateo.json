@@ -1,0 +1,25 @@
+{
+  "id": "mateo",
+  "nombre": "Mateo - Marinero",
+  "preguntas": [
+    { "id": "m1", "texto": "¿Dónde estabas durante la tormenta?", "respuesta": "Estaba en el muelle asegurando mi bote. El oleaje era terrible. No me moví de ahí hasta la madrugada.", "desbloqueada": true, "pistas": ["Mateo afirma estar en el muelle durante la tormenta"], "desbloquea": ["m2"],
+      "alibi": { "hora": "00:30-04:00", "lugar": "muelle", "persona": "Mateo" }
+    },
+    { "id": "m2", "texto": "¿Qué llevabas en la mano?", "respuesta": "Un gancho de metal. Necesitaba asegurar las cuerdas del barco. Si Sofía dice que era un cuchillo, miente o estaba demasiado lejos para verlo bien.", "desbloqueada": false, "pistas": ["Mateo llevaba un gancho metálico, no un cuchillo (según él)"], "desbloquea": ["m3"] },
+    { "id": "m3", "texto": "¿Tenías problemas con Julián?", "respuesta": "Sí, me acusaba de robar ron. Pero yo no le hice daño, solo estaba harto de sus sermones. Clara discutió con él la última vez que lo vi.", "desbloqueada": false, "pistas": ["Clara discutió con Julián antes de su muerte"], "desbloquea": ["m4"] },
+    { "id": "m4", "texto": "¿Por qué estabas nervioso esa noche?", "respuesta": "No estaba nervioso, solo preocupado por el clima y mi bote. Pero vi a alguien más cerca del faro, no pude distinguir quién era.", "desbloqueada": false, "pistas": ["Mateo vio a alguien cerca del faro"], "desbloquea": ["m5"],
+      "alibi": { "hora": "01:00", "lugar": "cerca del faro", "persona": "(desconocido)" }
+    },
+    { "id": "m5", "texto": "¿Qué opinas de Sofía?", "respuesta": "Sofía es buena persona, pero a veces se asusta fácilmente. No creo que sea capaz de hacerle daño a nadie.", "desbloqueada": false, "desbloquea": ["m6"] },
+    { "id": "m6", "texto": "¿Has visto la carta anónima?", "respuesta": "Sí, la vi en la mesa de Julián. Decía algo sobre una deuda y amenazas.", "desbloqueada": false, "pistas": ["La carta anónima menciona una deuda y amenazas"], "desbloquea": ["ines", "m7"] },
+    { "id": "m7", "texto": "¿Qué recuerdas de la noche anterior?", "respuesta": "Vi a Elías discutiendo con Julián cerca del cobertizo. Parecían muy alterados.", "desbloqueada": false, "pistas": ["Elías discutió con Julián cerca del cobertizo"], "desbloquea": ["m8"] },
+    { "id": "m8", "texto": "¿Quién más tenía acceso al faro?", "respuesta": "Casi todos, pero la llave maestra la tenía Julián o Carlos. A veces la dejaban en el despacho.", "desbloqueada": false, "desbloquea": ["m9"] },
+    { "id": "m9", "texto": "¿Por qué bebes más últimamente?", "respuesta": "La tensión me supera. No es fácil vivir aquí con tantas sospechas.", "desbloqueada": false, "desbloquea": ["m10"] },
+    { "id": "m10", "texto": "¿Has visto a alguien con la llave maestra?", "respuesta": "Vi a Carlos con ella antes de la tormenta. No sé si la devolvió.", "desbloqueada": false, "desbloquea": ["m11"] },
+    { "id": "m11", "texto": "¿Qué recuerdas de la noche del crimen?", "respuesta": "Escuché un golpe fuerte y luego pasos apresurados. No salí por miedo.", "desbloqueada": false, "desbloquea": ["m12"] },
+    { "id": "m12", "texto": "¿Qué opinas de Lucía?", "respuesta": "No me gusta que los periodistas se metan en todo. Hace preguntas incómodas.", "desbloqueada": false, "desbloquea": ["m13"] },
+    { "id": "m13", "texto": "¿Has visto a alguien con heridas?", "respuesta": "Vi a Sofía con un rasguño en el brazo, pero no sé cómo se lo hizo.", "desbloqueada": false, "desbloquea": ["m14"] },
+    { "id": "m14", "texto": "¿Por qué discutiste con Julián?", "respuesta": "Me acusó de robar ron, pero yo solo quería que me dejara en paz.", "desbloqueada": false, "desbloquea": ["m15"] },
+    { "id": "m15", "texto": "¿Qué opinas de Carlos?", "respuesta": "Es muy estricto, pero justo. No creo que sea capaz de matar a nadie.", "desbloqueada": false }
+  ]
+}

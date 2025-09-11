@@ -1,0 +1,80 @@
+body {
+  font-family: 'Courier New', monospace;
+  background: #f3f1e7;
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor-caso {
+  display: flex;
+  height: 100vh;
+}
+
+.lado-izquierdo, .lado-derecho {
+  width: 50%;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 2px solid #ccc;
+}
+
+.lado-derecho {
+  border-right: none;
+}
+
+.encabezado-caso h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.descripcion {
+  background: #fff8dc;
+  padding: 10px;
+  border: 1px solid #aaa;
+  margin-bottom: 20px;
+}
+
+.objetos-caso, .sospechosos-caso, .preguntas-caso,
+.conversacion-caso, .pistas-caso, .timeline-caso {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #ffffffd9;
+  border: 1px solid #999;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.lista-sospechosos button, .btn-pregunta {
+  display: block;
+  margin: 5px 0;
+  padding: 8px;
+  background: #dcdcdc;
+  border: 1px solid #666;
+  cursor: pointer;
+}
+
+.lista-sospechosos button:hover, .btn-pregunta:hover {
+  background: #c5c5c5;
+}
+
+.registro-item {
+  background: #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-left: 4px solid #444;
+}
+
+.registro-item .nota {
+  color: #b22222;
+  font-style: italic;
+}
+
+.timeline-event {
+  margin: 5px 0;
+  padding: 5px;
+  background: #f9f9f9;
+  border-left: 3px solid #222;
+}
+
+.timeline-event .hora {
+  font-weight: bold;
+}

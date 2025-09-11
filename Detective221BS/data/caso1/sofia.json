@@ -1,0 +1,21 @@
+{
+  "id": "sofia",
+  "nombre": "Sofía - Ayudante del Faro",
+  "preguntas": [
+    { "id": "s1", "texto": "¿Dónde estabas durante la tormenta?", "respuesta": "Me refugié en mi cabaña, pero no pude dormir. Escuché pasos en dirección al faro poco después de medianoche. No salí porque tenía miedo.", "desbloqueada": true, "pistas": ["Alguien se dirigió al faro pasada la medianoche"], "desbloquea": ["s2"], "alibi": { "hora": "00:30", "lugar": "cabaña de Sofía", "persona": "Sofía" } },
+    { "id": "s2", "texto": "¿Viste a alguien esa noche?", "respuesta": "Vi a Mateo desde mi ventana, caminaba hacia el muelle. Parecía nervioso y llevaba algo metálico en la mano, quizás un cuchillo.", "desbloqueada": false, "pistas": ["Mateo llevaba un objeto metálico, posiblemente un cuchillo"], "desbloquea": ["s3"], "alibi": { "hora": "00:40", "lugar": "camino al muelle", "persona": "Mateo" } },
+    { "id": "s3", "texto": "¿Cómo te llevabas con Julián?", "respuesta": "Él era exigente, pero me enseñaba. Discutía mucho con Mateo porque lo acusaba de robar ron y dinero.", "desbloqueada": false, "pistas": ["Mateo discutía con la víctima por alcohol y dinero"], "desbloquea": ["s4"] },
+    { "id": "s4", "texto": "¿Reconoces este llavero?", "respuesta": "Ese llavero no es mío. Creo que pertenece a Clara, la hija del capitán. Ella vino hace unos días a visitar.", "desbloqueada": false, "pistas": ["El llavero hallado podría pertenecer a Clara"], "desbloquea": ["s5"] },
+    { "id": "s5", "texto": "¿Por qué crees que Julián fue atacado?", "respuesta": "No lo sé, pero últimamente estaba muy nervioso. Decía que alguien lo vigilaba por las noches.", "desbloqueada": false, "pistas": ["Julián sentía que lo vigilaban por las noches"], "desbloquea": ["s6"] },
+    { "id": "s6", "texto": "¿Qué recuerdas de la tormenta?", "respuesta": "El viento era muy fuerte y se escuchaban ruidos extraños en el muelle. Pensé que era Mateo, pero no estoy segura.", "desbloqueada": false, "pistas": ["Ruidos extraños en el muelle durante la tormenta"], "desbloquea": ["s7"] },
+    { "id": "s7", "texto": "¿Conocías a Elías?", "respuesta": "Solo de vista. Discutió con Julián por la carta anónima, pero no sé más.", "desbloqueada": false, "pistas": ["Elías discutió con Julián por una carta anónima"], "desbloquea": ["s8"] },
+    { "id": "s8", "texto": "¿Has visto a alguien manipular la linterna?", "respuesta": "Vi a Roberto revisándola el día anterior, pero no parecía sospechoso.", "desbloqueada": false, "pistas": ["Roberto manipuló la linterna antes del crimen"], "desbloquea": ["s9"] },
+    { "id": "s9", "texto": "¿Qué sabes del contrabando?", "respuesta": "He escuchado rumores, pero nunca vi nada. Lucía preguntaba mucho sobre eso.", "desbloqueada": false, "pistas": ["Lucía investigaba contrabando"], "desbloquea": ["s10", "lucia"] },
+    { "id": "s10", "texto": "¿Qué recuerdas de la última vez que viste a Julián?", "respuesta": "Estaba nervioso, revisando la bitácora y murmurando para sí mismo.", "desbloqueada": false, "desbloquea": ["s11"] },
+    { "id": "s11", "texto": "¿Has visto a alguien con heridas recientes?", "respuesta": "Vi a Mateo con un rasguño en la mano, pero dijo que era del muelle.", "desbloqueada": false, "desbloquea": ["s12"] },
+    { "id": "s12", "texto": "¿Por qué discutías con Julián últimamente?", "respuesta": "No soportaba que me tratara como a una niña. Quería demostrarle que podía confiar en mí.", "desbloqueada": false, "desbloquea": ["s13"] },
+    { "id": "s13", "texto": "¿Qué recuerdas de la carta anónima?", "respuesta": "Vi a Julián leerla varias veces. Parecía asustado y la guardó en su bolsillo.", "desbloqueada": false, "desbloquea": ["s14"] },
+    { "id": "s14", "texto": "¿Has notado cambios en los demás?", "respuesta": "Todos están tensos. Clara apenas habla, Mateo bebe más de lo normal, y Carlos está siempre vigilante.", "desbloqueada": false, "desbloquea": ["s15"] },
+    { "id": "s15", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false }
+  ]
+}

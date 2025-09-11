@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Caso - Investigación</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="contenedor-caso">
+    <button style="position:fixed;top:10px;right:10px;z-index:9999" onclick="localStorage.clear();location.reload()">🧹
+      Reiniciar caso</button>
+    <!-- LADO IZQUIERDO: INTRODUCCIÓN, SOSPECHOSOS Y PREGUNTAS -->
+    <section class="lado-izquierdo">
+
+      <header class="encabezado-caso">
+        <h1 id="tituloCaso"></h1>
+        <p id="descripcionCaso" class="descripcion"></p>
+        <div style="text-align:right;margin-top:8px;">
+          <button id="btn-resolver-modal" style="background:#b22222;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;box-shadow:1px 1px 6px #b2222222;">Resolver el caso</button>
+        </div>
+      </header>
+
+
+
+      <div class="sospechosos-caso">
+        <h2>Sospechosos</h2>
+        <div id="sospechosos" class="lista-sospechosos"></div>
+      </div>
+
+      <div class="preguntas-caso">
+        <h2>Preguntas</h2>
+        <div id="preguntas" class="lista-preguntas"></div>
+      </div>
+    </section>
+
+    <!-- LADO DERECHO: CONVERSACIONES, PISTAS Y TIMELINE -->
+    <section class="lado-derecho">
+      <div class="conversacion-caso">
+        <h2>Conversación</h2>
+        <div id="conversacion" class="registro"></div>
+      </div>
+
+      <div class="pistas-caso">
+        <h2>Pistas</h2>
+        <ul id="pistas"></ul>
+      </div>
+
+      <div class="timeline-caso">
+        <h2>Timeline</h2>
+        <div id="timeline" class="timeline"></div>
+      </div>
+      <!-- ... -->
+      <style>
+      .resolver-caso-panel {
+        background: #fdf6e3;
+        border: 2px solid #5c442a;
+        border-radius: 10px;
+        padding: 18px 12px 12px 12px;
+        margin-top: 24px;
+        box-shadow: 2px 2px 8px #5c442a22;
+        max-width: 400px;
+      }
+        /* Estilo para la sección de sospechosos */
+        .sospechosos-caso {
+          background: #f8f0e6;
+          border: 2px solid #b22222;
+          border-radius: 10px;
+          padding: 16px 10px 10px 10px;
+          margin-bottom: 18px;
+          box-shadow: 2px 2px 8px #b2222222;
+        }
+
+        .lista-sospechosos button {
+          background: #fff;
+          border: 2px solid #b22222;
+          color: #b22222;
+          border-radius: 6px;
+          margin: 6px 8px 6px 0;
+          padding: 8px 16px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+        }
+
+        .lista-sospechosos button:hover:not(:disabled) {
+          background: #b22222;
+          color: #fff;
+        }
+
+        .lista-sospechosos button:disabled {
+          background: #eee;
+          color: #aaa;
+          border-style: dashed;
+          cursor: not-allowed;
+        }
+
+        /* Estilo para la sección de preguntas */
+        .preguntas-caso {
+          background: #f8f0e6;
+          border: 2px solid #8b6f47;
+          border-radius: 10px;
+          padding: 16px 10px 10px 10px;
+          margin-bottom: 18px;
+          box-shadow: 2px 2px 8px #8b6f4722;
+        }
+
+        .lista-preguntas button {
+          background: #fff;
+          border: 2px solid #8b6f47;
+          color: #8b6f47;
+          border-radius: 6px;
+          margin: 6px 8px 6px 0;
+          padding: 8px 16px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+        }
+
+        .lista-preguntas button:hover:not(:disabled) {
+          background: #8b6f47;
+          color: #fff;
+        }
+
+        .lista-preguntas button:disabled {
+          background: #eee;
+          color: #aaa;
+          border-style: dashed;
+          cursor: not-allowed;
+        }
+
+        /* Estilo para el formulario de resolución */
+        #resolver-form {
+          background: #fdf6e3;
+          border: 2px solid #5c442a;
+          border-radius: 10px;
+          padding: 18px 12px 12px 12px;
+          margin-top: 24px;
+          box-shadow: 2px 2px 8px #5c442a22;
+          max-width: 400px;
+        }
+
+        #resolver-form label {
+          display: block;
+          margin-top: 10px;
+          font-weight: bold;
+          color: #5c442a;
+        }
+
+        #resolver-form select,
+        #resolver-form button {
+          margin-top: 4px;
+          margin-bottom: 10px;
+          width: 100%;
+          padding: 6px;
+          border-radius: 5px;
+          border: 1px solid #8b6f47;
+        }
+
+        #resolver-form button {
+          background: #b22222;
+          color: #fff;
+          font-weight: bold;
+          border: none;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        #resolver-form button:hover {
+          background: #8b6f47;
+        }
+      </style>
+  </div>
+  </section>
+  </div>
+
+  <script src="js/sweetalert.js"></script>
+  <script src="js/global.js"></script>
+  <script>
+    // Obtener el parámetro 'id' de la URL
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+    const casoId = getQueryParam('id');
+    if (casoId) {
+      cargarCaso(casoId);
+    } else {
+      document.body.innerHTML = '<h2>No se especificó ningún caso.</h2>';
+    }
+  </script>
+</body>
+
+</html>

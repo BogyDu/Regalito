@@ -1,0 +1,21 @@
+{
+    "id": "lucia",
+    "nombre": "Lucía - Periodista local",
+    "preguntas": [
+    { "id": "l1", "texto": "¿Por qué estabas en el faro esa noche?", "respuesta": "Buscaba una historia. Había rumores de contrabando y pensé que podía descubrir algo grande.", "desbloqueada": true, "pistas": ["Lucía investigaba rumores de contrabando"], "desbloquea": ["l2"], "alibi": { "hora": "01:00", "lugar": "faro", "persona": "Lucía" } },
+    { "id": "l2", "texto": "¿Viste algo sospechoso?", "respuesta": "Vi a Clara salir corriendo del faro, parecía asustada. También escuché voces en el muelle.", "desbloqueada": false, "pistas": ["Clara salió corriendo del faro"], "desbloquea": ["l3"] },
+    { "id": "l3", "texto": "¿Conocías a Julián?", "respuesta": "Solo de vista. Era reservado, pero últimamente parecía paranoico.", "desbloqueada": false, "desbloquea": ["l4"] },
+    { "id": "l4", "texto": "¿Qué opinas de Sofía?", "respuesta": "Sofía es amable, pero muy reservada. No habla mucho con extraños.", "desbloqueada": false, "desbloquea": ["l5"] },
+    { "id": "l5", "texto": "¿Has visto la linterna rota?", "respuesta": "La vi en la sala de maquinaria antes de que llegara la policía. Tenía sangre.", "desbloqueada": false, "pistas": ["La linterna rota tenía sangre"], "desbloquea": ["l6"] },
+    { "id": "l6", "texto": "¿Qué recuerdas del muelle?", "respuesta": "Había huellas frescas y una cuerda cortada. Alguien salió corriendo hacia el pueblo.", "desbloqueada": false, "pistas": ["Huellas frescas y cuerda cortada en el muelle"], "desbloquea": ["l7"] },
+    { "id": "l7", "texto": "¿Por qué sospechas de alguien?", "respuesta": "Todos tenían motivos, pero creo que el miedo de Julián era real. Alguien lo amenazaba de verdad.", "desbloqueada": false, "pistas": ["Julián fue amenazado seriamente"], "desbloquea": ["l8"] },
+    { "id": "l8", "texto": "¿Qué opinas de Mateo?", "respuesta": "Mateo evitaba hablar conmigo. Lo vi nervioso cerca del muelle.", "desbloqueada": false, "desbloquea": ["l9"] },
+    { "id": "l9", "texto": "¿Has visto a alguien manipular la bitácora?", "respuesta": "Vi a Sofía cerca del despacho, parecía nerviosa.", "desbloqueada": false, "desbloquea": ["l10"] },
+    { "id": "l10", "texto": "¿Qué opinas de Carlos?", "respuesta": "Demasiado protector con Clara, pero no creo que sea culpable.", "desbloqueada": false, "desbloquea": ["l11"] },
+    { "id": "l11", "texto": "¿Qué recuerdas de la noche del crimen?", "respuesta": "Escuché un grito y luego vi a alguien salir corriendo del faro.", "desbloqueada": false, "pistas": ["Se escuchó un grito y alguien huyó del faro"], "desbloquea": ["l12"] },
+    { "id": "l12", "texto": "¿Has visto a alguien con botas embarradas?", "respuesta": "Vi huellas cerca del cobertizo, pero no sé de quién son.", "desbloqueada": false, "pistas": ["Huellas cerca del cobertizo"], "desbloquea": ["l13"] },
+    { "id": "l13", "texto": "¿Por qué preguntas tanto por la linterna?", "respuesta": "Porque es la clave del caso. Alguien la usó como arma.", "desbloqueada": false, "pistas": ["La linterna es clave en el caso"], "desbloquea": ["l14"] },
+    { "id": "l14", "texto": "¿Has visto a alguien discutir con Julián?", "respuesta": "Vi a Elías y a Mateo discutiendo con él en días distintos.", "desbloqueada": false, "desbloquea": ["l15"] },
+    { "id": "l15", "texto": "¿Qué opinas de Inés?", "respuesta": "Siempre parecía preocupada, pero no creo que tenga nada que ver con el crimen.", "desbloqueada": false }
+    ]
+}

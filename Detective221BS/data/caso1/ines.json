@@ -1,0 +1,22 @@
+{
+  "id": "ines",
+  "nombre": "Inés - Esposa de Julián",
+  "oculta": true,
+  "preguntas": [
+    { "id": "i1", "texto": "¿Dónde estabas cuando ocurrió el crimen?", "respuesta": "Dormía en mi habitación. No escuché nada hasta la mañana siguiente.", "desbloqueada": true, "desbloquea": ["i2"], "alibi": { "hora": "02:00", "lugar": "habitación de Inés", "persona": "Inés" } },
+    { "id": "i2", "texto": "¿Julián tenía enemigos?", "respuesta": "Últimamente recibía cartas extrañas y discutía con varios del pueblo.", "desbloqueada": false, "pistas": ["Julián recibía cartas extrañas"], "desbloquea": ["i3"] },
+    { "id": "i3", "texto": "¿Reconoces este fragmento de tela azul?", "respuesta": "Parece de un abrigo viejo de Julián, pero no estoy segura.", "desbloqueada": false, "pistas": ["Fragmento de tela azul podría ser de Julián"], "desbloquea": ["i4"] },
+    { "id": "i4", "texto": "¿Qué opinas de Carlos?", "respuesta": "Carlos era muy estricto con Julián, pero no creo que fuera capaz de matarlo.", "desbloqueada": false, "desbloquea": ["i5"] },
+    { "id": "i5", "texto": "¿Has visto a alguien manipular la linterna?", "respuesta": "Vi a Roberto revisándola el día anterior, pero no parecía sospechoso.", "desbloqueada": false, "desbloquea": ["i6"] },
+    { "id": "i6", "texto": "¿Qué recuerdas de la última vez que viste a Julián?", "respuesta": "Estaba nervioso, revisando la bitácora y murmurando para sí mismo.", "desbloqueada": false, "desbloquea": ["i7"] },
+    { "id": "i7", "texto": "¿Has visto a alguien con heridas recientes?", "respuesta": "Vi a Mateo con un rasguño en la mano, pero dijo que era del muelle.", "desbloqueada": false, "desbloquea": ["i8"] },
+    { "id": "i8", "texto": "¿Por qué discutías con Julián últimamente?", "respuesta": "No soportaba que me tratara como a una niña. Quería demostrarle que podía confiar en mí.", "desbloqueada": false, "desbloquea": ["i9"] },
+    { "id": "i9", "texto": "¿Has notado cambios en los demás?", "respuesta": "Todos están tensos. Clara apenas habla, Mateo bebe más de lo normal, y Carlos está siempre vigilante.", "desbloqueada": false, "desbloquea": ["i10"] },
+    { "id": "i10", "texto": "¿Qué opinas de la forense Valeria?", "respuesta": "Es muy profesional, pero no confía en nadie. Me preguntó varias veces por la linterna.", "desbloqueada": false, "desbloquea": ["i11"] },
+    { "id": "i11", "texto": "¿Has visto a alguien manipular la bitácora?", "respuesta": "Vi a Elías cerca del despacho de Julián, pero no sé si entró.", "desbloqueada": false, "desbloquea": ["i12"] },
+    { "id": "i12", "texto": "¿Qué harás ahora que Julián ha muerto?", "respuesta": "No lo sé. Todo ha cambiado. Tengo miedo de lo que pueda pasar.", "desbloqueada": false, "desbloquea": ["i13"] },
+    { "id": "i13", "texto": "¿Qué recuerdas de la carta anónima?", "respuesta": "Vi a Julián leerla varias veces. Parecía asustado y la guardó en su bolsillo.", "desbloqueada": false, "desbloquea": ["i14"] },
+    { "id": "i14", "texto": "¿Has visto a alguien manipular la cuerda de amarre?", "respuesta": "Vi a Roberto cerca del muelle, pero no sé qué hacía.", "desbloqueada": false, "desbloquea": ["i15"] },
+    { "id": "i15", "texto": "¿Qué opinas de Lucía?", "respuesta": "Me hace sentir incómoda, siempre está observando y anotando cosas.", "desbloqueada": false }
+  ]
+}

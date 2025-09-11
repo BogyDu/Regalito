@@ -1,0 +1,42 @@
+{
+  "id": "caso1",
+  "titulo": "El Misterio del Faro",
+  "descripcion": "El guardián del faro, Julián, ha sido hallado muerto en la sala de maquinaria. La tormenta de la noche pasada y las tensiones entre los habitantes del faro complican la investigación. El detective debe descubrir quién es el culpable, con qué arma lo atacó y cuál fue el motivo.",
+  "objetos": [
+    "Linterna rota con manchas de sangre",
+    "Cuaderno de bitácora con páginas arrancadas",
+    "Botella de ron medio vacía",
+    "Guantes de cuero abandonados en el muelle",
+    "Un llavero con la inicial 'C' hallado en la escalera",
+    "Carta anónima con amenazas",
+    "Reloj de bolsillo detenido a las 2:17",
+    "Fragmento de tela azul"
+  ],
+  "armas": [
+    "Linterna rota",
+    "Cuchillo",
+    "Gancho metálico",
+    "Botella de ron",
+    "Cuerda de amarre"
+  ],
+  "motivos": [
+    "Disputa personal",
+    "Dinero robado",
+    "Secreto familiar",
+    "Venganza por alcohol",
+    "Amenaza anónima"
+  ],
+  "solucion": {
+    "culpable": "clara",
+    "arma": "Linterna rota",
+    "motivo": "Secreto familiar"
+  },
+  "sospechosos": [
+    { "id": "sofia", "nombre": "Sofía - Ayudante del Faro", "archivo": "sofia.json" },
+    { "id": "mateo", "nombre": "Mateo - Marinero", "archivo": "mateo.json" },
+    { "id": "clara", "nombre": "Clara - Hija del Capitán", "archivo": "clara.json" },
+    { "id": "elias", "nombre": "Elías - Pescador", "archivo": "elias.json" },
+    { "id": "ines", "nombre": "Inés - Esposa de Julián", "archivo": "ines.json" },
+    { "id": "lucia", "nombre": "Lucía - Periodista local", "archivo": "lucia.json" }
+  ]
+}
