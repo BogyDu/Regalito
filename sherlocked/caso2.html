@@ -42,45 +42,76 @@
 
 <script src="caso-generico.js"></script>
 <script>
-window.casoActual="caso2";
+window.casoActual = "caso2";
 
+// Pistas iniciales
 const pistas = {
-  huellas:"Huellas de pisadas en la sala de exposición.",
-  video:"Cámara captó sombra sospechosa a las 21:15.",
-  vitrina:"Vitrina forzada, cerradura rota.",
-  nota:"Nota encontrada: 'No confíes en nadie'."
+  "Guantes ensangrentados": "Se encontraron guantes manchados de sangre cerca de la sala principal.",
+  "Huella en la vitrina": "Una huella parcial en la vitrina del museo.",
+  "Cámara de seguridad": "La cámara muestra movimiento sospechoso alrededor de las 21:00."
 };
 
+// Sospechosos
 const sospechosos = {
-  luis:"Luis Ortega: curator del museo, conoce seguridad.",
-  ana:"Ana Vega: restauradora, llegó tarde esa noche.",
-  pedro:"Pedro Rojas: guardia nocturno, acceso a todas las salas.",
-  carla:"Carla Díaz: experta en arte, interesada en la obra robada.",
-  diego:"Diego Torres: visitante, quedó encerrado accidentalmente."
+  "Ana": "Curadora del museo, conoce todos los accesos.",
+  "Roberto": "Guardia nocturno, encargado de la seguridad.",
+  "Elena": "Visitante frecuente del museo.",
+  "Diego": "Historiador, estaba investigando una exposición.",
+  "Marcos": "Técnico de mantenimiento, acceso a todas las instalaciones."
 };
 
+// Respuestas a interrogatorios
 const respuestas = {
-  luis:{donde:"En su oficina revisando inventario.",motivo:"Nada que me involucre.",relacion:"Solo conozco al personal."},
-  ana:{donde:"Restaurando obras.",motivo:"Solo mi trabajo.",relacion:"Conozco a los coleccionistas."},
-  pedro:{donde:"Patrullando galerías.",motivo:"Protejo el museo.",relacion:"Sí, a los demás guardias."},
-  carla:{donde:"Estudio privado.",motivo:"Quería la obra para investigación.",relacion:"Sí, sé quién podría robar."},
-  diego:{donde:"Visitando exposiciones.",motivo:"Solo observaba.",relacion:"No conozco a nadie del personal."}
+  "Ana": {
+    "¿Qué hacías esa noche?": "Estaba revisando el inventario de la exposición.",
+    "¿Ves algún comportamiento sospechoso?": "No, todos estaban tranquilos."
+  },
+  "Roberto": {
+    "¿Estabas en la sala principal a las 21:00?": "Sí, pero no vi nada extraño.",
+    "¿Alguien más tuvo acceso?": "No, la sala estaba cerrada."
+  },
+  "Elena": {
+    "¿Dónde estabas a las 21:00?": "Estaba tomando fotos de las piezas.",
+    "¿Viste algo raro?": "No, todo parecía normal."
+  },
+  "Diego": {
+    "¿Qué estabas investigando?": "La historia de la colección de arte.",
+    "¿Alguien más estaba cerca?": "Vi a Ana y Marcos pasar por la sala principal."
+  },
+  "Marcos": {
+    "¿Trabajabas en mantenimiento esa noche?": "Sí, estaba revisando luces y sistemas.",
+    "¿Alguien entró a áreas restringidas?": "Creo que Roberto estuvo allí antes de mí."
+  }
 };
 
-const culpableReal="carla";
-const contradicciones = {"ana-pedro":{texto:"Ana y Pedro no coinciden en horarios de patrulla/restauración",pista:"Registro del reloj de entrada"}};
+// Culpable real
+const culpableReal = "Marcos";
 
-// Guardar descripción de pista en localStorage
-function mostrarPista(id){
-  const contenido = pistas[id];
-  document.getElementById("pistas").innerHTML = contenido;
-  let lista = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
-  if(!lista.includes(id)) lista.push(id);
-  localStorage.setItem("pistas"+casoActual, JSON.stringify(lista));
-  localStorage.setItem("desc-"+casoActual+"-"+id, contenido);
+// Contradicciones que desbloquean pistas secretas
+const contradicciones = {
+  "Ana-Marcos": {
+    texto: "Ana dice que Marcos estaba en la sala sur, pero Marcos afirma que estaba en la sala principal.",
+    pista: "Informe de CCTV"
+  },
+  "Diego-Roberto": {
+    texto: "Diego vio a Roberto salir de la sala principal, pero Roberto dice que nunca entró.",
+    pista: "Registro de Guardias"
+  }
+};
+
+// Descripción de pistas secretas
+const pistasSecretasDescripcion = {
+  "Informe de CCTV": "El informe revela que Marcos manipuló una vitrina en la sala principal a las 21:00.",
+  "Registro de Guardias": "El registro muestra que Roberto no estaba en la sala principal, confirmando la contradicción con Diego."
+};
+
+// Inicializar pistas secretas en localStorage
+for(const key in pistasSecretasDescripcion){
+  if(!localStorage.getItem(`desc-${window.casoActual}-${key}`)){
+    localStorage.setItem(`desc-${window.casoActual}-${key}`, pistasSecretasDescripcion[key]);
+  }
 }
 
-document.addEventListener("DOMContentLoaded",()=>{ inicializarCaso(); });
 </script>
 </body>
 </html>
