@@ -4,15 +4,52 @@
 <meta charset="UTF-8">
 <title>Detective - Casos</title>
 <link rel="stylesheet" href="estilo.css">
+<style>
+body { font-family: "Courier New", monospace; background:#e5e2d0; margin:20px; }
+h1 { text-align:center; color:#3e3a2f; margin-bottom:30px; }
+
+.casos-container { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.caso-carpeta {
+  width:200px;
+  background:#fdf6e3;
+  border:2px solid #a77b4d;
+  border-radius:6px;
+  padding:15px;
+  cursor:pointer;
+  box-shadow:4px 4px 8px rgba(0,0,0,0.3);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.caso-carpeta:hover { transform:translateY(-5px); box-shadow:6px 6px 12px rgba(0,0,0,0.4); }
+
+.caso-carpeta .titulo { font-weight:bold; font-size:1.1em; margin-bottom:8px; color:#5d4730; text-shadow:1px 1px 0 #fff; }
+.caso-carpeta .estado { font-weight:bold; }
+.estado.resuelto { color:#5cb85c; }
+.estado.pendiente { color:#ff9800; }
+
+/* Botón dossier */
+#btn-dossier {
+  display:block;
+  margin:20px auto;
+  padding:10px 20px;
+  background:#d4c89d;
+  border:2px solid #3e3a2f;
+  border-radius:5px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:2px 2px 5px rgba(0,0,0,0.3);
+}
+#btn-dossier:hover { background:#b59f71; color:#fff; }
+</style>
 </head>
 <body>
-<h1>Detective - Casos</h1>
-<div id="lista-casos"></div>
+<h1>Expedientes del Detective</h1>
 
-  <button onclick="window.open('dossier.html','_blank')" style="margin-top:20px;">Abrir Dossier</button>
+<div class="casos-container" id="lista-casos"></div>
 
-  
+<button id="btn-dossier" onclick="window.open('dossier.html','_blank')">Abrir Dossier</button>
+
 <script>
+// Lista de casos
 const casos = [
   {id:"caso1", nombre:"El Faro", archivo:"caso1.html"},
   {id:"caso2", nombre:"El Museo", archivo:"caso2.html"},
@@ -20,19 +57,27 @@ const casos = [
   {id:"caso4", nombre:"El Tren Nocturno", archivo:"caso4.html"}
 ];
 
+// Cargar casos
 function cargarCasos(){
-  const lista = document.getElementById("lista-casos");
-  lista.innerHTML="";
+  const cont = document.getElementById("lista-casos");
+  cont.innerHTML = "";
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
   casos.forEach(c=>{
     const div = document.createElement("div");
     div.className="caso-carpeta";
     div.onclick = ()=> window.open(c.archivo,"_blank");
-    div.innerHTML = `<div class="titulo">${c.nombre}</div><div class="estado">${progreso[c.id] ? "Resuelto ✅" : "Pendiente 🟡"}</div>`;
-    lista.appendChild(div);
+    div.innerHTML = `<div class="titulo">${c.nombre}</div>
+                     <div class="estado ${progreso[c.id] ? "resuelto" : "pendiente"}">
+                       ${progreso[c.id] ? "Resuelto ✅" : "Pendiente 🟡"}
+                     </div>`;
+    cont.appendChild(div);
   });
 }
+
 cargarCasos();
+
+// Actualización automática del estado
+setInterval(cargarCasos,1000);
 </script>
 </body>
 </html>
