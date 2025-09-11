@@ -1,6 +1,6 @@
 const casoActual = window.casoActual || "caso1";
 
-// Mostrar pista y guardar automáticamente
+// Mostrar pista y guardar
 function mostrarPista(id){
   const contenido = pistas[id];
   document.getElementById("pistas").innerHTML = contenido;
@@ -8,12 +8,10 @@ function mostrarPista(id){
   let lista = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
   if(!lista.includes(id)) lista.push(id);
   localStorage.setItem("pistas"+casoActual, JSON.stringify(lista));
-
-  // Guardar descripción completa para el dossier
   localStorage.setItem("desc-"+casoActual+"-"+id, contenido);
 }
 
-// Mostrar sospechoso y guardar automáticamente
+// Mostrar sospechoso y guardar
 function mostrarSospechoso(id){
   const contenido = sospechosos[id];
   document.getElementById("sospechosos").innerHTML = contenido;
@@ -23,29 +21,26 @@ function mostrarSospechoso(id){
   localStorage.setItem("interrogados"+casoActual, JSON.stringify(lista));
 }
 
-// Interrogar sospechoso y guardar automáticamente
+// Interrogar sospechoso
 function interrogar(){
   const s = document.getElementById("inter-sospechoso").value;
   const p = document.getElementById("inter-pregunta").value;
   if(!s || !p) return alert("Selecciona sospechoso y pregunta");
-
   const r = respuestas[s][p];
   document.getElementById("respuesta-interrogatorio").innerHTML = `<strong>${s}</strong>: ${r}`;
 
-  // Guardar en localStorage
   let allRes = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
   if(!allRes[casoActual]) allRes[casoActual]={};
   if(!allRes[casoActual][s]) allRes[casoActual][s]={};
   allRes[casoActual][s][p] = r;
   localStorage.setItem("respuestasInterrogatorio", JSON.stringify(allRes));
 
-  // Añadir sospechoso a la lista si no estaba
   let lista = JSON.parse(localStorage.getItem("interrogados"+casoActual)) || [];
   if(!lista.includes(s)) lista.push(s);
   localStorage.setItem("interrogados"+casoActual, JSON.stringify(lista));
 }
 
-// Confrontación con contradicciones y auto-guardar pistas secretas
+// Confrontación
 function confrontar(){
   const s1 = document.getElementById("conf1").value;
   const s2 = document.getElementById("conf2").value;
@@ -59,20 +54,16 @@ function confrontar(){
   if(contradicciones[key1] || contradicciones[key2]){
     const contr = contradicciones[key1] || contradicciones[key2];
     document.getElementById("confrontacion").innerHTML = `Contradicción: ${contr.texto}`;
-
-    // desbloquear pista secreta automáticamente
     let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
     if(!secretas.includes(contr.pista)) secretas.push(contr.pista);
     localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
-
-    // Guardar descripción de pista secreta
     localStorage.setItem("desc-"+casoActual+"-"+contr.pista, contr.pista);
   } else {
     document.getElementById("confrontacion").innerHTML = "No hay contradicciones.";
   }
 }
 
-// Resolver caso y auto-guardar progreso
+// Resolver caso
 function resolverCaso(){
   const seleccion = document.getElementById("culpable").value;
   if(!seleccion) return alert("Selecciona un culpable");
@@ -84,14 +75,14 @@ function resolverCaso(){
   }
 }
 
-// Marcar caso resuelto y guardar
+// Guardar progreso
 function marcarCasoResuelto(id){
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
   progreso[id] = true;
   localStorage.setItem("progresoCasos", JSON.stringify(progreso));
 }
 
-// Inicializar botones y selects
+// Inicializar selects y botones
 function inicializarCaso(){
   const pistasSec = document.getElementById("pistas-seccion");
   for(const id in pistas){
