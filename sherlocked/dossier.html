@@ -3,137 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <title>Dossier del Detective</title>
-<style>
-body {
-  font-family: "Courier New", monospace;
-  background: #f4f1ea;
-  margin: 20px;
-}
-h2 {
-  text-align: center;
-  text-transform: uppercase;
-}
-.seccion {
-  margin-bottom: 20px;
-  border: 1px solid #333;
-  padding: 10px;
-  background: #fffdf6;
-}
-ul {
-  list-style: square;
-  padding-left: 20px;
-}
-textarea {
-  width: 100%;
-  height: 100px;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-  padding: 5px;
-  margin-top: 5px;
-}
-button {
-  margin-top: 5px;
-  padding: 5px 10px;
-  font-family: "Courier New", monospace;
-  cursor: pointer;
-}
-</style>
+<link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 <h2>Dossier del Detective</h2>
 
-<div class="seccion">
-  <h3>Pistas Descubiertas</h3>
-  <ul id="dossier-pistas"></ul>
+<div class="carpeta">
+  <div class="etiqueta">Seleccionar Caso</div>
+  <div class="contenido">
+    <select id="select-caso"></select>
+  </div>
 </div>
 
-<div class="seccion">
-  <h3>Pistas Secretas</h3>
-  <ul id="dossier-secretas"></ul>
+<div class="carpeta">
+  <div class="etiqueta">Pistas Descubiertas</div>
+  <div class="contenido">
+    <ul id="dossier-pistas"></ul>
+  </div>
 </div>
 
-<div class="seccion">
-  <h3>Sospechosos Interrogados</h3>
-  <ul id="dossier-sospechosos"></ul>
+<div class="carpeta">
+  <div class="etiqueta">Pistas Secretas</div>
+  <div class="contenido">
+    <ul id="dossier-secretas"></ul>
+  </div>
 </div>
 
-<div class="seccion">
-  <h3>Notas del Detective</h3>
-  <textarea id="notas"></textarea>
-  <button onclick="guardarNotas()">Guardar Notas</button>
+<div class="carpeta">
+  <div class="etiqueta">Sospechosos Interrogados</div>
+  <div class="contenido">
+    <ul id="dossier-sospechosos"></ul>
+  </div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Notas del Detective</div>
+  <div class="contenido">
+    <textarea id="notas"></textarea>
+    <button onclick="guardarNotas()">Guardar Notas</button>
+  </div>
 </div>
 
 <script>
-// Resúmenes de pistas y sospechosos (coincide con caso1.js)
-const resumenPistas = {
-  forense: "Informe forense: hora de muerte entre 23:00 y 23:45. Cráneo fracturado, olor a queroseno.",
-  escena: "Escena: cuerpo al pie de la escalera, objetos con sangre y arena húmeda en la entrada.",
-  bitacora: "Bitácora: Ortega sospechaba de contrabando, mencionó barcos sospechosos.",
-  ramirez: "Notas de Ramírez: pescador miente, sobrina oculta algo, guardia y cura implicados."
-};
-const resumenSospechosos = {
-  sofia: "Sofía Ortega: sobrina, herencia y deudas. Coartada dudosa.",
-  mateo: "Mateo Duarte: pescador, sospechas de contrabando.",
-  camila: "Camila Torres: periodista, investigaba contrabando.",
-  ernesto: "Ernesto Vega: guardia, coartada incompleta, huellas en el faro.",
-  padre: "Padre Anselmo: cura, rosario roto en la escena."
-};
+// Lista de casos disponibles
+const casosDisponibles = ["caso1","caso2"];
 
-// Cargar dossier
-function cargarDossier() {
-  const pistas = JSON.parse(localStorage.getItem("pistasCaso1")) || [];
-  const sospechosos = JSON.parse(localStorage.getItem("interrogadosCaso1")) || [];
-  const secretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
-  const notas = JSON.parse(localStorage.getItem("notasCaso1")) || "";
+// Cargar select de casos
+const select = document.getElementById("select-caso");
+casosDisponibles.forEach(caso=>{
+  const opt = document.createElement("option");
+  opt.value = caso;
+  opt.textContent = caso;
+  select.appendChild(opt);
+});
+
+// Actualizar visualización al cambiar caso
+select.addEventListener("change", cargarDossier);
+
+function cargarDossier(){
+  const caso = select.value;
+  if(!caso) return;
+
+  const pistas = JSON.parse(localStorage.getItem("pistas"+caso)) || [];
+  const secretas = JSON.parse(localStorage.getItem("pistasSecretas"+caso)) || [];
+  const sospechosos = JSON.parse(localStorage.getItem("interrogados"+caso)) || [];
+  const notas = JSON.parse(localStorage.getItem("notas"+caso)) || "";
+  const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
 
   // Pistas descubiertas
   const ulPistas = document.getElementById("dossier-pistas");
   ulPistas.innerHTML = "";
-  pistas.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent = resumenPistas[p] || p;
+  pistas.forEach(p => { 
+    const li = document.createElement("li"); 
+    li.textContent = p; 
     ulPistas.appendChild(li);
   });
 
   // Pistas secretas
   const ulSecretas = document.getElementById("dossier-secretas");
   ulSecretas.innerHTML = "";
-  secretas.forEach(ps => {
-    const li = document.createElement("li");
-    li.textContent = ps;
+  secretas.forEach(s => {
+    const li = document.createElement("li"); 
+    li.textContent = s; 
     ulSecretas.appendChild(li);
   });
 
-  // Sospechosos interrogados con extracto de respuestas
-  const ulSospechosos = document.getElementById("dossier-sospechosos");
-  ulSospechosos.innerHTML = "";
-  const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
+  // Sospechosos interrogados
+  const ulSos = document.getElementById("dossier-sospechosos");
+  ulSos.innerHTML = "";
   sospechosos.forEach(s => {
     const li = document.createElement("li");
     li.innerHTML = `<strong>${s}</strong>:<br>`;
-    if (respuestas[s]) {
+    if(respuestas[s]){
       Object.keys(respuestas[s]).forEach(preg => {
         li.innerHTML += `- ${preg}: ${respuestas[s][preg]}<br>`;
       });
-    } else {
-      li.innerHTML += "No hay respuestas registradas.<br>";
-    }
-    ulSospechosos.appendChild(li);
+    } else { li.innerHTML += "No hay respuestas registradas.<br>"; }
+    ulSos.appendChild(li);
   });
 
-  // Cargar notas
+  // Notas
   document.getElementById("notas").value = notas;
 }
 
-// Guardar notas del detective
-function guardarNotas() {
+function guardarNotas(){
+  const caso = select.value;
+  if(!caso) return alert("Selecciona un caso primero");
   const notas = document.getElementById("notas").value;
-  localStorage.setItem("notasCaso1", JSON.stringify(notas));
-  alert("Notas guardadas");
+  localStorage.setItem("notas"+caso, JSON.stringify(notas));
+  alert("Notas guardadas para " + caso);
 }
 
-// Inicialización
-document.addEventListener("DOMContentLoaded", cargarDossier);
+// Inicializar con primer caso
+document.addEventListener("DOMContentLoaded", ()=>{
+  select.selectedIndex = 0;
+  cargarDossier();
+});
 </script>
 </body>
 </html>
