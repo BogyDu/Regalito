@@ -167,7 +167,152 @@ function marcarCasoResuelto(idCaso) {
   localStorage.setItem("progresoCasos", JSON.stringify(progreso));
 }
 
+// --- Guardar en localStorage listas de progreso ---
+function guardarLista(nombre, item) {
+  let lista = JSON.parse(localStorage.getItem(nombre)) || [];
+  if (!lista.includes(item)) {
+    lista.push(item);
+    localStorage.setItem(nombre, JSON.stringify(lista));
+  }
+}
+
+// --- Mostrar pistas y guardar ---
+function mostrarPista(id) {
+  document.getElementById("pistas").innerHTML = pistas[id];
+  guardarLista("pistasCaso1", id);
+  actualizarDossier();
+}
+
+// --- Mostrar sospechosos y guardar ---
+function mostrarSospechoso(id) {
+  document.getElementById("sospechosos").innerHTML = sospechosos[id];
+  guardarLista("sospechososCaso1", id);
+  actualizarDossier();
+}
+
+// --- Confrontación (ya estaba) ---
+function confrontar() {
+  const s1 = document.getElementById("conf1").value;
+  const s2 = document.getElementById("conf2").value;
+  const div = document.getElementById("confrontacion");
+
+  if (!s1 || !s2 || s1 === s2) {
+    div.innerHTML = "<p style='color:red;'>Debes elegir dos sospechosos distintos.</p>";
+    return;
+  }
+
+  const key = `${s1}-${s2}`;
+  if (contradicciones[key]) {
+    div.innerHTML = `<p style='color:green;'><strong>Contradicción encontrada:</strong> ${contradicciones[key].texto}</p>`;
+    desbloquearPista(contradicciones[key].pista);
+  } else {
+    div.innerHTML = "<p style='color:gray;'>No se detectaron contradicciones claras.</p>";
+  }
+}
+
+// --- Desbloquear pista secreta y guardar ---
+function desbloquearPista(texto) {
+  let pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+
+  if (!pistasSecretas.includes(texto)) {
+    pistasSecretas.push(texto);
+    localStorage.setItem("pistasSecretasCaso1", JSON.stringify(pistasSecretas));
+  }
+
+  renderizarPistasSecretas();
+  actualizarDossier();
+}
+
+// --- Renderizar pistas secretas ---
+function renderizarPistasSecretas() {
+  const divSecretas = document.getElementById("pistas-secretas");
+  if (!divSecretas) return;
+  divSecretas.innerHTML = "";
+
+  const pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+
+  pistasSecretas.forEach(p => {
+    const parrafo = document.createElement("p");
+    parrafo.innerHTML = `<strong>Pista secreta desbloqueada:</strong> ${p}`;
+    divSecretas.appendChild(parrafo);
+  });
+}
+
+// --- Resolver caso ---
+function resolverCaso() {
+  const seleccion = document.getElementById("culpable").value;
+  const resultadoDiv = document.getElementById("resultado");
+
+  if (!seleccion) {
+    resultadoDiv.innerHTML = "<p style='color:red;'>Debes seleccionar un sospechoso.</p>";
+    return;
+  }
+
+  if (seleccion === "ernesto") {
+    resultadoDiv.innerHTML = `
+      <p style='color:green;'><strong>Correcto:</strong> 
+      Ernesto Vega, el guardia portuario, es el asesino. 
+      Tenía acceso, coartada débil y huellas en la escena. 
+      Mató a Julián para silenciarlo sobre el contrabando en el faro.</p>`;
+    marcarCasoResuelto("caso1");
+  } else {
+    resultadoDiv.innerHTML = "<p style='color:red;'><strong>Incorrecto:</strong> Ese sospechoso no es el culpable. Vuelve a analizar las pistas.</p>";
+  }
+}
+
+// --- Guardar progreso de caso ---
+function marcarCasoResuelto(idCaso) {
+  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+  progreso[idCaso] = true;
+  localStorage.setItem("progresoCasos", JSON.stringify(progreso));
+}
+
+// --- Dossier ---
+function abrirDossier() {
+  document.getElementById("dossier").style.display = "block";
+  actualizarDossier();
+}
+
+function cerrarDossier() {
+  document.getElementById("dossier").style.display = "none";
+}
+
+function actualizarDossier() {
+  const pistasGuardadas = JSON.parse(localStorage.getItem("pistasCaso1")) || [];
+  const sospechososGuardados = JSON.parse(localStorage.getItem("sospechososCaso1")) || [];
+  const secretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+
+  const ulPistas = document.getElementById("dossier-pistas");
+  const ulSospechosos = document.getElementById("dossier-sospechosos");
+  const ulSecretas = document.getElementById("dossier-secretas");
+
+  ulPistas.innerHTML = "";
+  pistasGuardadas.forEach(p => {
+    const li = document.createElement("li");
+    li.textContent = p;
+    ulPistas.appendChild(li);
+  });
+
+  ulSospechosos.innerHTML = "";
+  sospechososGuardados.forEach(s => {
+    const li = document.createElement("li");
+    li.textContent = s;
+    ulSospechosos.appendChild(li);
+  });
+
+  ulSecretas.innerHTML = "";
+  secretas.forEach(ps => {
+    const li = document.createElement("li");
+    li.textContent = ps;
+    ulSecretas.appendChild(li);
+  });
+}
+
 // --- Al cargar la página ---
 document.addEventListener("DOMContentLoaded", () => {
   renderizarPistasSecretas();
+  actualizarDossier();
 });
+
+
+
