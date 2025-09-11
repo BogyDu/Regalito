@@ -1,87 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Caso 1 - El Misterio del Faro</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Caso 1 - El Faro</title>
+<style>
+body {
+  font-family: "Courier New", monospace;
+  background: #e5dfd4;
+  margin: 0;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #2d2d2d;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+.carpeta {
+  width: 220px;
+  background: #c8a165;
+  border: 2px solid #8a5a2d;
+  border-radius: 5px 5px 0 0;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+}
+.etiqueta {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #b38952;
+  border: 2px solid #8a5a2d;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  font-weight: bold;
+}
+button {
+  padding: 8px 15px;
+  margin: 5px;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+  border: 2px solid #333;
+  background: #f5f5f5;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+section {
+  margin-bottom: 20px;
+}
+#pistas, #sospechosos, #confrontacion, #resultado, #respuesta-interrogatorio {
+  background: #fffdf6;
+  border: 1px solid #333;
+  padding: 10px;
+  margin-top: 5px;
+}
+</style>
 </head>
 <body>
-  <h1>Caso 1: El Misterio del Faro</h1>
-  <p>Eres el detective asignado a investigar la misteriosa muerte del farero Julián Ortega. Explora las pistas, interroga a los sospechosos y resuelve quién está detrás de todo.</p>
 
-  <section>
-    <h2>Pistas</h2>
+<h1>Caso 1: El Faro</h1>
+
+<div class="carpeta">
+  <div class="etiqueta">Pistas</div>
+  <div class="contenido">
     <button onclick="mostrarPista('forense')">Informe Forense</button>
     <button onclick="mostrarPista('escena')">Escena del Faro</button>
     <button onclick="mostrarPista('bitacora')">Bitácora del Faro</button>
     <button onclick="mostrarPista('ramirez')">Notas del detective Ramírez</button>
     <div id="pistas"></div>
+  </div>
+</div>
 
-    <div id="pistas-secretas"></div>
-  </section>
-
-  <section>
-    <h2>Sospechosos</h2>
-    <button onclick="mostrarSospechoso('sofia')">Sofía Ortega (sobrina)</button>
-    <button onclick="mostrarSospechoso('mateo')">Mateo Duarte (pescador)</button>
-    <button onclick="mostrarSospechoso('camila')">Camila Torres (periodista)</button>
-    <button onclick="mostrarSospechoso('ernesto')">Ernesto Vega (guardia portuario)</button>
-    <button onclick="mostrarSospechoso('padre')">Padre Anselmo (cura local)</button>
+<div class="carpeta">
+  <div class="etiqueta">Sospechosos</div>
+  <div class="contenido">
+    <button onclick="mostrarSospechoso('sofia')">Sofía Ortega</button>
+    <button onclick="mostrarSospechoso('mateo')">Mateo Duarte</button>
+    <button onclick="mostrarSospechoso('camila')">Camila Torres</button>
+    <button onclick="mostrarSospechoso('ernesto')">Ernesto Vega</button>
+    <button onclick="mostrarSospechoso('padre')">Padre Anselmo</button>
     <div id="sospechosos"></div>
-  </section>
-<section>
-<h2>Interrogar Sospechosos</h2>
-<p>Selecciona un sospechoso y una pregunta para interrogar:</p>
+  </div>
+</div>
 
-<select id="inter-sospechoso">
-  <option value="">-- Selecciona sospechoso --</option>
-  <option value="sofia">Sofía Ortega</option>
-  <option value="mateo">Mateo Duarte</option>
-  <option value="camila">Camila Torres</option>
-  <option value="ernesto">Ernesto Vega</option>
-  <option value="padre">Padre Anselmo</option>
-</select>
-
-<select id="inter-pregunta">
-  <option value="">-- Selecciona pregunta --</option>
-  <option value="donde">¿Dónde estabas la noche del crimen?</option>
-  <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
-  <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
-</select>
-
-<button onclick="interrogar()">Interrogar</button>
-<div id="respuesta-interrogatorio"></div>
-</section>
-
-  <section>
-    <h2>Confrontar declaraciones</h2>
-    <p>Selecciona dos sospechosos para comparar sus declaraciones y buscar contradicciones:</p>
+<div class="carpeta">
+  <div class="etiqueta">Confrontaciones</div>
+  <div class="contenido">
+    <p>Selecciona dos sospechosos:</p>
     <select id="conf1">
-      <option value="">-- Selecciona sospechoso --</option>
+      <option value="">-- Selecciona --</option>
       <option value="sofia">Sofía Ortega</option>
       <option value="mateo">Mateo Duarte</option>
       <option value="camila">Camila Torres</option>
       <option value="ernesto">Ernesto Vega</option>
       <option value="padre">Padre Anselmo</option>
     </select>
-
     <select id="conf2">
-      <option value="">-- Selecciona sospechoso --</option>
+      <option value="">-- Selecciona --</option>
       <option value="sofia">Sofía Ortega</option>
       <option value="mateo">Mateo Duarte</option>
       <option value="camila">Camila Torres</option>
       <option value="ernesto">Ernesto Vega</option>
       <option value="padre">Padre Anselmo</option>
     </select>
-
     <button onclick="confrontar()">Confrontar</button>
     <div id="confrontacion"></div>
-  </section>
+  </div>
+</div>
 
-  <section>
-    <h2>¿Quién es el culpable?</h2>
+<div class="carpeta">
+  <div class="etiqueta">Interrogatorio</div>
+  <div class="contenido">
+    <select id="inter-sospechoso">
+      <option value="">-- Selecciona sospechoso --</option>
+      <option value="sofia">Sofía Ortega</option>
+      <option value="mateo">Mateo Duarte</option>
+      <option value="camila">Camila Torres</option>
+      <option value="ernesto">Ernesto Vega</option>
+      <option value="padre">Padre Anselmo</option>
+    </select>
+    <select id="inter-pregunta">
+      <option value="">-- Selecciona pregunta --</option>
+      <option value="donde">¿Dónde estabas la noche del crimen?</option>
+      <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
+      <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
+    </select>
+    <button onclick="interrogar()">Interrogar</button>
+    <div id="respuesta-interrogatorio"></div>
+  </div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Resolver Caso</div>
+  <div class="contenido">
     <select id="culpable">
-      <option value="">-- Selecciona un sospechoso --</option>
+      <option value="">-- Selecciona sospechoso --</option>
       <option value="sofia">Sofía Ortega</option>
       <option value="mateo">Mateo Duarte</option>
       <option value="camila">Camila Torres</option>
@@ -90,28 +141,11 @@
     </select>
     <button onclick="resolverCaso()">Resolver</button>
     <div id="resultado"></div>
-  </section>
-
-  <!-- Botón para abrir el dossier -->
-  <button onclick="abrirDossier()" style="margin-top:20px;">📂 Abrir Dossier del Caso</button>
-
-  <!-- Panel flotante del dossier -->
-  <div id="dossier" class="dossier">
-    <h2>Dossier del Caso</h2>
-    <h3>Pistas descubiertas</h3>
-    <ul id="dossier-pistas"></ul>
-
-    <h3>Pistas secretas</h3>
-    <ul id="dossier-secretas"></ul>
-
-    <h3>Sospechosos interrogados</h3>
-    <ul id="dossier-sospechosos"></ul>
-
-    <button onclick="cerrarDossier()">Cerrar</button>
   </div>
+</div>
 
-  <p><a href="index.html">← Volver al listado de casos</a></p>
+<button onclick="abrirDossier()">📂 Abrir Dossier</button>
 
-  <script src="caso1.js"></script>
+<script src="caso1.js"></script>
 </body>
 </html>
