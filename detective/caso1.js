@@ -28,22 +28,34 @@ const respuestas={
   "Lucas":["Revisando puertas","Solo","Verificando seguridad","Todo normal","Trabajaba allí"]
 };
 
-// Preguntas avanzadas desbloqueadas
+// Preguntas avanzadas con callejones sin salida
 const preguntasAvanzadas={
   "Sofia":[
     {texto:"¿Viste a alguien manipular la cerradura?", desbloqueo:{pista:"Llave del Faro"}},
-    {texto:"¿Por qué ocultaste información sobre Mateo?", desbloqueo:{respuesta:{sospechoso:"Mateo", pregunta:1, valor:"Con Clara"}}}
+    {texto:"¿Por qué ocultaste información sobre Mateo?", desbloqueo:{respuesta:{sospechoso:"Mateo",pregunta:1,valor:"Con Clara"}}},
+    {texto:"¿Alguien te molestó mientras estabas sola?", callejon:true}
   ],
   "Mateo":[
-    {texto:"¿Qué discutiste con Sofia la noche del crimen?", desbloqueo:{respuesta:{sospechoso:"Sofia", pregunta:0, valor:"Estaba en el faro sola"}}}
+    {texto:"¿Qué discutiste con Sofia la noche del crimen?", desbloqueo:{respuesta:{sospechoso:"Sofia",pregunta:0,valor:"Estaba en el faro sola"}}},
+    {texto:"¿Notaste algo extraño en el faro?", callejon:true}
+  ],
+  "Lucas":[
+    {texto:"¿Revisaste todas las armas disponibles?", desbloqueo:{pista:"Cuchillo roto"}},
+    {texto:"¿Qué hiciste con la llave del faro?", desbloqueo:{pista:"Llave del Faro"}}
   ]
 };
 
-// Objetos
-const objetos=["Huella en la ventana","Llave del Faro","Zapato roto","Cuchillo"];
-if(!localStorage.getItem("objetosEncontrados"+casoActual)) localStorage.setItem("objetosEncontrados"+casoActual, JSON.stringify([]));
+// Hallazgos iniciales
+const hallazgos = [
+  {objeto:"Huella en la ventana", detalle:"Se detectan huellas parciales en la ventana norte"},
+  {objeto:"Llave del Faro", detalle:"Llave encontrada cerca del faro, parece reciente"},
+  {objeto:"Zapato roto", detalle:"Zapato izquierdo roto, huella cerca del muelle"},
+  {objeto:"Cuchillo", detalle:"Cuchillo encontrado en la cocina, con marcas de uso"},
+  {objeto:"Palo manchado", detalle:"Resto de sangre detectado en el palo"},
+  {objeto:"Carta críptica", detalle:"Carta con mensaje ambiguo y posibles indicios de cómplice"}
+];
 
-// Inicialización localStorage
+// Inicialización de localStorage
 ["respuestas"+casoActual,"preguntasHechas"+casoActual,"pistas"+casoActual,"pistasSecretas"+casoActual,"notas"+casoActual,"resumenSospechosos"+casoActual,"conversacion"+casoActual].forEach(k=>{
   if(!localStorage.getItem(k)) localStorage.setItem(k,JSON.stringify(k.includes("pistas")||k.includes("resumen")?[]:{}));
 });
@@ -57,7 +69,8 @@ const datosCulpables={
   "Lucas":{armas:["Cuchillo","Palo"],motivos:["Rabia","Protección del Faro"]}
 };
 
-// Inicialización
+// Funciones principales
+
 function crearListadoSospechosos(){
   const cont=document.getElementById("listado-sospechosos");
   cont.innerHTML="";
@@ -70,44 +83,41 @@ function crearListadoSospechosos(){
   });
 }
 
-// Iniciar interrogatorio
 function iniciarInterrogatorio(s){
   mostrarPreguntas(s);
   mostrarRegistroConversacion(s);
-  // Resumen
+  // Actualizar resumen
   let registros=JSON.parse(localStorage.getItem("resumenSospechosos"+casoActual)) || [];
   if(!registros.includes(s)){
     registros.push(s);
     localStorage.setItem("resumenSospechosos"+casoActual,JSON.stringify(registros));
-    cargarCaso();
   }
+  cargarCaso();
 }
 
-// Mostrar preguntas
 function mostrarPreguntas(s){
   const cont=document.getElementById("preguntas-container");
   cont.innerHTML="";
   const preguntasHechas=JSON.parse(localStorage.getItem("preguntasHechas"+casoActual)) || {};
   if(!preguntasHechas[s]) preguntasHechas[s]=[];
 
-  // Básicas
   preguntasBasicas.forEach((p,index)=>{
     if(!preguntasHechas[s].includes(index)){
-      const btn=document.createElement("button"); btn.textContent=p;
+      const btn=document.createElement("button");
+      btn.textContent=p;
       btn.onclick=()=>hacerPregunta(s,index);
       cont.appendChild(btn);
     }
   });
 
-  // Avanzadas
   if(preguntasAvanzadas[s]){
     preguntasAvanzadas[s].forEach((pObj,i)=>{
       let desbloqueada=false;
-      if(pObj.desbloqueo.pista){
+      if(pObj.desbloqueo?.pista){
         const pistas=JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
         if(pistas.includes(pObj.desbloqueo.pista)) desbloqueada=true;
       }
-      if(pObj.desbloqueo.respuesta){
+      if(pObj.desbloqueo?.respuesta){
         const conv=JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
         const respSos=conv[pObj.desbloqueo.respuesta.sospechoso];
         if(respSos){
@@ -117,7 +127,7 @@ function mostrarPreguntas(s){
           });
         }
       }
-      if(desbloqueada){
+      if(desbloqueada || !pObj.callejon){
         const btn=document.createElement("button");
         btn.textContent=pObj.texto;
         btn.onclick=()=>hacerPreguntaAvanzado(s,i);
@@ -127,20 +137,17 @@ function mostrarPreguntas(s){
   }
 }
 
-// Hacer pregunta básica
 function hacerPregunta(s,index){
   const resp=respuestas[s][index];
   guardarRespuesta(s,preguntasBasicas[index],resp);
 }
 
-// Hacer pregunta avanzada
 function hacerPreguntaAvanzado(s,index){
   const pObj=preguntasAvanzadas[s][index];
-  const resp="Respuesta avanzada"; // Simulación
+  const resp="Respuesta avanzada"; 
   guardarRespuesta(s,pObj.texto,resp);
 }
 
-// Guardar respuesta y actualizar registro
 function guardarRespuesta(s,preg,resp){
   const preguntasHechas=JSON.parse(localStorage.getItem("preguntasHechas"+casoActual)) || {};
   if(!preguntasHechas[s]) preguntasHechas[s]=[];
@@ -157,71 +164,64 @@ function guardarRespuesta(s,preg,resp){
   mostrarPreguntas(s);
 }
 
-// Mostrar registro conversación
 function mostrarRegistroConversacion(s){
   const cont=document.getElementById("registro-conversacion");
   cont.innerHTML="";
   const conv=JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
   if(conv[s]){
     conv[s].forEach(r=>{
-      const p=document.createElement("p"); p.innerHTML=`<strong>${r.pregunta}</strong><br>${r.respuesta}`;
+      const p=document.createElement("p"); 
+      p.innerHTML=`<strong>${r.pregunta}</strong><br>${r.respuesta}`;
       cont.appendChild(p);
     });
   }
 }
 
-// Generar pistas a partir de respuesta
 function generarPistas(s,preg,resp){
   let pistas=JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
   let secretas=JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
 
   if(resp.includes("observando el mar") && !pistas.includes("Zapato roto detectado")) pistas.push("Zapato roto detectado");
   if(resp.includes("Lucas") && !secretas.includes("Huella coincide con Lucas")) secretas.push("Huella coincide con Lucas");
+
+  const conv=JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
+  if(conv["Sofia"] && conv["Mateo"]){
+    const respSofia=conv["Sofia"].find(r=>r.pregunta===preguntasBasicas[1]);
+    const respMateo=conv["Mateo"].find(r=>r.pregunta===preguntasBasicas[1]);
+    if(respSofia && respMateo && respSofia.respuesta !== respMateo.respuesta){
+      if(!secretas.includes("Contradicción detectada entre Sofia y Mateo")) secretas.push("Contradicción detectada entre Sofia y Mateo");
+    }
+  }
+
+  if(preg.includes("Alguien te molestó") && !pistas.includes("Pregunta sin información útil")) pistas.push("Pregunta sin información útil");
+
   localStorage.setItem("pistas"+casoActual,JSON.stringify(pistas));
   localStorage.setItem("pistasSecretas"+casoActual,JSON.stringify(secretas));
   cargarCaso();
 }
 
-// Analizar objetos
-function crearBotonesObjetos(){
-  const cont=document.getElementById("objetos-container");
-  objetos.forEach(obj=>{
-    const btn=document.createElement("button"); btn.textContent=obj;
-    btn.onclick=()=>analizarObjeto(obj);
-    cont.appendChild(btn);
-  });
-}
-
-function analizarObjeto(obj){
-  let objetosF=JSON.parse(localStorage.getItem("objetosEncontrados"+casoActual)) || [];
-  if(!objetosF.includes(obj)) objetosF.push(obj);
-  localStorage.setItem("objetosEncontrados"+casoActual,JSON.stringify(objetosF));
-  // Pistas relacionadas
-  if(obj==="Cuchillo" && !JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)).includes("Cuchillo roto")) {
-    let s=JSON.parse(localStorage.getItem("pistasSecretas"+casoActual));
-    s.push("Cuchillo roto");
-    localStorage.setItem("pistasSecretas"+casoActual,JSON.stringify(s));
-  }
-  actualizarObjetosIntroduccion();
-  cargarCaso();
-}
-
-// Actualizar introducción con objetos
-function actualizarObjetosIntroduccion(){ 
+function actualizarIntroduccion(){
   const ul=document.getElementById("objetos-introduccion");
-  const objs=JSON.parse(localStorage.getItem("objetosEncontrados"+casoActual)) || [];
   ul.innerHTML="";
-  objs.forEach(o=>{ let li=document.createElement("li"); li.textContent=o; ul.appendChild(li); });
+  hallazgos.forEach(h=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<strong>${h.objeto}:</strong> ${h.detalle}`;
+    ul.appendChild(li);
+  });
+
+  const pistas=JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
+  const secretas=JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
+
+  if(pistas.includes("Zapato roto detectado") && !ul.innerHTML.includes("Zapato roto")) ul.innerHTML+=`<li><strong>Hallazgo Forense:</strong> Zapato roto coincide con huella hallada</li>`;
+  if(secretas.includes("Huella coincide con Lucas") && !ul.innerHTML.includes("Lucas")) ul.innerHTML+=`<li><strong>Hallazgo Forense:</strong> Huella coincide con Lucas</li>`;
 }
 
-// Guardar notas
 function guardarNotas(){
   const notas=document.getElementById("notas-caso1").value;
   localStorage.setItem("notas"+casoActual,JSON.stringify(notas));
   alert("Notas guardadas");
 }
 
-// Resolver caso avanzado
 function inicializarSelectores(){
   const selC=document.getElementById("culpable");
   const selCo=document.getElementById("complice");
@@ -263,7 +263,6 @@ function resolverCasoAvanzado(){
   } else r.textContent="Combinación incorrecta ❌";
 }
 
-// Cargar estado y pistas
 function cargarCaso(){
   const progreso=JSON.parse(localStorage.getItem("progresoCasos"))||{};
   const estadoSpan=document.getElementById("estado-caso");
@@ -271,28 +270,24 @@ function cargarCaso(){
   estadoSpan.textContent=estado;
   estadoSpan.className=progreso[casoActual]?"estado resuelto":"estado pendiente";
 
-  // Pistas
   const ulP=document.getElementById("pistas");
   const p=JSON.parse(localStorage.getItem("pistas"+casoActual))||[];
   ulP.innerHTML=""; p.forEach(pi=>{ const li=document.createElement("li"); li.textContent=pi; li.className="nueva"; ulP.appendChild(li); });
 
-  // Pistas secretas
   const ulS=document.getElementById("secretas");
   const s=JSON.parse(localStorage.getItem("pistasSecretas"+casoActual))||[];
   ulS.innerHTML=""; s.forEach(ss=>{ const li=document.createElement("li"); li.textContent=ss; li.className="secretas"; ulS.appendChild(li); });
 
-  // Resumen sospechosos
   const ulR=document.getElementById("resumen-sospechosos");
   const reg=JSON.parse(localStorage.getItem("resumenSospechosos"+casoActual))||[];
   ulR.innerHTML=""; reg.forEach(s=>{ const li=document.createElement("li"); li.textContent=s+" - "+infoSospechosos[s]; ulR.appendChild(li); });
 
-  // Notas
   document.getElementById("notas-caso1").value=JSON.parse(localStorage.getItem("notas"+casoActual))||"";
+  actualizarIntroduccion();
 }
 
+// Inicialización
 crearListadoSospechosos();
-crearBotonesObjetos();
-actualizarObjetosIntroduccion();
 inicializarSelectores();
 setInterval(cargarCaso,500);
 cargarCaso();
