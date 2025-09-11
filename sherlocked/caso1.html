@@ -6,54 +6,76 @@
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
+<body>
 <h1>Caso 1: El Faro</h1>
 
-<div class="carpeta">
-  <div class="etiqueta">Pistas</div>
-  <div class="contenido" id="pistas-seccion"></div>
-  <div id="pistas"></div>
-</div>
+<div id="panel-izquierdo">
+  <div class="carpeta">
+    <div class="etiqueta">Pistas</div>
+    <div class="contenido" id="pistas-seccion"></div>
+  </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Sospechosos</div>
-  <div class="contenido" id="sospechosos-seccion"></div>
-  <div id="sospechosos"></div>
-</div>
+  <div class="carpeta">
+    <div class="etiqueta">Sospechosos</div>
+    <div class="contenido" id="sospechosos-seccion"></div>
+  </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Confrontaciones</div>
-  <div class="contenido">
-    <p>Selecciona dos sospechosos:</p>
-    <select id="conf1"></select>
-    <select id="conf2"></select>
-    <button onclick="confrontar()">Confrontar</button>
-    <div id="confrontacion"></div>
+  <div class="carpeta">
+    <div class="etiqueta">Confrontaciones</div>
+    <div class="contenido">
+      <select id="conf1"></select>
+      <select id="conf2"></select>
+      <button onclick="confrontar()">Confrontar</button>
+    </div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Interrogatorio</div>
+    <div class="contenido">
+      <select id="inter-sospechoso"></select>
+      <select id="inter-pregunta">
+        <option value="">-- Selecciona pregunta --</option>
+      </select>
+      <button onclick="interrogar()">Interrogar</button>
+    </div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Resolver Caso</div>
+    <div class="contenido">
+      <select id="culpable"></select>
+      <button onclick="resolverCaso()">Resolver</button>
+    </div>
   </div>
 </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Interrogatorio</div>
-  <div class="contenido">
-    <select id="inter-sospechoso"></select>
-    <select id="inter-pregunta">
-      <option value="">-- Selecciona pregunta --</option>
-      <option value="donde">¿Dónde estabas la noche del crimen?</option>
-      <option value="motivo">¿Tenías algún motivo?</option>
-      <option value="relacion">¿Conocías a alguien involucrado?</option>
-    </select>
-    <button onclick="interrogar()">Interrogar</button>
-    <div id="respuesta-interrogatorio"></div>
+<div id="panel-derecho">
+  <div class="carpeta">
+    <div class="etiqueta">Pistas Mostradas</div>
+    <div class="contenido" id="pistas"></div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Sospechosos Mostrados</div>
+    <div class="contenido" id="sospechosos"></div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Confrontación / Resultados</div>
+    <div class="contenido" id="confrontacion"></div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Respuestas Interrogatorio</div>
+    <div class="contenido" id="respuesta-interrogatorio"></div>
+  </div>
+
+  <div class="carpeta">
+    <div class="etiqueta">Resultado del Caso</div>
+    <div class="contenido" id="resultado"></div>
   </div>
 </div>
 
-<div class="carpeta">
-  <div class="etiqueta">Resolver Caso</div>
-  <div class="contenido">
-    <select id="culpable"></select>
-    <button onclick="resolverCaso()">Resolver</button>
-    <div id="resultado"></div>
-  </div>
-</div>
 
 <button onclick="abrirDossier()">📂 Abrir Dossier</button>
 <script src="caso-generico.js"></script>
