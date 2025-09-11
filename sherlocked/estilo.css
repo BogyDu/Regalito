@@ -4,15 +4,12 @@ body {
   margin: 0;
   padding: 20px;
   color: #2d2d2d;
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
   box-sizing: border-box;
 }
 
 h1, h2 { text-align: center; text-transform: uppercase; }
 
-/* Paneles izquierdo y derecho */
+/* Doble panel para los casos */
 #panel-izquierdo, #panel-derecho {
   width: 50%;
   padding: 10px;
@@ -22,6 +19,9 @@ h1, h2 { text-align: center; text-transform: uppercase; }
   gap: 20px;
 }
 
+body.caso { display: flex; flex-direction: row; height: 100vh; }
+
+/* Carpetas estilo detective */
 .carpeta {
   background: #c8a165;
   border: 2px solid #8a5a2d;
@@ -29,6 +29,7 @@ h1, h2 { text-align: center; text-transform: uppercase; }
   padding: 10px;
   box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
 }
+
 .etiqueta {
   display: inline-block;
   padding: 5px 10px;
@@ -38,6 +39,9 @@ h1, h2 { text-align: center; text-transform: uppercase; }
   border-radius: 5px 5px 0 0;
   font-weight: bold;
 }
+
+.etiqueta.pendiente { background: #d9534f; border-color: #a94442; }
+.etiqueta.resuelto { background: #5cb85c; border-color: #4cae4c; }
 
 .contenido {
   padding: 10px;
@@ -63,12 +67,7 @@ select, textarea {
   padding: 5px;
 }
 
-textarea {
-  width: 100%;
-  height: 100px;
-  margin-top: 5px;
-  box-sizing: border-box;
-}
+textarea { width: 100%; height: 100px; margin-top: 5px; box-sizing: border-box; }
 
 #pistas, #sospechosos, #confrontacion, #resultado, #respuesta-interrogatorio {
   background: #fffdf6;
@@ -77,3 +76,7 @@ textarea {
   max-height: 400px;
   overflow-y: auto;
 }
+
+/* Index casos */
+.archivador { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+.archivador .carpeta { width: 220px; cursor: pointer; }
