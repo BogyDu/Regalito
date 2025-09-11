@@ -9,8 +9,9 @@ body { font-family: "Segoe UI", sans-serif; background: #f0f0f0; margin: 0; padd
 #interacciones { width:50%; padding:20px; overflow-y:auto; border-right:2px solid #333; background:#e3e3e3; }
 #dossier { width:50%; padding:20px; overflow-y:auto; background:#fdf6e3; }
 h2 { text-align:center; margin-top:0; }
-button { display:block; margin:5px 0; padding:8px; cursor:pointer; border-radius:5px; border:1px solid #333; background:#fff; }
+button { display:block; margin:5px 0; padding:8px; cursor:pointer; border-radius:5px; border:1px solid #333; background:#fff; width:95%; text-align:left; }
 button.destacada { background:#fff3cd; }
+button.sospechoso { font-weight:bold; background:#c8a165; color:#fff; border-color:#8a5a2d; }
 .carpeta { background:#fff; padding:10px; margin-bottom:10px; border-radius:5px; box-shadow:2px 2px 5px rgba(0,0,0,0.2); }
 textarea { width:100%; height:80px; }
 .estado.resuelto { color:green; font-weight:bold; }
@@ -20,10 +21,10 @@ li { margin-bottom:5px; }
 </style>
 </head>
 <body>
+
 <div id="interacciones">
 <h2>Interrogatorio</h2>
-<label>Selecciona sospechoso:</label>
-<select id="sospechoso-select"></select>
+<div id="sospechosos-container"></div>
 <div id="preguntas-container"></div>
 <h3>Registro de conversación</h3>
 <div id="registro-conversacion" style="background:#fff; padding:10px; max-height:300px; overflow-y:auto; border:1px solid #333;"></div>
@@ -61,7 +62,6 @@ li { margin-bottom:5px; }
 <select id="motivo"></select>
 <button onclick="resolverCasoAvanzado()">Resolver</button>
 <p id="resultado-avanzado"></p>
-</div>
 </div>
 
 <script src="caso1.js"></script>
