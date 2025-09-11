@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El Faro</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<h1>El Faro</h1>
+<div id="dossier">
+  <div id="pistas-seccion">
+    <h2>Pistas</h2>
+    <div id="pistas"></div>
+  </div>
+  <div id="sospechosos-seccion">
+    <h2>Sospechosos</h2>
+    <div id="sospechosos"></div>
+  </div>
+</div>
+
+<h2>Interrogatorio</h2>
+<select id="inter-sospechoso"></select>
+<select id="inter-pregunta">
+  <option>¿Qué viste la noche del crimen?</option>
+  <option>¿Dónde estabas a las 10 pm?</option>
+  <option>¿Conoces a los demás sospechosos?</option>
+  <option>¿Qué estabas haciendo en el faro?</option>
+</select>
+<button onclick="interrogar()">Interrogar</button>
+<div id="respuesta-interrogatorio"></div>
+
+<h2>Confrontación</h2>
+<select id="conf1"></select>
+<select id="conf2"></select>
+<button onclick="confrontar()">Confrontar</button>
+<div id="confrontacion"></div>
+
+<h2>Resolver Caso</h2>
+<select id="culpable"></select>
+<button onclick="resolverCaso()">Resolver</button>
+<div id="resultado"></div>
+
+<script src="caso-generico.js"></script>
+<script src="caso1.js"></script>
+<script>inicializarCaso();</script>
+</body>
+</html>
