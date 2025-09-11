@@ -3,14 +3,15 @@
   "objetos": [
     {"objeto":"Cuchillo","detalle":"Encontrado ligeramente doblado, con restos de sangre."},
     {"objeto":"Llave del Faro","detalle":"Llave marcada, podría haber sido usada recientemente."},
-    {"objeto":"Zapato roto","detalle":"Encontrado cerca del muelle, posible evidencia de huellas."}
+    {"objeto":"Zapato roto","detalle":"Encontrado cerca del muelle, posible evidencia de huellas."},
+    {"objeto":"Documento antiguo","detalle":"Documento del faro con instrucciones de cierre de seguridad."}
   ],
   "sospechosos": [
-    {"nombre":"Sofia","resumen":"Trabajadora del faro, conoce bien la zona."},
-    {"nombre":"Mateo","resumen":"Ayudante del faro, siempre atento a la torre."},
-    {"nombre":"Lucas","resumen":"Guardia nocturno, celoso y reservado."},
-    {"nombre":"Clara","resumen":"Fotógrafa visitante, curiosa y observadora."},
-    {"nombre":"Javier","resumen":"Historiador, interesado en documentos antiguos."}
+    {"nombre":"Sofia","resumen":"Trabajadora del faro, conoce bien la zona y tiene relación cercana con Mateo."},
+    {"nombre":"Mateo","resumen":"Ayudante del faro, siempre atento a la torre, amigo de Sofia."},
+    {"nombre":"Lucas","resumen":"Guardia nocturno, celoso y reservado, conocía los objetos de valor del faro."},
+    {"nombre":"Clara","resumen":"Fotógrafa visitante, curiosa y observadora, estuvo en la zona esa noche."},
+    {"nombre":"Javier","resumen":"Historiador, interesado en documentos antiguos y en la historia del faro."}
   ],
   "preguntasBasicas": [
     "¿Con quién estabas la noche del crimen?",
@@ -23,45 +24,53 @@
     "Sofia":[
       {
         "texto":"¿Viste a alguien manipular la cerradura?",
-        "respuesta":"Sí, mientras revisaba la zona, vi a Lucas cerca de la cerradura; parecía nervioso. Esto me hace sospechar que podría haber querido entrar sin ser visto, tal vez involucrado con la llave que encontramos.",
+        "respuesta":"Sí, vi a Lucas cerca de la cerradura, parecía nervioso y revisando la llave. Esto sugiere que podría estar intentando entrar sin ser visto.",
         "desbloqueo":[
-          {"sospechoso":"Sofia","nuevaPregunta":"¿Quién podría querer usar la llave del faro?"},
-          {"sospechoso":"Lucas","nuevaPregunta":"¿Dónde estabas cuando alguien vio la cerradura?"}
+          {"sospechoso":"Sofia","nuevaPregunta":"¿Quién más podría haber querido usar la llave del faro?"},
+          {"sospechoso":"Lucas","nuevaPregunta":"¿Dónde estabas cuando alguien te vio cerca de la cerradura?"}
         ]
       },
       {
         "texto":"¿Por qué ocultaste información sobre Mateo?",
-        "respuesta":"No quería comprometerlo sin pruebas. Noté que intentaba ocultar que estaba con Clara, lo que podría ser una pista importante.",
-        "desbloqueo":[
-          {"sospechoso":"Sofia","nuevaPregunta":"¿Qué sabías sobre la relación entre Mateo y Clara?"}
-        ]
+        "respuesta":"No quería comprometerlo sin pruebas. Noté que intentaba ocultar estar con Clara, lo que podría ser relevante para la investigación.",
+        "desbloqueo":[{"sospechoso":"Sofia","nuevaPregunta":"¿Qué sabías sobre la relación entre Mateo y Clara?"}]
       }
     ],
     "Mateo":[
       {
         "texto":"¿Qué discutiste con Sofia la noche del crimen?",
-        "respuesta":"Le pregunté sobre la torre y noté que evitaba ciertos detalles. Esto podría indicar que alguien manipula información.",
+        "respuesta":"Hablamos de la torre, pero noté que Sofia evitaba ciertos detalles. Esto me hace sospechar que alguien manipula información.",
         "desbloqueo":[{"sospechoso":"Sofia","nuevaPregunta":"¿Qué detalles evitaste sobre la torre?"}]
+      },
+      {
+        "texto":"¿Dónde estabas cuando Clara tomaba fotos?",
+        "respuesta":"Estaba revisando los niveles inferiores del faro. Observé que Lucas se movía con nerviosismo.",
+        "desbloqueo":[{"sospechoso":"Lucas","nuevaPregunta":"¿Por qué estabas nervioso mientras Mateo revisaba el faro?"}]
       }
     ],
     "Lucas":[
       {
         "texto":"¿Revisaste todas las armas disponibles?",
-        "respuesta":"Sí, revisé el cuchillo y el palo. El cuchillo estaba ligeramente doblado y con restos de sangre, lo que podría ser clave.",
+        "respuesta":"Sí, revisé el cuchillo y el palo. El cuchillo estaba ligeramente doblado y con restos de sangre, podría ser clave.",
         "desbloqueo":[{"sospechoso":"Lucas","nuevaPregunta":"¿Qué hiciste con el cuchillo después de encontrarlo?"}]
+      },
+      {
+        "texto":"¿Qué estabas haciendo cerca del muelle?",
+        "respuesta":"Verificaba las medidas de seguridad. Sin embargo, alguien podría haber interpretado mal mi presencia.",
+        "desbloqueo":[{"sospechoso":"Sofia","nuevaPregunta":"¿Notaste algo sospechoso en Lucas?"}]
       }
     ],
     "Clara":[
       {
         "texto":"¿Qué hiciste durante la noche del crimen?",
-        "respuesta":"Tomaba fotos del faro y alrededores, vi movimientos sospechosos, especialmente de Mateo.",
+        "respuesta":"Tomaba fotos del faro y alrededores, noté movimientos sospechosos de Mateo y Lucas.",
         "desbloqueo":[{"sospechoso":"Mateo","nuevaPregunta":"¿Qué estabas haciendo mientras Clara te observaba?"}]
       }
     ],
     "Javier":[
       {
         "texto":"¿Dónde estabas la noche del crimen?",
-        "respuesta":"Exploraba niveles superiores buscando documentos antiguos. Noté que Lucas parecía apresurado y ocultaba algo.",
+        "respuesta":"Exploraba niveles superiores buscando documentos antiguos. Vi a Lucas y Mateo actuando con cautela, me pareció extraño.",
         "desbloqueo":[{"sospechoso":"Lucas","nuevaPregunta":"¿Qué ocultabas mientras Javier te observaba?"}]
       }
     ]
