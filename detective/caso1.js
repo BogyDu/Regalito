@@ -3,6 +3,7 @@ let preguntasHechas = {};
 let conversacion = {};
 let sospechosoActivo = null;
 
+// Cargar JSON del caso
 fetch('caso1.json')
   .then(res => res.json())
   .then(data => {
@@ -11,7 +12,7 @@ fetch('caso1.json')
     inicializarCaso();
   });
 
-// Inicializa las estructuras de control
+// Inicializa estructuras de control
 function inicializarVariables() {
   casoData.sospechosos.forEach(s => {
     preguntasHechas[s.nombre] = [];
@@ -19,7 +20,7 @@ function inicializarVariables() {
   });
 }
 
-// Inicializa el caso: interfaz y selects
+// Inicializa interfaz del caso
 function inicializarCaso() {
   actualizarIntroduccion();
   crearListadoSospechosos();
@@ -27,7 +28,7 @@ function inicializarCaso() {
   cargarDossier();
 }
 
-// Muestra objetos hallados
+// Muestra la introducción y objetos hallados
 function actualizarIntroduccion() {
   const ul = document.getElementById("objetos-introduccion");
   ul.innerHTML = "";
@@ -51,24 +52,26 @@ function crearListadoSospechosos() {
   });
 }
 
-// Muestra preguntas del sospechoso activo
+// Muestra preguntas disponibles del sospechoso activo
 function mostrarPreguntas(sos) {
   sospechosoActivo = sos;
   const cont = document.getElementById("preguntas-container");
   cont.innerHTML = "";
 
   // Preguntas básicas
-  casoData.preguntasBasicas.forEach(p => {
-    if (!preguntasHechas[sos].includes(p)) {
-      const btn = document.createElement("button");
-      btn.textContent = p;
-      btn.onclick = () => hacerPregunta(sos, p, "Respuesta estándar relacionada con la pregunta.");
-      cont.appendChild(btn);
-    }
-  });
+  if(casoData.preguntasBasicas[sos]){
+    casoData.preguntasBasicas[sos].forEach(p => {
+      if (!preguntasHechas[sos].includes(p.texto)) {
+        const btn = document.createElement("button");
+        btn.textContent = p.texto;
+        btn.onclick = () => hacerPregunta(sos, p.texto, p.respuesta);
+        cont.appendChild(btn);
+      }
+    });
+  }
 
   // Preguntas avanzadas
-  if (casoData.preguntasAvanzadas[sos]) {
+  if(casoData.preguntasAvanzadas[sos]){
     casoData.preguntasAvanzadas[sos].forEach(pObj => {
       if (!preguntasHechas[sos].includes(pObj.texto)) {
         const btn = document.createElement("button");
@@ -91,18 +94,19 @@ function hacerPregunta(sos, preg, resp) {
 // Ejecuta una pregunta avanzada
 function hacerPreguntaAvanzado(sos, pObj) {
   registrarRespuesta(sos, pObj.texto, pObj.respuesta);
+
+  // Desbloquea nuevas preguntas si aplica
   if (pObj.desbloqueo) {
     pObj.desbloqueo.forEach(d => {
       if (!casoData.preguntasAvanzadas[d.sospechoso]) casoData.preguntasAvanzadas[d.sospechoso] = [];
-      // Evitar duplicados
       if (!casoData.preguntasAvanzadas[d.sospechoso].some(q => q.texto === d.nuevaPregunta)) {
-        casoData.preguntasAvanzadas[d.sospechoso].push({ texto: d.nuevaPregunta, respuesta: "Pendiente", desbloqueo: [] });
+        casoData.preguntasAvanzadas[d.sospechoso].push({ texto: d.nuevaPregunta, respuesta: "Se desbloqueó una nueva línea de investigación", desbloqueo: [] });
       }
     });
   }
 }
 
-// Registra la respuesta y actualiza registro y pistas
+// Registra respuesta y actualiza conversación y pistas
 function registrarRespuesta(sos, preg, resp) {
   preguntasHechas[sos].push(preg);
   conversacion[sos].push({ pregunta: preg, respuesta: resp });
@@ -123,12 +127,12 @@ function mostrarRegistroConversacion() {
   });
 }
 
-// Genera pistas y pistas secretas automáticas
+// Genera pistas y pistas secretas automáticamente
 function generarPistas(sos, preg, resp) {
   let pistas = JSON.parse(localStorage.getItem("pistas" + casoData.nombre)) || [];
   let secretas = JSON.parse(localStorage.getItem("pistasSecretas" + casoData.nombre)) || [];
 
-  // Lógica de ejemplo para pistas basadas en palabras clave
+  // Lógica de ejemplo: añadir pistas cuando se mencionan palabras clave
   if (resp.includes("Lucas") && !secretas.includes("Huella coincide con Lucas")) secretas.push("Huella coincide con Lucas");
   if (resp.includes("Contradicción") && !secretas.includes("Contradicción detectada")) secretas.push("Contradicción detectada entre sospechosos");
   if (resp.includes("Cuchillo") && !pistas.includes("Cuchillo doblado y con sangre")) pistas.push("Cuchillo doblado y con sangre");
@@ -140,7 +144,6 @@ function generarPistas(sos, preg, resp) {
 
 // Carga el dossier con pistas, secretas y resumen de sospechosos
 function cargarDossier() {
-  // Pistas normales
   const pistas = document.getElementById("pistas");
   pistas.innerHTML = "";
   const p = JSON.parse(localStorage.getItem("pistas" + casoData.nombre)) || [];
@@ -150,7 +153,6 @@ function cargarDossier() {
     pistas.appendChild(li);
   });
 
-  // Pistas secretas
   const secretasElem = document.getElementById("secretas");
   secretasElem.innerHTML = "";
   const s = JSON.parse(localStorage.getItem("pistasSecretas" + casoData.nombre)) || [];
@@ -160,7 +162,6 @@ function cargarDossier() {
     secretasElem.appendChild(li);
   });
 
-  // Resumen de sospechosos
   const resumen = document.getElementById("resumen-sospechosos");
   resumen.innerHTML = "";
   casoData.sospechosos.forEach(s => {
@@ -193,11 +194,8 @@ function inicializarSelectores() {
     selCo.appendChild(o);
   });
 
-  selA.innerHTML = '<option value="">Selecciona arma</option>';
-  selA.innerHTML += `<option value="${casoData.resolucion.arma}">${casoData.resolucion.arma}</option>`;
-
-  selM.innerHTML = '<option value="">Selecciona motivo</option>';
-  selM.innerHTML += `<option value="${casoData.resolucion.motivo}">${casoData.resolucion.motivo}</option>`;
+  selA.innerHTML = `<option value="">Selecciona arma</option><option value="${casoData.resolucion.arma}">${casoData.resolucion.arma}</option>`;
+  selM.innerHTML = `<option value="">Selecciona motivo</option><option value="${casoData.resolucion.motivo}">${casoData.resolucion.motivo}</option>`;
 }
 
 // Resolver caso
