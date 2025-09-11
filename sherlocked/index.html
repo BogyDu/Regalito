@@ -1,1 +1,782 @@
-START GAME
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Juego: Caso El Faro — Investigación</title>
+  <style>
+    :root{
+      --bg:#0f1724; --panel:#0b1220; --accent:#ffcc33; --muted:#9aa6b2;
+      --card:#0e1a2b; --green:#33cc88;
+    }
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{margin:0;background:linear-gradient(180deg,#07111b 0%,#08151f 100%);color:#e6eef6;}
+    header{padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:16px;}
+    header h1{font-size:18px;margin:0;color:var(--accent);}
+    .container{display:grid;grid-template-columns:320px 1fr 360px;gap:18px;padding:18px;}
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,0.03);}
+    .left .section{margin-bottom:12px;}
+    .timer{font-weight:700;color:#fff;font-size:20px;}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:6px;}
+    .locations button{display:block;width:100%;margin:8px 0;padding:8px;border-radius:8px;border:0;background:#0b2436;color:#dff0ff;text-align:left;cursor:pointer;}
+    .locations button:active{transform:translateY(1px);}
+    .evidence{max-height:420px;overflow:auto;padding-right:6px;}
+    .evidence .item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.01);margin:6px 0;cursor:pointer;border:1px solid rgba(255,255,255,0.02);}
+    .main{padding:18px;}
+    .scene{display:flex;gap:12px;}
+    .card{flex:1;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.012),rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.02);}
+    .log{height:160px;overflow:auto;background:rgba(0,0,0,0.2);padding:8px;border-radius:8px;font-size:13px;}
+    .suspects .suspect{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);margin-bottom:8px;}
+    .btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#07111b;font-weight:700;cursor:pointer;}
+    .muted{color:var(--muted);font-size:13px;}
+    .doc{background:#02111a;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);margin:8px 0;font-size:13px;}
+    footer{padding:18px;border-top:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;align-items:center;justify-content:space-between;}
+    .notearea{width:100%;min-height:80px;padding:8px;background:#03121a;border-radius:8px;border:1px solid rgba(255,255,255,0.02);color:#cfe8ff;}
+    .question-list button{display:inline-block;margin:6px 6px 6px 0;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#dff0ff;cursor:pointer;}
+    .evidence.collected{border-left:4px solid var(--green);}
+    .result{padding:12px;border-radius:8px;margin-top:10px;}
+    .small{font-size:12px;color:var(--muted);}
+    .clue-hidden{opacity:0.07;filter:blur(1px);transition:all .3s;}
+    .clue-revealed{opacity:1;filter:none;}
+    @media(max-width:1000px){.container{grid-template-columns:1fr;}.left{order:2}.right{order:3}.main{order:1}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Caso: <span style="color:#fff">El Faro — Investigación</span></h1>
+    <div style="margin-left:auto;text-align:right">
+      <div class="small">Eres el inspector sustituto. Tu predecesor murió investigando este caso.</div>
+      <div class="timer" id="timer">30:00</div>
+      <div class="small" id="time-used">Tiempo usado: 0s</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- IZQUIERDA: ubicaciones y evidencia -->
+    <div class="left panel">
+      <div class="section">
+        <strong>Ubicaciones a inspeccionar</strong>
+        <div class="subtitle">Cada acción consume tiempo. Investiga con criterio.</div>
+        <div class="locations" id="locations">
+          <button data-loc="escena">1) Callejón detrás de la Taberna (Escena)</button>
+          <button data-loc="taberna">2) Interior - Taberna "El Faro"</button>
+          <button data-loc="oficina">3) Oficina del fallecido (papeles)</button>
+          <button data-loc="telefono">4) Teléfono del fallecido (recuperación)</button>
+          <button data-loc="casillero">5) Casillero del inspector anterior</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <strong>Evidencias recogidas</strong>
+        <div class="subtitle">Haz clic para ver más detalles.</div>
+        <div class="evidence" id="evidenceList">
+          <!-- items añadidos por JS -->
+        </div>
+      </div>
+
+      <div class="section">
+        <strong>Documentos</strong>
+        <div class="subtitle">Documentos encontrados en el expediente y en la escena.</div>
+        <div id="docs">
+          <!-- documentos dinámicos -->
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTRO: juego principal -->
+    <main class="main panel">
+      <div class="scene">
+        <div class="card">
+          <h3>Resumen del caso</h3>
+          <div class="small">
+            <strong>Víctima:</strong> Mateo García, 42 años, propietario de la Taberna "El Faro".<br>
+            <strong>Hora estimada de muerte:</strong> 02:20 de la madrugada (según reloj del bar y testigos).<br>
+            <strong>Lugar:</strong> Callejón detrás de la taberna. Homicidio por herida penetrante. El inspector anterior, Luis Herrera, murió mientras investigaba (nota en expediente).<br>
+          </div>
+
+          <hr style="margin:10px 0;border-color:rgba(255,255,255,0.03)">
+
+          <div>
+            <strong>Objetivo:</strong> Reunir evidencia, entrevistar sospechosos/testigos y formular una acusación.</div>
+
+          <div style="margin-top:12px;">
+            <strong>Reglas rápidas:</strong>
+            <ul class="small">
+              <li>Investigar lugares revela pruebas y documentos.</li>
+              <li>Preguntar a sospechosos cuesta algo de tiempo pero puede revelar contradicciones.</li>
+              <li>Al final debes acusar seleccionando: sospechoso principal, arma y (opcional) cómplice.</li>
+              <li>El juego tiene varios finales según pruebas reunidas y la acusación.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Registro / Bitácora</h3>
+          <div class="log" id="log">
+            <div><em>Comienzo de la investigación: lee documentos y registra hipótesis.</em></div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <strong>Tu libreta</strong>
+            <textarea id="notepad" class="notearea" placeholder="Anota tus hipótesis aquí..."></textarea>
+            <div style="margin-top:8px;display:flex;gap:8px;">
+              <button class="btn" id="saveNote">Guardar nota</button>
+              <button class="btn" id="clearNote" style="background:#999;color:#08111b;">Borrar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Sospechosos</h3>
+          <div class="suspects" id="suspectsList">
+            <!-- rellenado por JS -->
+          </div>
+
+          <hr style="margin:8px 0;border-color:rgba(255,255,255,0.03)">
+
+          <strong>Interrogatorio</strong>
+          <div class="small">Elige preguntas (cada una gasta tiempo). Las respuestas pueden ser verdaderas o mentiras.</div>
+          <div class="question-list" id="questions">
+            <!-- preguntas dinámicas -->
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- DERECHA: herramientas, acusación -->
+    <aside class="right panel">
+      <div>
+        <h3>Herramientas</h3>
+        <div class="small">Mantén el orden de las pruebas y firma hipótesis.</div>
+        <div style="margin-top:8px;">
+          <button class="btn" id="forensicBtn">Enviar a forense (análisis) - 120s</button>
+          <div class="small" style="margin-top:6px;">Análisis forense devolverá: arma probable, huellas, rastro de ADN si está presente.</div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <button class="btn" id="viewFiles">Ver expediente completo</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <h3>Acusar</h3>
+        <div class="small">Cuando estés listo, presenta la acusación formal.</div>
+
+        <div style="margin-top:8px;">
+          <label class="small">Sospechoso principal</label>
+          <select id="acc_suspect" style="width:100%;padding:8px;border-radius:6px;background:#071a27;border:1px solid rgba(255,255,255,0.02);color:#dff0ff;margin-top:6px;">
+            <option value="">-- elegir --</option>
+          </select>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label class="small">Arma</label>
+          <select id="acc_weapon" style="width:100%;padding:8px;border-radius:6px;background:#071a27;border:1px solid rgba(255,255,255,0.02);color:#dff0ff;margin-top:6px;">
+            <option value="">-- elegir --</option>
+            <option value="cuchillo">Cuchillo (machete pequeño)</option>
+            <option value="botella">Botella rota</option>
+            <option value="candelabro">Candelabro metálico</option>
+            <option value="cuerda">Cuerda / estrangulamiento</option>
+            <option value="pieza">Pieza de hierro (marco)</option>
+          </select>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label class="small">Posible cómplice (opcional)</label>
+          <select id="acc_accomplice" style="width:100%;padding:8px;border-radius:6px;background:#071a27;border:1px solid rgba(255,255,255,0.02);color:#dff0ff;margin-top:6px;">
+            <option value="">-- ninguno --</option>
+          </select>
+        </div>
+
+        <div style="margin-top:10px;">
+          <button class="btn" id="submitAccusation">Presentar acusación</button>
+        </div>
+
+        <div id="resultArea"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="small">Documentos clave: informe forense preliminar, bitácora del inspector anterior, mensajes recuperados.</div>
+    <div style="display:flex;gap:8px;">
+      <button id="restart" class="btn" style="background:#a33;color:#fff;">Reiniciar partida</button>
+    </div>
+  </footer>
+
+  <script>
+    /******************************************************
+     * Juego: Caso El Faro - JavaScript
+     * Contenido en español. Auto-contenido. No necesita red.
+     ******************************************************/
+
+    // --- Datos del caso (estáticos, pero formulados para jugar) ---
+    const suspects = [
+      {
+        id: 'rosa',
+        name: 'Rosa Vega',
+        role: 'Barman / Empleada',
+        desc: 'Bartender y mano derecha del difunto. Relación sentimental ambigua con la víctima; discutieron días antes por dinero.',
+        truthfulness: 0.8, // 0..1 probabilidad de decir la verdad
+        alibi: 'Dice que estaba barriendo y atendiendo clientes hasta las 02:10 y luego salió a la cocina; afirma que volvió a la barra a las 02:30.',
+        motive: 'Relación personal rota y deudas no saldadas con Mateo.',
+        canBeAccomplice: true
+      },
+      {
+        id: 'javi',
+        name: 'Javier "Javi" Morales',
+        role: 'Socio comercial',
+        desc: 'Socio en la taberna. Tenía desacuerdos fuertes por inversiones y extracción de dinero del negocio.',
+        truthfulness: 0.6,
+        alibi: 'Se marchó antes esa noche, según dice; un testigo lo vio discutir con Mateo el día anterior.',
+        motive: 'Posible interés en eliminar a Mateo para tomar control de la sociedad.',
+        canBeAccomplice: true
+      },
+      {
+        id: 'elena',
+        name: 'Elena Duarte',
+        role: 'Activista / Cliente habitual',
+        desc: 'Ambientalista local; tuvo una pelea pública con Mateo por derrame y ruido de la taberna.',
+        truthfulness: 0.9,
+        alibi: 'Dice que dejó la zona antes de medianoche y que tiene testigos; afirma no volver esa noche.',
+        motive: 'Rencillas públicas; insultos y amenazas por parte de la víctima.',
+        canBeAccomplice: false
+      },
+      {
+        id: 'marco',
+        name: 'Marco Rueda',
+        role: 'Exconvicto / Deudas',
+        desc: 'Deudor del fallecido; se le vio amenazando a Mateo hace unas semanas. Tiene antecedentes de violencia.',
+        truthfulness: 0.4,
+        alibi: 'Dice que estaba durmiendo en la pensión de la esquina y que no salió esa noche.',
+        motive: 'Cobro de deuda y resentimiento; posibilidad de un enfrentamiento físico.',
+        canBeAccomplice: true
+      },
+      {
+        id: 'daniel',
+        name: 'Daniel Ortiz',
+        role: 'Vecino / Testigo nocturno',
+        desc: 'Vive en el edificio encima de la taberna. Sale a fumar a la misma hora casi todas las noches; oye voces.',
+        truthfulness: 0.7,
+        alibi: 'Dice que estuvo en su balcón a las 02:15 y vio a alguien correr por el callejón.',
+        motive: 'No aparente; celos menores por el ruido, pero conocía la vida nocturna del bar.',
+        canBeAccomplice: false
+      }
+    ];
+
+    // Testigos independientes (no siempre coinciden)
+    const witnesses = [
+      { name:'Marta (limpieza)', text:'Vio a Rosa salir del bar a las 02:12 y volver nerviosa', truth: true },
+      { name:'Pedro (cliente)', text:'Escuchó a Mateo discutir con "Javi" esa noche', truth: false }, // miente
+      { name:'Silvia (repartidora)', text:'Trajo bebidas a la barra a la 01:50, no vio nada raro luego', truth: true },
+      { name:'Carlos (portero)', text:'Dice que vio a Marco rondando el callejón a las 02:05', truth: false }, // miente
+      { name:'Ana (vendedora)', text:'Oyó un grito a las 02:20 y luego pasos', truth: true }
+    ];
+
+    // Pistas escondidas por ubicación
+    const locations = {
+      escena: {
+        name:'Callejón detrás de la Taberna',
+        timeCost: 60,
+        clues:[
+          { id:'cuchillo_ensang', title:'Cuchillo con restos de sangre', desc:'Cuchillo de cocina con huellas parciales. Restos de sangre recientemente limpiados parcialmente.', important:true },
+          { id:'huellas_suelo', title:'Huellas en barro', desc:'Unas huellas con patrón deportivo que se dirigen hacia la puerta trasera del bar. Tamaño grande (posible Marco o Javi).', important:false },
+          { id:'botella_rota', title:'Fragmento de botella', desc:'Cristal con una pequeña mancha oscura; no parece la herida fatal.', important:false }
+        ],
+        doc: null
+      },
+      taberna: {
+        name:'Interior - Taberna "El Faro"',
+        timeCost: 45,
+        clues:[
+          { id:'vino_cuenta', title:'Cuenta de caja (registro)', desc:'Caja registradora: falta una retirada de efectivo en la noche anterior por 700€. Firma: "J. Morales".', important:true },
+          { id:'recibo_entrega', title:'Recibo de entrega', desc:'Recibo de proveedor con hora de entrega 01:48 (silvia).', important:false },
+          { id:'cinta_camar', title:'Cámara interior (obstruida)', desc:'Grabación con la cámara de seguridad que tiene 20 segundos borrados entre 02:08-02:13.', important:true }
+        ],
+        doc: { title:'Horario de empleados', content:'Rosa estaba de servicio 22:00-04:00. Javi no figura en nómina.' }
+      },
+      oficina: {
+        name:'Oficina del fallecido',
+        timeCost: 50,
+        clues:[
+          { id:'transferencia', title:'Transferencia bancaria', desc:'Transferencia reciente a nombre de "F. Soler" por 3000€; ordenada 3 días antes.', important:true },
+          { id:'nota_amenaza', title:'Nota anónima', desc:'Nota: "Devuélve lo que nos debes o lo pagarás". Con tinta azul, sin firma.', important:false },
+          { id:'libro_cuentas', title:'Libro de cuentas', desc:'Registro de débitos: Marco aparece como deudor pendiente; Javi aparece como socio con acceso a caja.', important:true }
+        ],
+        doc: { title:'Correo electrónico impreso', content:'Email de Javi pidiendo reunión para "resolver el asunto" el 2 de septiembre.' }
+      },
+      telefono: {
+        name:'Teléfono del fallecido (recuperación)',
+        timeCost: 90,
+        clues:[
+          { id:'sms_elena', title:'SMS borrado (recuperable)', desc:'Fragmento de SMS recuperado: "...si no paro esto, vas a perderlo todo. Nos vemos esta noche." Firmado M.', important:true },
+          { id:'llamada_entrante', title:'Registro de llamada', desc:'Llamada perdida de un número privado a las 02:18; duración 0:12s.', important:false },
+          { id:'chat_robo', title:'Chat de caja', desc:'Conversación con Javi: "Hice lo que había que hacer. Deja las cosas en mis manos."', important:true }
+        ],
+        doc: { title:'Copia de pantalla (recuperada)', content:'El archivo de fotos del móvil tiene una foto borrosa del callejón; se ve una figura encapuchada.' }
+      },
+      casillero: {
+        name:'Casillero del inspector anterior',
+        timeCost: 40,
+        clues:[
+          { id:'nota_herrera', title:'Nota del inspector Herrera', desc:'Entrada en libreta: "Algo huele raro. Si me pasa algo, buscar en la cuenta de J." (tachado).', important:true },
+          { id:'foto_borrada', title:'Foto parcialmente quemada', desc:'Foto con la cara rasgada; en el reverso se lee "no confiar en..."', important:true },
+          { id:'llave', title:'Llave con etiqueta', desc:'Llave con etiqueta "Trastero 3".', important:false }
+        ],
+        doc: { title:'Informe parcial de Herrera', content:'Herrera sospechaba de manipulación de cámaras y desaparición de 700€ de la caja. Tenía amenazas anónimas.' }
+      }
+    };
+
+    // Arma verdadera en este diseño (puede ser variable si quieres): Cuchillo
+    const trueWeapon = 'cuchillo';
+    // Culplable principal diseño: Javi (para este escenario)
+    const trueCulprit = 'javi';
+    // Cómplice posible: Rosa (ella puede haber ayudado a ocultar el arma)
+    const trueAccomplice = 'rosa';
+
+    // Estado del juego
+    const state = {
+      timeLeft: 30*60, // segundos
+      usedTime: 0,
+      evidence: [], // ids
+      docsSeen: [],
+      forensicRequested: false,
+      forensicResult: null,
+      questioned: {}, // {suspectId: [questionsAsked...]}
+      discoveredClues: new Set()
+    };
+
+    // Preguntas disponibles
+    const questions = [
+      { id:'q1', text:'¿Dónde estabas entre 02:00 y 02:30?' },
+      { id:'q2', text:'¿Conocías la deuda de Marco?' },
+      { id:'q3', text:'¿Viste a alguien entrar o salir por el callejón?' },
+      { id:'q4', text:'¿Había dinero faltante en caja?' },
+      { id:'q5', text:'¿Tu relación con Mateo era profesional o personal?' },
+      { id:'q6', text:'¿Sabías que alguien había manipulado las cámaras?' }
+    ];
+
+    // Utilidades
+    function log(msg){
+      const el = document.getElementById('log');
+      const time = formatTime( (30*60) - state.timeLeft );
+      el.innerHTML += `<div><span class="small">[${time}]</span> ${msg}</div>`;
+      el.scrollTop = el.scrollHeight;
+    }
+    function formatTime(s){
+      const mm = Math.floor(s/60).toString().padStart(2,'0');
+      const ss = (s%60).toString().padStart(2,'0');
+      return mm+':'+ss;
+    }
+    function updateTimerDisplay(){
+      document.getElementById('timer').textContent = formatTime(state.timeLeft);
+      document.getElementById('time-used').textContent = `Tiempo usado: ${state.usedTime}s`;
+    }
+
+    // Inicialización visual
+    function init(){
+      const suspectsDiv = document.getElementById('suspectsList');
+      suspects.forEach(s=>{
+        const div = document.createElement('div'); div.className='suspect';
+        div.innerHTML = `<div style="flex:1">
+            <strong>${s.name}</strong>
+            <div class="small">${s.role} — ${s.desc}</div>
+            <div class="small" style="margin-top:6px;"><em>Álibi:</em> ${s.alibi}</div>
+            <div style="margin-top:8px;">
+              <button class="btn" data-id="${s.id}" onclick="startQuestion('${s.id}')">Interrogar</button>
+              <button style="margin-left:6px;padding:8px;border-radius:8px;" onclick="viewSuspectDoc('${s.id}')">Ver antecedentes</button>
+            </div>
+          </div>`;
+        suspectsDiv.appendChild(div);
+      });
+
+      // preguntas
+      const qdiv = document.getElementById('questions');
+      questions.forEach(q=>{
+        const b = document.createElement('button'); b.textContent=q.text; b.onclick=()=>askQuestion(q.id);
+        qdiv.appendChild(b);
+      });
+
+      // Ubicaciones botones
+      document.querySelectorAll('[data-loc]').forEach(btn=>{
+        btn.addEventListener('click', ()=>inspectLocation(btn.getAttribute('data-loc')));
+      });
+
+      // Evidences list empty
+      updateEvidenceUI();
+
+      // Fill accusation selects
+      const accSus = document.getElementById('acc_suspect');
+      const accAcc = document.getElementById('acc_accomplice');
+      suspects.forEach(s=>{
+        const o = document.createElement('option'); o.value=s.id; o.textContent = s.name;
+        accSus.appendChild(o);
+        const o2 = document.createElement('option'); o2.value=s.id; o2.textContent = s.name;
+        accAcc.appendChild(o2);
+      });
+
+      // Files button
+      document.getElementById('viewFiles').addEventListener('click', ()=>viewExpediente());
+      document.getElementById('forensicBtn').addEventListener('click', ()=>requestForensic());
+      document.getElementById('saveNote').addEventListener('click', ()=>saveNote());
+      document.getElementById('clearNote').addEventListener('click', ()=>clearNote());
+      document.getElementById('submitAccusation').addEventListener('click', ()=>submitAccusation());
+      document.getElementById('restart').addEventListener('click', ()=>location.reload());
+
+      // Start timer tick
+      updateTimerDisplay();
+      timerTick();
+      log('Has tomado el caso en sustitución del inspector Luis Herrera. Revisa su casillero y expediente.');
+      // show initial docs
+      renderInitialDocs();
+    }
+
+    // Timer: restando cada segundo
+    function timerTick(){
+      const iv = setInterval(()=>{
+        if(state.timeLeft <= 0){
+          clearInterval(iv);
+          state.timeLeft = 0;
+          updateTimerDisplay();
+          log('Se acabó el tiempo. Debes presentar la acusación ahora.');
+          // auto-disable actions optional
+        } else {
+          state.timeLeft--;
+          state.usedTime++;
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    // Inspeccionar ubicación (consume tiempo)
+    function inspectLocation(locKey){
+      if(!locations[locKey]) return;
+      const loc = locations[locKey];
+      if(state.timeLeft <= 10){ log('Tiempo insuficiente para investigar.'); return; }
+      state.timeLeft -= loc.timeCost;
+      state.usedTime += loc.timeCost;
+      updateTimerDisplay();
+      log(`Inspeccionas: ${loc.name}.`);
+      // mostrar pistas
+      const docs = document.getElementById('docs');
+      const panel = document.createElement('div');
+      panel.className = 'doc';
+      panel.innerHTML = `<strong>${loc.name}</strong><div class="small" style="margin-top:6px;">Observaciones:</div>`;
+      loc.clues.forEach(c=>{
+        const hidden = state.discoveredClues.has(c.id) ? 'clue-revealed' : 'clue-hidden';
+        const p = document.createElement('div');
+        p.className = `small ${hidden}`;
+        p.innerHTML = `<strong>${c.title}</strong><div style="margin-top:4px;">${c.desc}</div>`;
+        p.onclick = ()=>collectClue(locKey,c.id);
+        panel.appendChild(p);
+      });
+      if(loc.doc){
+        const dd = document.createElement('div'); dd.className='small'; dd.style.marginTop='8px';
+        dd.innerHTML = `<strong>Documento:</strong> ${loc.doc.title} <button style="margin-left:8px;padding:6px;border-radius:6px;" onclick="seeDoc('${locKey}')">Ver</button>`;
+        panel.appendChild(dd);
+      }
+      docs.prepend(panel);
+    }
+
+    // Recoger pista (revelar)
+    function collectClue(locKey, clueId){
+      // reveal and add to evidence
+      const loc = locations[locKey];
+      const c = loc.clues.find(x=>x.id===clueId);
+      if(!c) return;
+      if(state.discoveredClues.has(clueId)){
+        log(`Ya recolectaste: ${c.title}.`);
+        return;
+      }
+      state.discoveredClues.add(clueId);
+      state.evidence.push({id:clueId,title:c.title,desc:c.desc});
+      // small chance some clues require forense
+      log(`Recogiste la evidencia: ${c.title}`);
+      updateEvidenceUI();
+      // mark doc UI to reveal (re-render docs)
+      renderDocs();
+    }
+
+    function updateEvidenceUI(){
+      const el = document.getElementById('evidenceList'); el.innerHTML='';
+      state.evidence.forEach(ev=>{
+        const div = document.createElement('div'); div.className='item collected';
+        div.innerHTML = `<strong>${ev.title}</strong><div class="small">${ev.desc}</div>`;
+        el.appendChild(div);
+      });
+      if(state.evidence.length===0){
+        el.innerHTML = '<div class="small">Aún no has recogido evidencias.</div>';
+      }
+    }
+
+    function seeDoc(locKey){
+      const loc = locations[locKey];
+      if(!loc.doc) return;
+      const docs = document.getElementById('docs');
+      const panel = document.createElement('div');
+      panel.className='doc';
+      panel.innerHTML = `<strong>${loc.doc.title}</strong><div class="small" style="margin-top:6px;">${loc.doc.content}</div>`;
+      docs.prepend(panel);
+      state.docsSeen.push(loc.doc.title);
+      log(`Leíste documento: ${loc.doc.title}`);
+    }
+
+    function renderInitialDocs(){
+      const docs = document.getElementById('docs');
+      // Expediente inicial
+      const exp = document.createElement('div'); exp.className='doc';
+      exp.innerHTML = `<strong>Informe preliminar de la escena</strong>
+        <div class="small" style="margin-top:6px;">
+        - Herida penetrante en zona dorsal (penetró pulpa pulmonar).<br>
+        - Hora estimada: 02:20.<br>
+        - No se han localizado cámaras públicas cercanas con imagen clara.<br>
+        - Nota: "Inspector Herrera investigaba manipulación de caja y cámaras".</div>`;
+      docs.appendChild(exp);
+    }
+
+    function renderDocs(){
+      // refresh docs; show inspector note early
+      const docs = document.getElementById('docs');
+      // ensure casillero doc shown early
+      if(!state.docsSeen.includes('Informe parcial de Herrera')){
+        const panel = document.createElement('div'); panel.className='doc';
+        panel.innerHTML = `<strong>Informe parcial de Herrera</strong><div class="small" style="margin-top:6px;">El inspector Herrera informó de retiradas no autorizadas de caja por 700€ y anotó: "Revisar J. Morales - cámaras manipuladas".</div>`;
+        docs.appendChild(panel);
+        state.docsSeen.push('Informe parcial de Herrera');
+      }
+    }
+
+    // Interrogar sospechoso (abre modal simplificado)
+    function startQuestion(susId){
+      const s = suspects.find(x=>x.id===susId);
+      if(!s) return;
+      log(`Comienzas interrogatorio breve a ${s.name}.`);
+      // open a small prompt sequence
+      const q = prompt(`Interrogar a ${s.name}.\nEscribe la pregunta que quieres hacer (elige entre: dónde, deuda, ver, dinero, relación, cámaras)`);
+      if(!q) { log('Interrogatorio cancelado.'); return; }
+      // map to Qs
+      let qKey = null;
+      if(/dónde|donde|estabas/.test(q.toLowerCase())) qKey='q1';
+      if(/deuda|Marco/.test(q.toLowerCase())) qKey='q2';
+      if(/ver|visto|vista/.test(q.toLowerCase())) qKey='q3';
+      if(/dinero|caja|retirad/.test(q.toLowerCase())) qKey='q4';
+      if(/relación|romp|personal|profesional/.test(q.toLowerCase())) qKey='q5';
+      if(/cámara|camara|camaras|manipul/.test(q.toLowerCase())) qKey='q6';
+      if(!qKey){ log('Pregunta no entendida. Intenta con palabras clave: dónde, deuda, ver, dinero, relación, cámaras.'); return; }
+      askSpecificQuestion(susId,qKey);
+    }
+
+    // Pregunta programática (viene de botones)
+    function askQuestion(qid){
+      // ask next suspect selected? Prompt to choose suspect
+      const suspectNames = suspects.map(s=>`${s.name} (${s.id})`).join('\\n');
+      const sid = prompt(`A quién interrogar? Escribe el id del sospechoso:\n${suspectNames}`);
+      if(!sid) { log('Interrogatorio cancelado.'); return; }
+      const s = suspects.find(x=>x.id===sid);
+      if(!s){ log('Sospechoso no reconocido.'); return; }
+      askSpecificQuestion(s.id,qid);
+    }
+
+    function askSpecificQuestion(sid,qid){
+      const s = suspects.find(x=>x.id===sid);
+      if(!s) return;
+      // cost time per question
+      const cost = 30;
+      if(state.timeLeft < cost+5){ log('Tiempo insuficiente para interrogar.'); return; }
+      state.timeLeft -= cost; state.usedTime += cost; updateTimerDisplay();
+      // determine whether say truth or lie based on truthfulness probability
+      const saysTruth = Math.random() < s.truthfulness;
+      let response = "";
+      // Based on qid and suspect generate response; if lying, invert or mislead
+      if(qid === 'q1'){
+        response = saysTruth ? s.alibi : (s.alibi + ' (dice haber salido a la trastienda, pero su reloj de pulsera marca 02:05 según testigo)');
+      } else if(qid === 'q2'){
+        response = saysTruth ? (s.name + ' admite conocer la deuda, pero niega implicación directa.') : (s.name + ' niega conocer a Marco; afirma que es difamación.');
+      } else if(qid === 'q3'){
+        // if truthful, may point to someone
+        if(saysTruth){
+          if(s.id==='daniel') response = 'Vi a una figura correr por el callejón, encapuchada, pero no distinguí rasgos.';
+          else if(s.id==='rosa') response = 'Vi a Javi fuera discutiendo la noche anterior, pero no lo vi esa madrugada.';
+          else response = 'No vi a nadie específico; apenas hubo ruido esa noche.';
+        } else {
+          response = 'No vi a nadie; no salí en toda la noche.';
+        }
+      } else if(qid === 'q4'){
+        response = saysTruth ? 'No puedo confirmar retirada; la caja estaba cerrada cuando me fui.' : 'No, yo no toqué la caja. (sospechosamente evasivo)';
+      } else if(qid === 'q5'){
+        response = saysTruth ? (s.name + ' dice que su relación era profesional con tensiones recientes.') : (s.name + ' dice que eran amigos cercanos y que se resolvería todo.');
+      } else if(qid === 'q6'){
+        if(saysTruth) response = 'He oído rumores de que alguien conocía el sistema de cámaras; Mateo discutió con alguien sobre grabaciones.';
+        else response = 'Nunca he oído nada sobre cámaras; eso son teorías de conspiración.';
+      }
+      log(`<strong>${s.name}</strong> respondió: "${response}"`);
+      // track questioned
+      if(!state.questioned[sid]) state.questioned[sid]=[];
+      state.questioned[sid].push({q:qid,resp:response,truth:saysTruth});
+    }
+
+    function viewSuspectDoc(sid){
+      const s = suspects.find(x=>x.id===sid);
+      if(!s) return;
+      log(`Revisas antecedentes y notas sobre ${s.name}.`);
+      const docs = document.getElementById('docs');
+      const panel = document.createElement('div'); panel.className='doc';
+      panel.innerHTML = `<strong>Ficha: ${s.name}</strong>
+        <div class="small" style="margin-top:6px;">
+        Rol: ${s.role}<br>
+        Motivo potencial: ${s.motive || 'No aparente'}<br>
+        Observaciones: ${s.desc}
+        </div>`;
+      docs.prepend(panel);
+    }
+
+    // Forense (analisis) genera resultado basado en evidencia reunida
+    function requestForensic(){
+      if(state.forensicRequested){ log('El laboratorio ya está procesando tu solicitud.'); return; }
+      if(state.timeLeft < 120+5){ log('No hay tiempo suficiente para análisis forense.'); return; }
+      state.timeLeft -= 120; state.usedTime += 120;
+      updateTimerDisplay();
+      state.forensicRequested = true;
+      log('Solicitaste análisis forense. Resultados en breve...');
+      // Simula entrega inmediata (para el juego) pero con comprobación de evidencias
+      setTimeout(()=>{ // simular procesamiento
+        const found = {};
+        // if cuchillo evidence collected -> match
+        if(state.discoveredClues.has('cuchillo_ensang')){
+          found.weapon = 'cuchillo';
+          found.huellas = 'Parciales: huellas coinciden con acceso a caja (J. Morales tiene impresiones parciales en mango).';
+          found.adn = 'ADN no concluyente; mezcla de perfiles. Posible manipulación para incriminar a otro.';
+        } else {
+          found.weapon = 'indeterminado';
+          found.huellas = 'Huellas borrosas';
+          found.adn = 'ADN degradado';
+        }
+        state.forensicResult = found;
+        log('Resultados forenses recibidos: arma probable: ' + found.weapon + '. ' + found.huellas);
+        // show forensic report in docs
+        const docs = document.getElementById('docs');
+        const panel = document.createElement('div'); panel.className='doc';
+        panel.innerHTML = `<strong>Informe forense</strong><div class="small" style="margin-top:6px;">
+          Arma probable: ${found.weapon}.<br>
+          Huellas: ${found.huellas}.<br>
+          ADN: ${found.adn}.
+        </div>`;
+        docs.prepend(panel);
+      }, 1000);
+    }
+
+    function saveNote(){
+      const n = document.getElementById('notepad').value;
+      if(n.trim()===''){ alert('La nota está vacía.'); return; }
+      log(`Nota guardada: ${n.substring(0,80)}${n.length>80 ? '...' : ''}`);
+      document.getElementById('notepad').value='';
+    }
+    function clearNote(){ document.getElementById('notepad').value=''; log('Notas borradas.'); }
+
+    function viewExpediente(){
+      const docs = document.getElementById('docs');
+      const panel = document.createElement('div'); panel.className='doc';
+      panel.innerHTML = `<strong>Expediente completo (resumen)</strong>
+        <div class="small" style="margin-top:6px;">
+        - Huellas llevan hacia y desde la taberna.<br>
+        - Retirada de 700€ no explicada (registro de caja).<br>
+        - Grabación con 20s borrados durante la noche.<br>
+        - Nota de Herrera: "Buscar en J. Morales".<br>
+        - Mensajes del teléfono del fallecido muestran "M." como remitente amenazante.<br>
+        - Sospecha de cómplice para ocultar arma o limpiar escena.
+        </div>`;
+      docs.prepend(panel);
+      log('Has consultado el expediente completo.');
+    }
+
+    // Al presentar acusación, comprobamos evidencia y mostramos final
+    function submitAccusation(){
+      const s = document.getElementById('acc_suspect').value;
+      const w = document.getElementById('acc_weapon').value;
+      const a = document.getElementById('acc_accomplice').value;
+      if(!s || !w){ alert('Debes seleccionar al menos sospechoso principal y arma.'); return; }
+      // evaluate
+      let correct = (s===trueCulprit) && (w===trueWeapon);
+      // acomplice optional: if user selects trueAccomplice then increase conviction clarity
+      let accompliceCorrect = (a===trueAccomplice);
+      const res = document.getElementById('resultArea');
+      res.innerHTML = '';
+      const box = document.createElement('div'); box.className='result';
+      if(correct && (a==='' || accompliceCorrect || trueAccomplice==='rosa' && a==='rosa')){
+        box.style.background='#072118'; box.style.border='1px solid rgba(51,204,136,0.12)';
+        box.innerHTML = `<strong>Acusación presentada</strong>
+          <div class="small" style="margin-top:8px;">
+          Has acusado a <strong>${getName(s)}</strong> por homicidio con <strong>${weaponLabel(w)}</strong>.
+          ${a ? 'Has incluido como cómplice a ' + getName(a) + '.' : 'No has incluido cómplice.'}
+          </div>
+          <div style="margin-top:10px;"><strong>Resultado:</strong> <span style="color:var(--green)">Caso resuelto</span></div>
+          <div class="small" style="margin-top:8px;">Motivación (resumen policial): Registros bancarios y conversaciones incriminan a J. Morales por disponer de fondos. Huellas parciales en el cuchillo y audio borrado de la cámara apuntan a manipulación por parte del acusado. Rosa ayudó a ocultar el arma tras la agresión (movimiento de 02:24 en transcripción de testigos y su nerviosismo). Herrera había apuntado a J. Morales antes de morir.</div>
+          <div style="margin-top:8px;" class="small"><em>Final alternativo: si no reuniste pruebas forenses, la fiscalía pedirá más tiempo pero la acusación puede no prosperar en juicio. Tu actuación fue lo mejor con el material disponible.</em></div>
+        `;
+        res.appendChild(box);
+        log('Has presentado una acusación que conduce a la detención del sospechoso. Felicidades.');
+      } else {
+        box.style.background='#241012'; box.style.border='1px solid rgba(255,150,120,0.08)';
+        box.innerHTML = `<strong>Acusación presentada</strong>
+          <div class="small" style="margin-top:8px;">
+          Acusaste a <strong>${getName(s)}</strong> por homicidio con <strong>${weaponLabel(w)}</strong>.
+          ${a ? 'Incluiste como cómplice a ' + getName(a) + '.' : ''}
+          </div>
+          <div style="margin-top:10px;"><strong>Resultado:</strong> <span style="color:#ff8b8b">Acusación débil / incorrecta</span></div>
+          <div class="small" style="margin-top:8px;">Motivación: La evidencia disponible no liga de forma concluyente al acusado con el arma seleccionada. Puedes revisar las pruebas: ${state.evidence.map(e=>e.title).join(', ') || 'sin evidencias recogidas'}.</div>
+          <div style="margin-top:8px;" class="small"><em>Consejo:</em> Revisa las transferencias bancarias, las cámaras con frames faltantes, las transcripciones de testigos y la libreta de Herrera.</div>
+        `;
+        res.appendChild(box);
+        log('La acusación no fue concluyente. El caso queda abierto y puede haber consecuencias por acusación errónea.');
+      }
+    }
+
+    // Ayudas de texto
+    function getName(id){ return suspects.find(s=>s.id===id)?.name || 'Desconocido'; }
+    function weaponLabel(k){
+      const map = {cuchillo:'cuchillo',botella:'botella rota',candelabro:'candelabro metálico',cuerda:'cuerda',pieza:'pieza de hierro'};
+      return map[k] || k;
+    }
+
+    // Mostrar docs dinámicos al inicio (inspector herrera)
+    // Cargar UI inicial
+    window.onload = init;
+
+    // Exponer funciones para handlers usados en HTML (collectClue desde dynamic nodes)
+    window.collectClue = collectClue;
+    window.seeDoc = seeDoc;
+    window.startQuestion = startQuestion;
+    window.viewSuspectDoc = viewSuspectDoc;
+    window.askQuestion = askQuestion;
+
+    // Extra: renderar algunos clues como descubiertos gradualmente para que haya juego
+    // (No hacer todo trivial: algunas pistas requieren que el jugador vaya y las recoja)
+    function renderSomeHiddenClues(){
+      // mantener vacío por ahora
+    }
+
+    /***************
+     * Notas de diseño / conjeturas del policía (texto para documentación en el juego)
+     ***************/
+    const policeNotes = [
+      `Hipótesis primaria: disputa por control del negocio. La transferencia reciente y la retirada de 700€ indican motivo económico (J. Morales).`,
+      `Posible modus operandi: agresión rápida con arma blanca durante salida de la víctima al exterior. Limpieza parcial del arma indica intención de ocultación; necesidad de buscar cómplice.`,
+      `La manipulación de las cámaras (20s borrados) sugiere conocimiento técnico o acceso previo; Herrera anotó "revisar J. Morales" en su libreta, lo que es significativo.`,
+      `Si la acusación incluye cómplice, deberás probar que esa persona tuvo acceso al arma o ayudó a ocultarla (testigos, huellas, mensajes).`
+    ];
+
+    // Añadir notas al expediente como documento visible
+    setTimeout(()=>{
+      const docs = document.getElementById('docs');
+      const panel = document.createElement('div'); panel.className='doc';
+      panel.innerHTML = `<strong>Conjeturas policiales (entrada)</strong>
+        <div class="small" style="margin-top:6px;">
+        ${policeNotes.map(n=>`• ${n}`).join('<br>')}
+        </div>`;
+      docs.prepend(panel);
+    },1500);
+
+  </script>
+</body>
+</html>
