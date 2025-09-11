@@ -2,14 +2,128 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Juego Detective - Casos</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Archivo de Casos - División de Homicidios</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background: #e5dfd4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2d2d2d;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    .archivador {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .carpeta {
+      width: 200px;
+      height: 140px;
+      background: #c8a165;
+      border: 2px solid #8a5a2d;
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+    .carpeta:hover {
+      transform: translateY(-5px);
+    }
+    .etiqueta {
+      position: absolute;
+      top: -25px;
+      left: 20px;
+      width: 80px;
+      height: 25px;
+      background: #b38952;
+      border: 2px solid #8a5a2d;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .contenido {
+      padding: 10px;
+      color: #2d2d2d;
+      font-size: 14px;
+    }
+    .resuelto {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 128, 0, 0.2),
+        rgba(0, 128, 0, 0.2) 10px,
+        rgba(0, 128, 0, 0.3) 10px,
+        rgba(0, 128, 0, 0.3) 20px
+      );
+      border: 2px solid green !important;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #444;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      border: 2px solid #333;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>Juego Detective</h1>
-  <h2>Casos disponibles</h2>
-  <ul id="casos-lista"></ul>
+  <h1>ARCHIVO DE CASOS</h1>
+  
+  <div class="archivador" id="lista-casos">
+    <!-- Carpeta del caso 1 -->
+    <div class="carpeta" onclick="abrirCaso('caso1.html')" id="caso1">
+      <div class="etiqueta">Caso 1</div>
+      <div class="contenido">
+        <p><strong>El Faro</strong></p>
+        <p>Homicidio del farero Julián Ortega.<br>
+        Sospechosos: sobrina, pescador, periodista, guardia, cura.</p>
+      </div>
+    </div>
+  </div>
 
-  <script src="index.js"></script>
+  <button onclick="abrirDossier()">📂 Abrir Dossier</button>
+
+  <footer>
+    División de Homicidios - Acceso Restringido
+  </footer>
+
+  <script>
+    // Revisar progreso en localStorage y marcar carpetas resueltas
+    document.addEventListener("DOMContentLoaded", () => {
+      const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+      Object.keys(progreso).forEach(id => {
+        if (progreso[id]) {
+          document.getElementById(id).classList.add("resuelto");
+        }
+      });
+    });
+
+    function abrirCaso(html) {
+      window.location.href = html;
+    }
+
+    // Abrir dossier en una ventana separada
+    function abrirDossier() {
+      window.open("dossier.html", "Dossier", "width=800,height=600,scrollbars=yes");
+    }
+  </script>
 </body>
 </html>
