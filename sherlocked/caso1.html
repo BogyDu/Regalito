@@ -38,15 +38,19 @@
   <div class="carpeta"><div class="etiqueta">Resultado del Caso</div><div class="contenido" id="resultado"></div></div>
 </div>
 
+<button onclick="window.open('dossier.html','Dossier','width=800,height=600,scrollbars=yes')">📂 Abrir Dossier</button>
+
 <script src="caso-generico.js"></script>
 <script>
-const casoActual="caso1";
+window.casoActual="caso1";
+
 const pistas = {
   forense:"Informe forense: hora de muerte 23:00-23:45. Cráneo fracturado.",
   escena:"Cuerpo al pie de la escalera, sangre y arena.",
   bitacora:"Bitácora: sospechas de contrabando.",
   ramirez:"Notas: pescador miente, sobrina oculta algo."
 };
+
 const sospechosos = {
   sofia:"Sofía Ortega: sobrina, herencia dudosa.",
   mateo:"Mateo Duarte: pescador, contrabando sospechoso.",
@@ -54,6 +58,7 @@ const sospechosos = {
   ernesto:"Ernesto Vega: guardia, huellas en el faro.",
   padre:"Padre Anselmo: cura, rosario roto en escena."
 };
+
 const respuestas = {
   sofia:{donde:"En casa.",motivo:"No tenía.",relacion:"No conozco a nadie."},
   mateo:{donde:"En el mar.",motivo:"Jamás dañaría.",relacion:"Sí, conozco contrabandistas."},
@@ -61,21 +66,11 @@ const respuestas = {
   ernesto:{donde:"Rondas nocturnas.",motivo:"Ortega descubrió algo.",relacion:"Sí, conozco a los involucrados."},
   padre:{donde:"Rezando en sacristía.",motivo:"Protejo comunidad.",relacion:"Sí, algunos feligreses."}
 };
+
 const culpableReal="ernesto";
 const contradicciones={"sofia-mateo":{texto:"Sofía y Mateo contradicen coartadas",pista:"Documento secreto"}};
 
-// Inicializar botones y selects
-document.addEventListener("DOMContentLoaded",()=>{
-  const pistasSec = document.getElementById("pistas-seccion");
-  for(const id in pistas){ let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarPista(id); pistasSec.appendChild(btn); }
-
-  const sospSec = document.getElementById("sospechosos-seccion");
-  const selects = [document.getElementById("conf1"),document.getElementById("conf2"),document.getElementById("inter-sospechoso"),document.getElementById("culpable")];
-  for(const id in sospechosos){
-    let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarSospechoso(id); sospSec.appendChild(btn);
-    selects.forEach(s=>{let opt=document.createElement("option"); opt.value=id; opt.textContent=id; s.appendChild(opt);});
-  }
-});
+document.addEventListener("DOMContentLoaded",()=>{ inicializarCaso(); });
 </script>
 </body>
 </html>
