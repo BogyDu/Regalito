@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Caso - Nombre del Caso</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<h1>Caso: Nombre del Caso</h1>
+
+<div class="carpeta">
+  <div class="etiqueta">Pistas</div>
+  <div class="contenido" id="pistas-seccion">
+    <!-- Botones generados dinámicamente -->
+  </div>
+  <div id="pistas"></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Sospechosos</div>
+  <div class="contenido" id="sospechosos-seccion">
+    <!-- Botones generados dinámicamente -->
+  </div>
+  <div id="sospechosos"></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Confrontaciones</div>
+  <div class="contenido">
+    <p>Selecciona dos sospechosos:</p>
+    <select id="conf1"></select>
+    <select id="conf2"></select>
+    <button onclick="confrontar()">Confrontar</button>
+    <div id="confrontacion"></div>
+  </div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Interrogatorio</div>
+  <div class="contenido">
+    <select id="inter-sospechoso"></select>
+    <select id="inter-pregunta">
+      <option value="">-- Selecciona pregunta --</option>
+      <option value="donde">¿Dónde estabas la noche del crimen?</option>
+      <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
+      <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
+    </select>
+    <button onclick="interrogar()">Interrogar</button>
+    <div id="respuesta-interrogatorio"></div>
+  </div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Resolver Caso</div>
+  <div class="contenido">
+    <select id="culpable"></select>
+    <button onclick="resolverCaso()">Resolver</button>
+    <div id="resultado"></div>
+  </div>
+</div>
+
+<button onclick="abrirDossier()">📂 Abrir Dossier</button>
+
+<script src="caso-generico.js"></script>
+</body>
+</html>
