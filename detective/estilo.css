@@ -1,0 +1,10 @@
+body, select, button, textarea { font-family: "Segoe UI", sans-serif; background:#f0f0f0; padding:20px;}
+h1 { text-align:center; }
+button { cursor: pointer; margin:3px; }
+textarea { resize: vertical; }
+.caso-carpeta { display: inline-block; width: 200px; height: 120px; background: #f5f5f5; border: 2px solid #333; border-radius: 8px; margin: 15px; text-align: center; vertical-align: top; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; position: relative; }
+.caso-carpeta:hover { transform: scale(1.05); }
+.caso-carpeta .titulo { font-weight: bold; margin-top: 20px; }
+.caso-carpeta .estado { position: absolute; bottom: 10px; width: 100%; font-size: 0.9em; }
+#dossier { display:flex; }
+#pistas-seccion, #sospechosos-seccion { width:50%; padding:10px; }
