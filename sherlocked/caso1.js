@@ -1,4 +1,4 @@
-// --- Pistas iniciales ---
+// --- Pistas iniciales (contenido completo) ---
 const pistas = {
   forense: `
     <h3>Informe Forense</h3>
@@ -28,7 +28,15 @@ const pistas = {
   `
 };
 
-// --- Sospechosos ---
+// --- Resúmenes de pistas ---
+const resumenPistas = {
+  forense: "Informe forense: hora de muerte entre 23:00 y 23:45. Cráneo fracturado, olor a queroseno.",
+  escena: "Escena: cuerpo al pie de la escalera, objetos con sangre y arena húmeda en la entrada.",
+  bitacora: "Bitácora: Ortega sospechaba de contrabando, mencionó barcos sospechosos.",
+  ramirez: "Notas de Ramírez: pescador miente, sobrina oculta algo, guardia y cura implicados."
+};
+
+// --- Sospechosos (contenido completo) ---
 const sospechosos = {
   sofia: `
     <h3>Sofía Ortega (sobrina)</h3>
@@ -62,7 +70,16 @@ const sospechosos = {
   `
 };
 
-// --- Contradicciones posibles ---
+// --- Resúmenes de sospechosos ---
+const resumenSospechosos = {
+  sofia: "Sofía Ortega: sobrina, herencia y deudas. Coartada dudosa, vista en el puerto.",
+  mateo: "Mateo Duarte: pescador, sospechas de contrabando. Miente sobre dónde estaba.",
+  camila: "Camila Torres: periodista, investigaba contrabando. Coartada vaga.",
+  ernesto: "Ernesto Vega: guardia, coartada incompleta, huellas en el faro.",
+  padre: "Padre Anselmo: cura, sin testigos de su coartada, rosario roto en la escena."
+};
+
+// --- Contradicciones ---
 const contradicciones = {
   "sofia-mateo": {
     texto: "Sofía dijo que estaba en casa, pero Mateo asegura haberla visto en el puerto cerca de medianoche.",
@@ -81,91 +98,6 @@ const contradicciones = {
     pista: "Registro de barcos: Ernesto autorizó entrada de un navío sin inspección la noche del crimen."
   }
 };
-
-// --- Mostrar pistas y sospechosos ---
-function mostrarPista(id) {
-  document.getElementById("pistas").innerHTML = pistas[id];
-}
-
-function mostrarSospechoso(id) {
-  document.getElementById("sospechosos").innerHTML = sospechosos[id];
-}
-
-// --- Confrontación ---
-function confrontar() {
-  const s1 = document.getElementById("conf1").value;
-  const s2 = document.getElementById("conf2").value;
-  const div = document.getElementById("confrontacion");
-
-  if (!s1 || !s2 || s1 === s2) {
-    div.innerHTML = "<p style='color:red;'>Debes elegir dos sospechosos distintos.</p>";
-    return;
-  }
-
-  const key = `${s1}-${s2}`;
-  if (contradicciones[key]) {
-    div.innerHTML = `<p style='color:green;'><strong>Contradicción encontrada:</strong> ${contradicciones[key].texto}</p>`;
-    desbloquearPista(contradicciones[key].pista);
-  } else {
-    div.innerHTML = "<p style='color:gray;'>No se detectaron contradicciones claras.</p>";
-  }
-}
-
-// --- Desbloquear nueva pista secreta ---
-function desbloquearPista(texto) {
-  let pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
-
-  // Evitar duplicados
-  if (!pistasSecretas.includes(texto)) {
-    pistasSecretas.push(texto);
-    localStorage.setItem("pistasSecretasCaso1", JSON.stringify(pistasSecretas));
-  }
-
-  renderizarPistasSecretas();
-}
-
-// --- Renderizar pistas secretas desde localStorage ---
-function renderizarPistasSecretas() {
-  const divSecretas = document.getElementById("pistas-secretas");
-  divSecretas.innerHTML = ""; // Limpiar antes de pintar
-
-  const pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
-
-  pistasSecretas.forEach(p => {
-    const parrafo = document.createElement("p");
-    parrafo.innerHTML = `<strong>Pista secreta desbloqueada:</strong> ${p}`;
-    divSecretas.appendChild(parrafo);
-  });
-}
-
-// --- Resolver ---
-function resolverCaso() {
-  const seleccion = document.getElementById("culpable").value;
-  const resultadoDiv = document.getElementById("resultado");
-
-  if (!seleccion) {
-    resultadoDiv.innerHTML = "<p style='color:red;'>Debes seleccionar un sospechoso.</p>";
-    return;
-  }
-
-  if (seleccion === "ernesto") {
-    resultadoDiv.innerHTML = `
-      <p style='color:green;'><strong>Correcto:</strong> 
-      Ernesto Vega, el guardia portuario, es el asesino. 
-      Tenía acceso, coartada débil y huellas en la escena. 
-      Mató a Julián para silenciarlo sobre el contrabando en el faro.</p>`;
-    marcarCasoResuelto("caso1");
-  } else {
-    resultadoDiv.innerHTML = "<p style='color:red;'><strong>Incorrecto:</strong> Ese sospechoso no es el culpable. Vuelve a analizar las pistas.</p>";
-  }
-}
-
-// --- Guardar progreso de caso ---
-function marcarCasoResuelto(idCaso) {
-  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
-  progreso[idCaso] = true;
-  localStorage.setItem("progresoCasos", JSON.stringify(progreso));
-}
 
 // --- Guardar en localStorage listas de progreso ---
 function guardarLista(nombre, item) {
@@ -190,7 +122,7 @@ function mostrarSospechoso(id) {
   actualizarDossier();
 }
 
-// --- Confrontación (ya estaba) ---
+// --- Confrontación ---
 function confrontar() {
   const s1 = document.getElementById("conf1").value;
   const s2 = document.getElementById("conf2").value;
@@ -210,7 +142,7 @@ function confrontar() {
   }
 }
 
-// --- Desbloquear pista secreta y guardar ---
+// --- Desbloquear pista secreta ---
 function desbloquearPista(texto) {
   let pistasSecretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
 
@@ -260,7 +192,7 @@ function resolverCaso() {
   }
 }
 
-// --- Guardar progreso de caso ---
+// --- Guardar progreso del caso ---
 function marcarCasoResuelto(idCaso) {
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
   progreso[idCaso] = true;
@@ -289,14 +221,14 @@ function actualizarDossier() {
   ulPistas.innerHTML = "";
   pistasGuardadas.forEach(p => {
     const li = document.createElement("li");
-    li.textContent = p;
+    li.textContent = resumenPistas[p] || p;
     ulPistas.appendChild(li);
   });
 
   ulSospechosos.innerHTML = "";
   sospechososGuardados.forEach(s => {
     const li = document.createElement("li");
-    li.textContent = s;
+    li.textContent = resumenSospechosos[s] || s;
     ulSospechosos.appendChild(li);
   });
 
@@ -308,11 +240,8 @@ function actualizarDossier() {
   });
 }
 
-// --- Al cargar la página ---
+// --- Inicialización ---
 document.addEventListener("DOMContentLoaded", () => {
   renderizarPistasSecretas();
   actualizarDossier();
 });
-
-
-
