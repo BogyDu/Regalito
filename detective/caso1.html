@@ -24,8 +24,7 @@ button:hover { background:#b59f71; color:#fff; }
 .estado.pendiente { color:#ff9800; }
 .interaccion-boton { margin-bottom:5px; }
 .pista-nueva { animation: parpadeo 1s ease-in-out 3; }
-@keyframes parpadeo { 0% { background-color: #fff3cd; } 50% { background-color: #ffe0a3; } 100% { background-color: #fff3cd; }
-}
+@keyframes parpadeo { 0% { background-color: #fff3cd; } 50% { background-color: #ffe0a3; } 100% { background-color: #fff3cd; }}
 #registro-conversacion { margin-top:10px; max-height:250px; overflow-y:auto; background:#fff8dc; padding:5px; border:1px solid #a77b4d; }
 </style>
 </head>
@@ -36,6 +35,13 @@ button:hover { background:#b59f71; color:#fff; }
 <div class="container">
   <!-- IZQUIERDA: INTERACCIONES -->
   <div class="interacciones">
+    <div class="carpeta">
+      <div class="etiqueta">Introducción del Caso</div>
+      <div class="contenido" id="introduccion-caso">
+        <p>Eres un detective que ha reemplazado a tu predecesor fallecido investigando un homicidio en el faro. Objetos encontrados hasta ahora:</p>
+        <ul id="objetos-introduccion"></ul>
+      </div>
+    </div>
     <div class="carpeta">
       <div class="etiqueta">Listado de Sospechosos</div>
       <div class="contenido" id="listado-sospechosos"></div>
@@ -53,7 +59,7 @@ button:hover { background:#b59f71; color:#fff; }
     </div>
   </div>
 
-  <!-- DERECHA: PISTAS, SECRETAS Y NOTAS -->
+  <!-- DERECHA: PISTAS, SECRETAS, NOTAS Y RESOLUCIÓN -->
   <div class="informacion">
     <div class="carpeta">
       <div class="etiqueta">Estado del Caso</div>
@@ -76,6 +82,21 @@ button:hover { background:#b59f71; color:#fff; }
       <div class="contenido">
         <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..." rows="5" style="width:100%;"></textarea>
         <button onclick="guardarNotas()">Guardar Notas</button>
+      </div>
+    </div>
+    <div class="carpeta">
+      <div class="etiqueta">Resolver Caso Avanzado</div>
+      <div class="contenido">
+        <label>Culpable:</label>
+        <select id="culpable"><option value="">Selecciona culpable</option></select><br>
+        <label>Posible Cómplice (opcional):</label>
+        <select id="complice"><option value="">Ninguno</option></select><br>
+        <label>Arma del crimen:</label>
+        <select id="arma"><option value="">Selecciona arma</option></select><br>
+        <label>Motivo:</label>
+        <select id="motivo"><option value="">Selecciona motivo</option></select><br>
+        <button onclick="resolverCasoAvanzado()">Resolver Caso</button>
+        <div id="resultado-avanzado" style="margin-top:10px; font-weight:bold;"></div>
       </div>
     </div>
   </div>
