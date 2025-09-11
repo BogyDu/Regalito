@@ -62,7 +62,27 @@ const sospechosos = {
   `
 };
 
-// Mostrar pistas y sospechosos
+// --- Contradicciones posibles ---
+const contradicciones = {
+  "sofia-mateo": {
+    texto: "Sofía dijo que estaba en casa, pero Mateo asegura haberla visto en el puerto cerca de medianoche.",
+    pista: "Documento de herencia con firmas recientes, hallado en el despacho del farero."
+  },
+  "mateo-sofia": {
+    texto: "Sofía dijo que estaba en casa, pero Mateo asegura haberla visto en el puerto cerca de medianoche.",
+    pista: "Documento de herencia con firmas recientes, hallado en el despacho del farero."
+  },
+  "camila-ernesto": {
+    texto: "Camila afirma que el guardia portuario conocía del contrabando, Ernesto lo niega.",
+    pista: "Registro de barcos: Ernesto autorizó entrada de un navío sin inspección la noche del crimen."
+  },
+  "ernesto-camila": {
+    texto: "Camila afirma que el guardia portuario conocía del contrabando, Ernesto lo niega.",
+    pista: "Registro de barcos: Ernesto autorizó entrada de un navío sin inspección la noche del crimen."
+  }
+};
+
+// --- Mostrar pistas y sospechosos ---
 function mostrarPista(id) {
   document.getElementById("pistas").innerHTML = pistas[id];
 }
@@ -71,7 +91,35 @@ function mostrarSospechoso(id) {
   document.getElementById("sospechosos").innerHTML = sospechosos[id];
 }
 
-// Resolver
+// --- Confrontación ---
+function confrontar() {
+  const s1 = document.getElementById("conf1").value;
+  const s2 = document.getElementById("conf2").value;
+  const div = document.getElementById("confrontacion");
+
+  if (!s1 || !s2 || s1 === s2) {
+    div.innerHTML = "<p style='color:red;'>Debes elegir dos sospechosos distintos.</p>";
+    return;
+  }
+
+  const key = `${s1}-${s2}`;
+  if (contradicciones[key]) {
+    div.innerHTML = `<p style='color:green;'><strong>Contradicción encontrada:</strong> ${contradicciones[key].texto}</p>`;
+    desbloquearPista(contradicciones[key].pista);
+  } else {
+    div.innerHTML = "<p style='color:gray;'>No se detectaron contradicciones claras.</p>";
+  }
+}
+
+// --- Desbloquear nueva pista secreta ---
+function desbloquearPista(texto) {
+  const divSecretas = document.getElementById("pistas-secretas");
+  const p = document.createElement("p");
+  p.innerHTML = `<strong>Pista secreta desbloqueada:</strong> ${texto}`;
+  divSecretas.appendChild(p);
+}
+
+// --- Resolver ---
 function resolverCaso() {
   const seleccion = document.getElementById("culpable").value;
   const resultadoDiv = document.getElementById("resultado");
@@ -81,7 +129,6 @@ function resolverCaso() {
     return;
   }
 
-  // Culpable en esta versión → Ernesto Vega
   if (seleccion === "ernesto") {
     resultadoDiv.innerHTML = `
       <p style='color:green;'><strong>Correcto:</strong> 
@@ -94,7 +141,7 @@ function resolverCaso() {
   }
 }
 
-// Guardar progreso
+// --- Guardar progreso ---
 function marcarCasoResuelto(idCaso) {
   const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
   progreso[idCaso] = true;
