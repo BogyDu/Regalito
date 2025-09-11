@@ -37,6 +37,7 @@ if(!localStorage.getItem("pistas"+casoActual)) localStorage.setItem("pistas"+cas
 if(!localStorage.getItem("pistasSecretas"+casoActual)) localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify([]));
 if(!localStorage.getItem("notas"+casoActual)) localStorage.setItem("notas"+casoActual, JSON.stringify(""));
 if(!localStorage.getItem("resumenSospechosos"+casoActual)) localStorage.setItem("resumenSospechosos"+casoActual, JSON.stringify([]));
+if(!localStorage.getItem("conversacion"+casoActual)) localStorage.setItem("conversacion"+casoActual, JSON.stringify({}));
 
 // Crear listado de sospechosos con resumen
 function crearListadoSospechosos(){
@@ -86,21 +87,44 @@ function mostrarPreguntas(sospechoso){
   });
 }
 
-// Hacer pregunta y generar pistas
+// Hacer pregunta y registrar conversación
 function hacerPregunta(sospechoso,index){
   const resp = respuestas[sospechoso][index];
-  alert(`${sospechoso} responde: ${resp}`);
+
   const resps = JSON.parse(localStorage.getItem("respuestas"+casoActual));
   if(!resps[sospechoso]) resps[sospechoso]={};
-  resps[sospechoso][preguntas[index]]=resp;
+  resps[sospechoso][preguntas[index]] = resp;
   localStorage.setItem("respuestas"+casoActual, JSON.stringify(resps));
 
   const preguntasHechas = JSON.parse(localStorage.getItem("preguntasHechas"+casoActual));
   preguntasHechas[sospechoso].push(index);
   localStorage.setItem("preguntasHechas"+casoActual, JSON.stringify(preguntasHechas));
 
+  // Registrar en conversación
+  const conversacion = JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
+  if(!conversacion[sospechoso]) conversacion[sospechoso]=[];
+  conversacion[sospechoso].push({pregunta:preguntas[index], respuesta:resp});
+  localStorage.setItem("conversacion"+casoActual, JSON.stringify(conversacion));
+
+  mostrarRegistroConversacion(sospechoso);
+
   generarPistas(sospechoso,index,resp);
   mostrarPreguntas(sospechoso);
+}
+
+// Mostrar conversación en UI
+function mostrarRegistroConversacion(sospechoso){
+  const cont = document.getElementById("registro-conversacion");
+  cont.innerHTML="";
+  const conversacion = JSON.parse(localStorage.getItem("conversacion"+casoActual)) || {};
+  if(conversacion[sospechoso]){
+    conversacion[sospechoso].forEach(c=>{
+      const div = document.createElement("div");
+      div.innerHTML = `<strong>P:</strong> ${c.pregunta}<br><strong>R:</strong> ${c.respuesta}`;
+      div.style.marginBottom="5px";
+      cont.appendChild(div);
+    });
+  }
 }
 
 // Generar pistas progresivas
@@ -110,6 +134,7 @@ function generarPistas(sospechoso,index,resp){
 
   if(resp.includes("Mateo") && !secretas.includes("Documento secreto")) secretas.push("Documento secreto");
   if(resp.includes("Lucas") && !pistas.includes("Zapato roto detectado")) pistas.push("Zapato roto detectado");
+
   localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
   localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
 }
@@ -177,3 +202,4 @@ crearBotonesObjetos();
 setInterval(cargarCaso,500);
 cargarCaso();
 mostrarPreguntas(selectSos.value);
+mostrarRegistroConversacion(selectSos.value);
