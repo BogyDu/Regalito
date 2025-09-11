@@ -5,16 +5,16 @@ let sospechosoActivo = null;
 
 fetch('caso1.json').then(res=>res.json()).then(data=>{
   casoData = data;
-  inicializarVariables();
-  inicializarCaso();
-});
 
-function inicializarVariables(){
+  // Inicializar desbloqueos
   casoData.sospechosos.forEach(s=>{
+    s.desbloqueado = casoData.sospechososIniciales.includes(s.nombre);
     preguntasHechas[s.nombre] = JSON.parse(localStorage.getItem('preguntas-'+s.nombre)) || [];
     conversacion[s.nombre] = JSON.parse(localStorage.getItem('conversacion-'+s.nombre)) || [];
   });
-}
+
+  inicializarCaso();
+});
 
 function inicializarCaso(){
   actualizarIntroduccion();
@@ -37,11 +37,13 @@ function crearListadoSospechosos(){
   const cont=document.getElementById("sospechosos-container");
   cont.innerHTML="";
   casoData.sospechosos.forEach(s=>{
-    const btn=document.createElement("button");
-    btn.textContent=s.nombre;
-    btn.className="sospechoso";
-    btn.onclick=()=>mostrarPreguntas(s.nombre);
-    cont.appendChild(btn);
+    if(s.desbloqueado){
+      const btn=document.createElement("button");
+      btn.textContent=s.nombre;
+      btn.className="sospechoso";
+      btn.onclick=()=>mostrarPreguntas(s.nombre);
+      cont.appendChild(btn);
+    }
   });
 }
 
@@ -78,14 +80,21 @@ function mostrarPreguntas(sos){
 function hacerPregunta(sos,preg,resp){registrarRespuesta(sos,preg,resp);}
 function hacerPreguntaAvanzado(sos,pObj){
   registrarRespuesta(sos,pObj.texto,pObj.respuesta);
+
   if(pObj.desbloqueo){
     pObj.desbloqueo.forEach(d=>{
+      const sospechosoNuevo = casoData.sospechosos.find(s => s.nombre===d.sospechoso);
+      if(sospechosoNuevo && !sospechosoNuevo.desbloqueado){
+        sospechosoNuevo.desbloqueado=true;
+      }
       if(!casoData.preguntasAvanzadas[d.sospechoso]) casoData.preguntasAvanzadas[d.sospechoso]=[];
       if(!casoData.preguntasAvanzadas[d.sospechoso].some(q=>q.texto===d.nuevaPregunta)){
-        casoData.preguntasAvanzadas[d.sospechoso].push({texto:d.nuevaPregunta,respuesta:"Se desbloqueó nueva investigación",desbloqueo:[]});
+        casoData.preguntasAvanzadas[d.sospechoso].push({texto:d.nuevaPregunta,respuesta:d.respuesta,desbloqueo:[]});
       }
     });
   }
+  mostrarPreguntas(sos);
+  crearListadoSospechosos();
 }
 
 function registrarRespuesta(sos,preg,resp){
@@ -157,7 +166,9 @@ function cargarDossier(){
 
   const resumen=document.getElementById("resumen-sospechosos"); resumen.innerHTML="";
   casoData.sospechosos.forEach(s=>{
-    const li=document.createElement("li"); li.innerHTML=`<strong>${s.nombre}</strong>: ${s.resumen}`; resumen.appendChild(li);
+    if(s.desbloqueado){
+      const li=document.createElement("li"); li.innerHTML=`<strong>${s.nombre}</strong>: ${s.resumen}`; resumen.appendChild(li);
+    }
   });
 }
 
@@ -168,14 +179,13 @@ function inicializarSelectores(){
   const selM=document.getElementById("motivo");
 
   selC.innerHTML='<option value="">Selecciona culpable</option>';
-  casoData.sospechosos.forEach(s=>{let o=document.createElement("option");o.value=s.nombre;o.textContent=s.nombre;selC.appendChild(o);});
+  casoData.sospechosos.forEach(s=>{if(s.desbloqueado){let o=document.createElement("option");o.value=s.nombre;o.textContent=s.nombre;selC.appendChild(o);}});
   selCo.innerHTML='<option value="">Ninguno</option>';
-  casoData.sospechosos.forEach(s=>{let o=document.createElement("option");o.value=s.nombre;o.textContent=s.nombre;selCo.appendChild(o);});
+  casoData.sospechosos.forEach(s=>{if(s.desbloqueado){let o=document.createElement("option");o.value=s.nombre;o.textContent=s.nombre;selCo.appendChild(o);}});
   selA.innerHTML=`<option value="">Selecciona arma</option><option value="${casoData.resolucion.arma}">${casoData.resolucion.arma}</option>`;
   selM.innerHTML=`<option value="">Selecciona motivo</option><option value="${casoData.resolucion.motivo}">${casoData.resolucion.motivo}</option>`;
 }
 
-// Resolver
 function resolverCasoAvanzado(){
   const c=document.getElementById("culpable").value;
   const co=document.getElementById("complice").value;
