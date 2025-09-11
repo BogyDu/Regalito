@@ -23,6 +23,7 @@ button:hover { background:#b59f71; color:#fff; }
 .estado.resuelto { color:#5cb85c; }
 .estado.pendiente { color:#ff9800; }
 .interaccion-boton { margin-bottom:5px; }
+select { width:100%; padding:4px; margin-bottom:5px; }
 </style>
 </head>
 <body>
@@ -33,12 +34,15 @@ button:hover { background:#b59f71; color:#fff; }
   <!-- IZQUIERDA: INTERACCIONES -->
   <div class="interacciones">
     <div class="carpeta">
-      <div class="etiqueta">Interrogar Sospechosos</div>
-      <div class="contenido" id="botones-sospechosos"></div>
+      <div class="etiqueta">Seleccionar Sospechoso</div>
+      <div class="contenido">
+        <select id="selectSospechoso"></select>
+        <div id="preguntas-container"></div>
+      </div>
     </div>
     <div class="carpeta">
-      <div class="etiqueta">Confrontar Sospechosos</div>
-      <div class="contenido" id="botones-confrontar"></div>
+      <div class="etiqueta">Analizar Objetos</div>
+      <div class="contenido" id="objetos-container"></div>
     </div>
   </div>
 
@@ -48,17 +52,14 @@ button:hover { background:#b59f71; color:#fff; }
       <div class="etiqueta">Estado del Caso</div>
       <div class="contenido"><span id="estado-caso" class="estado"></span></div>
     </div>
-
     <div class="carpeta">
       <div class="etiqueta">Pistas Descubiertas</div>
       <div class="contenido"><ul id="pistas"></ul></div>
     </div>
-
     <div class="carpeta">
       <div class="etiqueta">Pistas Secretas 🔴</div>
       <div class="contenido"><ul id="secretas"></ul></div>
     </div>
-
     <div class="carpeta">
       <div class="etiqueta">Notas del Detective</div>
       <div class="contenido">
