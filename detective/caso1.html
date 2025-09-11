@@ -2,49 +2,144 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>El Faro</title>
+<title>Caso 1 - El Faro</title>
 <link rel="stylesheet" href="estilo.css">
+<style>
+body { font-family: "Courier New", monospace; background:#e5e2d0; margin:20px; }
+h1 { text-align:center; color:#3e3a2f; margin-bottom:20px; }
+button { cursor:pointer; padding:5px 10px; margin-top:5px; border-radius:4px; border:1px solid #3e3a2f; background:#d4c89d; font-weight:bold; }
+button:hover { background:#b59f71; color:#fff; }
+
+/* Carpetas de secciones */
+.carpeta { background:#fdf6e3; border:2px solid #a77b4d; border-radius:6px; padding:12px; margin:10px 0; box-shadow:4px 4px 8px rgba(0,0,0,0.3); }
+.etiqueta { font-weight:bold; font-size:1.2em; margin-bottom:8px; color:#5d4730; text-shadow:1px 1px 0 #fff; }
+.contenido { padding-left:12px; font-size:0.95em; }
+ul { list-style:none; padding-left:0; }
+li { margin-bottom:5px; padding:5px; border-left:5px solid transparent; }
+.nueva { background:#fff3cd; border-left-color:#f0ad4e; }
+.secretas { color:#d9534f; font-weight:bold; border-left-color:#d9534f; }
+.estado { font-weight:bold; margin-bottom:10px; }
+.estado.resuelto { color:#5cb85c; }
+.estado.pendiente { color:#ff9800; }
+</style>
 </head>
 <body>
-<h1>El Faro</h1>
-  
-  <button onclick="window.open('dossier.html','_blank')" style="margin-bottom:15px;">Abrir Dossier</button>
+<h1>Caso 1 - El Faro</h1>
+<button onclick="window.open('dossier.html','_blank')">Abrir Dossier</button>
 
-<div id="dossier">
-  <div id="pistas-seccion">
-    <h2>Pistas</h2>
-    <div id="pistas"></div>
-  </div>
-  <div id="sospechosos-seccion">
-    <h2>Sospechosos</h2>
-    <div id="sospechosos"></div>
+<div class="carpeta">
+  <div class="etiqueta">Estado del Caso</div>
+  <div class="contenido"><span id="estado-caso" class="estado"></span></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Pistas Descubiertas</div>
+  <div class="contenido"><ul id="pistas"></ul></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Pistas Secretas 🔴</div>
+  <div class="contenido"><ul id="secretas"></ul></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Sospechosos Interrogados</div>
+  <div class="contenido"><ul id="sospechosos"></ul></div>
+</div>
+
+<div class="carpeta">
+  <div class="etiqueta">Notas del Detective</div>
+  <div class="contenido">
+    <textarea id="notas-caso1" placeholder="Escribe tus notas aquí..." rows="5" style="width:100%;"></textarea>
+    <button onclick="guardarNotas()">Guardar Notas</button>
   </div>
 </div>
 
-<h2>Interrogatorio</h2>
-<select id="inter-sospechoso"></select>
-<select id="inter-pregunta">
-  <option>¿Qué viste la noche del crimen?</option>
-  <option>¿Dónde estabas a las 10 pm?</option>
-  <option>¿Conoces a los demás sospechosos?</option>
-  <option>¿Qué estabas haciendo en el faro?</option>
-</select>
-<button onclick="interrogar()">Interrogar</button>
-<div id="respuesta-interrogatorio"></div>
+<script>
+// Datos del caso 1
+window.casoActual = "caso1";
 
-<h2>Confrontación</h2>
-<select id="conf1"></select>
-<select id="conf2"></select>
-<button onclick="confrontar()">Confrontar</button>
-<div id="confrontacion"></div>
+const pistas = ["Huella en la ventana","Llave del faro","Zapato roto"];
+const pistasSecretas = ["Documento Secreto: Diario del Faro","Carta del Historiador"];
+const sospechosos = ["Sofia","Mateo","Clara","Javier","Lucas"];
+const respuestas = {
+  "Sofia":{"¿Qué viste la noche del crimen?":"Vi a Mateo salir del faro a las 10 pm.","¿Conoces a los demás sospechosos?":"Sí, los he visto varias veces en el faro."},
+  "Mateo":{"¿Dónde estabas a las 10 pm?":"Estaba con Clara… pero el diario del faro muestra que eso no coincide.","¿Ves a alguien sospechoso?":"No puedo decir, todos parecen normales."},
+  "Clara":{"¿Qué estabas haciendo en el faro?":"Tomando fotos de la torre.","¿Viste algo extraño?":"No, todo parecía tranquilo."},
+  "Javier":{"¿Cuál era tu propósito en el faro?":"Investigar la historia del faro.","¿Alguien más estaba allí?":"Sí, vi a Mateo y Lucas."},
+  "Lucas":{"¿Guardabas el faro esa noche?":"Sí, estuve revisando cada hora.","¿Alguien entró sin permiso?":"No estoy seguro, pero la puerta estaba cerrada."},
+  "Victor":{"¿Qué sabes del asesinato?":"He revisado la torre y hay evidencias que solo yo conozco.","¿Alguien más estuvo involucrado?":"Parece que Mateo tenía ayuda."}
+};
 
-<h2>Resolver Caso</h2>
-<select id="culpable"></select>
-<button onclick="resolverCaso()">Resolver</button>
-<div id="resultado"></div>
+const culpableReal = "Mateo";
 
-<script src="caso-generico.js"></script>
-<script src="caso1.js"></script>
-<script>inicializarCaso();</script>
+// Inicializar localStorage
+if(!localStorage.getItem("pistas"+casoActual)) localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
+if(!localStorage.getItem("pistasSecretas"+casoActual)) localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify([]));
+if(!localStorage.getItem("interrogados"+casoActual)) localStorage.setItem("interrogados"+casoActual, JSON.stringify([]));
+if(!localStorage.getItem("notas"+casoActual)) localStorage.setItem("notas"+casoActual, JSON.stringify(""));
+
+function cargarCaso(){
+  // Estado del caso
+  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+  const estadoSpan = document.getElementById("estado-caso");
+  const estado = progreso[casoActual] ? "Resuelto ✅" : "Pendiente 🟡";
+  estadoSpan.textContent = estado;
+  estadoSpan.className = progreso[casoActual] ? "estado resuelto" : "estado pendiente";
+
+  // Pistas
+  const ulPistas = document.getElementById("pistas");
+  const listaPistas = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
+  ulPistas.innerHTML="";
+  listaPistas.forEach(p=>{
+    let li = document.createElement("li");
+    li.textContent = p;
+    li.className="nueva";
+    ulPistas.appendChild(li);
+  });
+
+  // Pistas secretas
+  const ulSecretas = document.getElementById("secretas");
+  const listaSecretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
+  ulSecretas.innerHTML="";
+  listaSecretas.forEach(s=>{
+    let li = document.createElement("li");
+    li.textContent = s;
+    li.className="secretas";
+    ulSecretas.appendChild(li);
+  });
+
+  // Sospechosos interrogados
+  const ulSos = document.getElementById("sospechosos");
+  const interrogados = JSON.parse(localStorage.getItem("interrogados"+casoActual)) || [];
+  ulSos.innerHTML="";
+  interrogados.forEach(s=>{
+    let li = document.createElement("li");
+    li.innerHTML = `<strong>${s}</strong><br>`;
+    if(respuestas[s]){
+      Object.keys(respuestas[s]).forEach(preg=>{
+        li.innerHTML += `- ${preg}: ${respuestas[s][preg]}<br>`;
+      });
+    } else {
+      li.innerHTML += "- No hay respuestas registradas.<br>";
+    }
+    ulSos.appendChild(li);
+  });
+
+  // Notas
+  document.getElementById("notas-caso1").value = JSON.parse(localStorage.getItem("notas"+casoActual)) || "";
+}
+
+// Guardar notas
+function guardarNotas(){
+  const notas = document.getElementById("notas-caso1").value;
+  localStorage.setItem("notas"+casoActual, JSON.stringify(notas));
+  alert("Notas guardadas");
+}
+
+// Actualización automática
+setInterval(cargarCaso,500);
+cargarCaso();
+</script>
 </body>
 </html>
