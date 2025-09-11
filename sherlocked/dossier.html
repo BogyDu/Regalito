@@ -4,7 +4,27 @@
 <meta charset="UTF-8">
 <title>Dossier del Detective</title>
 <link rel="stylesheet" href="estilo.css">
+  <style>
+/* Animaciones */
+@keyframes parpadeo {
+  0% { background-color: #fff3cd; }
+  50% { background-color: #ffe0a3; }
+  100% { background-color: #fff3cd; }
+}
+
+@keyframes pulso {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.pista-nueva { animation: parpadeo 1s ease-in-out 3; }
+.caso-resuelto { animation: pulso 0.8s ease-in-out 2; }
+</style>
+
 <style>
+
+  
 body { font-family: "Segoe UI", sans-serif; background: #f0f0f0; margin: 20px; }
 h2 { text-align: center; }
 .tab-header { display: flex; gap: 10px; margin-bottom: 20px; }
