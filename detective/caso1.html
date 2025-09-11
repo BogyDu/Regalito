@@ -1,65 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Caso 1 - El Faro</title>
-<link rel="stylesheet" href="estilo.css">
+<meta charset="utf-8">
+<title>Caso 1 — El Faro</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-body { font-family: "Segoe UI", sans-serif; background:#f0f0f0; margin:0; padding:0; }
-.container { display:flex; height:100vh; }
-.left-panel { width:50%; background:#e3e3d3; padding:15px; overflow-y:auto; border-right:3px solid #333; }
-.right-panel { width:50%; background:#fffbe0; padding:15px; overflow-y:auto; }
-h2,h3 { text-align:center; }
-button.sospechoso, button { display:block; margin:5px 0; padding:5px 10px; cursor:pointer; }
-button.destacada { background:#ffecb3; font-weight:bold; }
-#preguntas-container button { margin-bottom:5px; }
-ul { padding-left:20px; }
-#registro-conversacion p { margin-bottom:10px; background:#fff3cd; padding:5px; border-radius:3px; }
-.carpeta { background:#fff; border-radius:5px; padding:10px; margin-bottom:10px; box-shadow:1px 1px 5px rgba(0,0,0,0.2); }
+  :root{
+    --bg:#f4f1e6;
+    --panel:#f7f3ea;
+    --accent:#c78f3a;
+    --paper:#fff9e6;
+    --note:#fff3cd;
+    --shadow: rgba(0,0,0,0.12);
+    --folder:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter, "Segoe UI", Roboto, sans-serif;background:var(--bg);color:#111}
+  header{background:var(--accent);color:#fff;padding:12px 18px}
+  header h1{margin:0;font-size:18px}
+  .container{display:flex;height:calc(100vh - 56px)}
+  .left{width:50%;border-right:3px solid #2b2b2b;background:linear-gradient(180, #e9e6d8, #e3decf);padding:16px;overflow:auto}
+  .right{width:50%;background:var(--panel);padding:16px;overflow:auto}
+  .panel{background:var(--folder);border-radius:8px;padding:12px;margin-bottom:12px;box-shadow:0 2px 6px var(--shadow)}
+  h2,h3{margin:0 0 8px 0}
+  .sus-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .sus-btn{background:var(--accent);color:#fff;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.12)}
+  .sus-btn.locked{background:#9aa19a;opacity:0.6;cursor:default}
+  #preguntas-container button{display:block;width:100%;text-align:left;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #d0c6b0;background:#fff;cursor:pointer}
+  #preguntas-container button.destacada{background:var(--note);font-weight:bold;border-color:#d4b86c}
+  #registro-conversacion{max-height:46vh;overflow:auto;padding:8px}
+  .registro-item{background:#fff;padding:8px;margin-bottom:8px;border-radius:6px}
+  .registro-item.note{background:#fff8e1;border-left:4px solid #c78f3a}
+  .registro-item strong{display:block;margin-bottom:6px}
+  .carpeta-list li{margin-bottom:6px}
+  select{width:100%;padding:8px;margin:6px 0;border-radius:6px}
+  .small-muted{font-size:13px;color:#555}
+  footer{padding:8px 12px;background:#f0e8d8;border-top:1px solid rgba(0,0,0,0.05)}
+  .highlight-u{ text-decoration: underline; text-decoration-color: #d9534f; }
+  @media (max-width:900px){ .container{flex-direction:column} .left,.right{width:100%;height:auto} }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="left-panel">
-    <h2>Interrogatorio</h2>
-    <div id="sospechosos-container"></div>
-    <div id="preguntas-container" class="carpeta"></div>
-    <h3>Registro de Conversación</h3>
-    <div id="registro-conversacion" class="carpeta"></div>
+  <header>
+    <h1>Expediente: Caso 1 — El Faro</h1>
+  </header>
+
+  <div class="container">
+    <div class="left">
+      <div class="panel">
+        <h2>Interrogatorio</h2>
+        <p class="small-muted">Selecciona un sospechoso para abrir su registro y las preguntas disponibles.</p>
+        <div id="sospechosos-container" class="sus-list"></div>
+      </div>
+
+      <div class="panel" id="panel-preguntas">
+        <h3>Preguntas disponibles</h3>
+        <div id="preguntas-container"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Registro de conversación (sospechoso activo)</h3>
+        <div id="registro-conversacion"></div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panel">
+        <h2>Introducción y objetos hallados</h2>
+        <ul id="objetos-introduccion" class="carpeta-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Pistas descubiertas</h3>
+        <ul id="pistas" class="carpeta-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Pistas secretas 🔴</h3>
+        <ul id="secretas" class="carpeta-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Resumen de sospechosos visibles</h3>
+        <ul id="resumen-sospechosos" class="carpeta-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Resolver caso</h3>
+        <label>Culpable</label>
+        <select id="culpable"></select>
+        <label>Posible cómplice</label>
+        <select id="complice"></select>
+        <label>Arma</label>
+        <select id="arma"></select>
+        <label>Motivo</label>
+        <select id="motivo"></select>
+        <button style="margin-top:8px;padding:8px;width:100%;background:#2b2b2b;color:#fff;border:none;border-radius:6px;cursor:pointer" onclick="resolverCasoAvanzado()">Enviar acusación</button>
+        <p id="resultado-avanzado" class="small-muted"></p>
+      </div>
+    </div>
   </div>
-  <div class="right-panel">
-    <h2>Investigación</h2>
-    <div class="carpeta">
-      <h3>Introducción y Objetos</h3>
-      <ul id="objetos-introduccion"></ul>
-    </div>
-    <div class="carpeta">
-      <h3>Pistas</h3>
-      <ul id="pistas"></ul>
-    </div>
-    <div class="carpeta">
-      <h3>Pistas Secretas 🔴</h3>
-      <ul id="secretas"></ul>
-    </div>
-    <div class="carpeta">
-      <h3>Resumen de Sospechosos</h3>
-      <ul id="resumen-sospechosos"></ul>
-    </div>
-    <div class="carpeta">
-      <h3>Resolver Caso</h3>
-      <label>Culpable:</label>
-      <select id="culpable"></select><br>
-      <label>Complice:</label>
-      <select id="complice"></select><br>
-      <label>Arma:</label>
-      <select id="arma"></select><br>
-      <label>Motivo:</label>
-      <select id="motivo"></select><br><br>
-      <button onclick="resolverCasoAvanzado()">Resolver Caso</button>
-      <p id="resultado-avanzado"></p>
-    </div>
-  </div>
-</div>
-<script src="caso1.js"></script>
+
+  <footer>
+    <span class="small-muted">Progresión guardada localmente en tu navegador.</span>
+  </footer>
+
+  <script src="caso1.js"></script>
 </body>
 </html>
