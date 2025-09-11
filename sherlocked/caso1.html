@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-<body>
 <h1>Caso 1: El Faro</h1>
 
 <div id="panel-izquierdo">
@@ -14,12 +13,10 @@
     <div class="etiqueta">Pistas</div>
     <div class="contenido" id="pistas-seccion"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Sospechosos</div>
     <div class="contenido" id="sospechosos-seccion"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Confrontaciones</div>
     <div class="contenido">
@@ -28,18 +25,19 @@
       <button onclick="confrontar()">Confrontar</button>
     </div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Interrogatorio</div>
     <div class="contenido">
       <select id="inter-sospechoso"></select>
       <select id="inter-pregunta">
         <option value="">-- Selecciona pregunta --</option>
+        <option value="donde">¿Dónde estabas la noche del crimen?</option>
+        <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
+        <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
       </select>
       <button onclick="interrogar()">Interrogar</button>
     </div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Resolver Caso</div>
     <div class="contenido">
@@ -54,38 +52,33 @@
     <div class="etiqueta">Pistas Mostradas</div>
     <div class="contenido" id="pistas"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Sospechosos Mostrados</div>
     <div class="contenido" id="sospechosos"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Confrontación / Resultados</div>
     <div class="contenido" id="confrontacion"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Respuestas Interrogatorio</div>
     <div class="contenido" id="respuesta-interrogatorio"></div>
   </div>
-
   <div class="carpeta">
     <div class="etiqueta">Resultado del Caso</div>
     <div class="contenido" id="resultado"></div>
   </div>
 </div>
 
-
 <button onclick="abrirDossier()">📂 Abrir Dossier</button>
 <script src="caso-generico.js"></script>
 <script>
-/* Datos específicos del caso 1 */
+/* Datos del caso 1 */
 const pistas = {
-  forense: "Informe forense: hora de muerte 23:00-23:45. Cráneo fracturado.",
-  escena: "Cuerpo al pie de la escalera, sangre y arena.",
-  bitacora: "Bitácora: sospechas de contrabando.",
-  ramirez: "Notas: pescador miente, sobrina oculta algo."
+  forense:"Informe forense: hora de muerte 23:00-23:45. Cráneo fracturado.",
+  escena:"Cuerpo al pie de la escalera, sangre y arena.",
+  bitacora:"Bitácora: sospechas de contrabando.",
+  ramirez:"Notas: pescador miente, sobrina oculta algo."
 };
 const sospechosos = {
   sofia:"Sofía Ortega: sobrina, herencia dudosa.",
@@ -101,10 +94,8 @@ const respuestas = {
   ernesto:{donde:"Rondas nocturnas.",motivo:"Ortega descubrió algo.",relacion:"Sí, conozco a los involucrados."},
   padre:{donde:"Rezando en sacristía.",motivo:"Protejo comunidad.",relacion:"Sí, algunos feligreses."}
 };
-const culpableReal = "ernesto";
-const contradicciones = {
-  "sofia-mateo":{texto:"Sofía y Mateo contradicen coartadas",pista:"Documento secreto"}
-};
+const culpableReal="ernesto";
+const contradicciones = {"sofia-mateo":{texto:"Sofía y Mateo contradicen coartadas",pista:"Documento secreto"}};
 </script>
 </body>
 </html>
