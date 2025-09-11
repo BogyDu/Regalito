@@ -77,6 +77,15 @@ textarea { width: 100%; height: 100px; margin-top: 5px; box-sizing: border-box; 
   overflow-y: auto;
 }
 
+
+body, select, button, textarea { font-family: "Segoe UI", sans-serif; }
+button { cursor: pointer; }
+textarea { resize: vertical; }
+.carpeta { margin: 10px 0; background: #fff; border-radius: 5px; padding: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.15); }
+.etiqueta { font-weight: bold; margin-bottom: 5px; font-size: 1.1em; }
+.contenido { padding-left: 10px; }
+
+
 /* Index casos */
 .archivador { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
 .archivador .carpeta { width: 220px; cursor: pointer; }
