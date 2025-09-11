@@ -6,52 +6,26 @@
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-
 <h1>Caso 1: El Faro</h1>
 
 <div class="carpeta">
   <div class="etiqueta">Pistas</div>
-  <div class="contenido">
-    <button onclick="mostrarPista('forense')">Informe Forense</button>
-    <button onclick="mostrarPista('escena')">Escena del Faro</button>
-    <button onclick="mostrarPista('bitacora')">Bitácora del Faro</button>
-    <button onclick="mostrarPista('ramirez')">Notas del detective Ramírez</button>
-    <div id="pistas"></div>
-  </div>
+  <div class="contenido" id="pistas-seccion"></div>
+  <div id="pistas"></div>
 </div>
 
 <div class="carpeta">
   <div class="etiqueta">Sospechosos</div>
-  <div class="contenido">
-    <button onclick="mostrarSospechoso('sofia')">Sofía Ortega</button>
-    <button onclick="mostrarSospechoso('mateo')">Mateo Duarte</button>
-    <button onclick="mostrarSospechoso('camila')">Camila Torres</button>
-    <button onclick="mostrarSospechoso('ernesto')">Ernesto Vega</button>
-    <button onclick="mostrarSospechoso('padre')">Padre Anselmo</button>
-    <div id="sospechosos"></div>
-  </div>
+  <div class="contenido" id="sospechosos-seccion"></div>
+  <div id="sospechosos"></div>
 </div>
 
 <div class="carpeta">
   <div class="etiqueta">Confrontaciones</div>
   <div class="contenido">
     <p>Selecciona dos sospechosos:</p>
-    <select id="conf1">
-      <option value="">-- Selecciona --</option>
-      <option value="sofia">Sofía Ortega</option>
-      <option value="mateo">Mateo Duarte</option>
-      <option value="camila">Camila Torres</option>
-      <option value="ernesto">Ernesto Vega</option>
-      <option value="padre">Padre Anselmo</option>
-    </select>
-    <select id="conf2">
-      <option value="">-- Selecciona --</option>
-      <option value="sofia">Sofía Ortega</option>
-      <option value="mateo">Mateo Duarte</option>
-      <option value="camila">Camila Torres</option>
-      <option value="ernesto">Ernesto Vega</option>
-      <option value="padre">Padre Anselmo</option>
-    </select>
+    <select id="conf1"></select>
+    <select id="conf2"></select>
     <button onclick="confrontar()">Confrontar</button>
     <div id="confrontacion"></div>
   </div>
@@ -60,19 +34,12 @@
 <div class="carpeta">
   <div class="etiqueta">Interrogatorio</div>
   <div class="contenido">
-    <select id="inter-sospechoso">
-      <option value="">-- Selecciona sospechoso --</option>
-      <option value="sofia">Sofía Ortega</option>
-      <option value="mateo">Mateo Duarte</option>
-      <option value="camila">Camila Torres</option>
-      <option value="ernesto">Ernesto Vega</option>
-      <option value="padre">Padre Anselmo</option>
-    </select>
+    <select id="inter-sospechoso"></select>
     <select id="inter-pregunta">
       <option value="">-- Selecciona pregunta --</option>
       <option value="donde">¿Dónde estabas la noche del crimen?</option>
-      <option value="motivo">¿Tenías algún motivo para dañar a la víctima?</option>
-      <option value="relacion">¿Conocías a alguien involucrado en contrabando?</option>
+      <option value="motivo">¿Tenías algún motivo?</option>
+      <option value="relacion">¿Conocías a alguien involucrado?</option>
     </select>
     <button onclick="interrogar()">Interrogar</button>
     <div id="respuesta-interrogatorio"></div>
@@ -82,21 +49,40 @@
 <div class="carpeta">
   <div class="etiqueta">Resolver Caso</div>
   <div class="contenido">
-    <select id="culpable">
-      <option value="">-- Selecciona sospechoso --</option>
-      <option value="sofia">Sofía Ortega</option>
-      <option value="mateo">Mateo Duarte</option>
-      <option value="camila">Camila Torres</option>
-      <option value="ernesto">Ernesto Vega</option>
-      <option value="padre">Padre Anselmo</option>
-    </select>
+    <select id="culpable"></select>
     <button onclick="resolverCaso()">Resolver</button>
     <div id="resultado"></div>
   </div>
 </div>
 
 <button onclick="abrirDossier()">📂 Abrir Dossier</button>
-
-<script src="caso1.js"></script>
+<script src="caso-generico.js"></script>
+<script>
+/* Datos específicos del caso 1 */
+const pistas = {
+  forense: "Informe forense: hora de muerte 23:00-23:45. Cráneo fracturado.",
+  escena: "Cuerpo al pie de la escalera, sangre y arena.",
+  bitacora: "Bitácora: sospechas de contrabando.",
+  ramirez: "Notas: pescador miente, sobrina oculta algo."
+};
+const sospechosos = {
+  sofia:"Sofía Ortega: sobrina, herencia dudosa.",
+  mateo:"Mateo Duarte: pescador, contrabando sospechoso.",
+  camila:"Camila Torres: periodista investigando contrabando.",
+  ernesto:"Ernesto Vega: guardia, huellas en el faro.",
+  padre:"Padre Anselmo: cura, rosario roto en escena."
+};
+const respuestas = {
+  sofia:{donde:"En casa.",motivo:"No tenía.",relacion:"No conozco a nadie."},
+  mateo:{donde:"En el mar.",motivo:"Jamás dañaría.",relacion:"Sí, conozco contrabandistas."},
+  camila:{donde:"Entrevistando.",motivo:"Solo investigo.",relacion:"Sí, tengo info."},
+  ernesto:{donde:"Rondas nocturnas.",motivo:"Ortega descubrió algo.",relacion:"Sí, conozco a los involucrados."},
+  padre:{donde:"Rezando en sacristía.",motivo:"Protejo comunidad.",relacion:"Sí, algunos feligreses."}
+};
+const culpableReal = "ernesto";
+const contradicciones = {
+  "sofia-mateo":{texto:"Sofía y Mateo contradicen coartadas",pista:"Documento secreto"}
+};
+</script>
 </body>
 </html>
