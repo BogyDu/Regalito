@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Detective - Casos</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<h1>Detective - Casos</h1>
+<div id="lista-casos"></div>
+
+<script>
+const casos = [
+  {id:"caso1", nombre:"El Faro", archivo:"caso1.html"},
+  {id:"caso2", nombre:"El Museo", archivo:"caso2.html"},
+  {id:"caso3", nombre:"La Mansión", archivo:"caso3.html"},
+  {id:"caso4", nombre:"El Tren Nocturno", archivo:"caso4.html"}
+];
+
+function cargarCasos(){
+  const lista = document.getElementById("lista-casos");
+  lista.innerHTML="";
+  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
+  casos.forEach(c=>{
+    const div = document.createElement("div");
+    div.className="caso-carpeta";
+    div.onclick = ()=> window.open(c.archivo,"_blank");
+    div.innerHTML = `<div class="titulo">${c.nombre}</div><div class="estado">${progreso[c.id] ? "Resuelto ✅" : "Pendiente 🟡"}</div>`;
+    lista.appendChild(div);
+  });
+}
+cargarCasos();
+</script>
+</body>
+</html>
