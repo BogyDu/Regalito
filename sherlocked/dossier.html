@@ -1,92 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Dossier del Detective</title>
-  <style>
-    body {
-      font-family: "Courier New", monospace;
-      background: #f4f1ea;
-      margin: 20px;
-    }
-    h2 {
-      text-align: center;
-      text-transform: uppercase;
-    }
-    .seccion {
-      margin-bottom: 20px;
-      border: 1px solid #333;
-      padding: 10px;
-      background: #fffdf6;
-    }
-    ul {
-      list-style: square;
-      padding-left: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Dossier del Detective</title>
+<style>
+body {
+  font-family: "Courier New", monospace;
+  background: #f4f1ea;
+  margin: 20px;
+}
+h2 {
+  text-align: center;
+  text-transform: uppercase;
+}
+.seccion {
+  margin-bottom: 20px;
+  border: 1px solid #333;
+  padding: 10px;
+  background: #fffdf6;
+}
+ul {
+  list-style: square;
+  padding-left: 20px;
+}
+textarea {
+  width: 100%;
+  height: 100px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  padding: 5px;
+  margin-top: 5px;
+}
+button {
+  margin-top: 5px;
+  padding: 5px 10px;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
-  <h2>Dossier del Caso</h2>
+<h2>Dossier del Detective</h2>
 
-  <div class="seccion">
-    <h3>Pistas</h3>
-    <ul id="dossier-pistas"></ul>
-  </div>
+<div class="seccion">
+  <h3>Pistas Descubiertas</h3>
+  <ul id="dossier-pistas"></ul>
+</div>
 
-  <div class="seccion">
-    <h3>Sospechosos</h3>
-    <ul id="dossier-sospechosos"></ul>
-  </div>
+<div class="seccion">
+  <h3>Pistas Secretas</h3>
+  <ul id="dossier-secretas"></ul>
+</div>
 
-  <div class="seccion">
-    <h3>Pistas Secretas</h3>
-    <ul id="dossier-secretas"></ul>
-  </div>
+<div class="seccion">
+  <h3>Sospechosos Interrogados</h3>
+  <ul id="dossier-sospechosos"></ul>
+</div>
 
-  <script>
-    function cargarDossier() {
-      const pistas = JSON.parse(localStorage.getItem("pistasCaso1")) || [];
-      const sospechosos = JSON.parse(localStorage.getItem("sospechososCaso1")) || [];
-      const secretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+<div class="seccion">
+  <h3>Notas del Detective</h3>
+  <textarea id="notas"></textarea>
+  <button onclick="guardarNotas()">Guardar Notas</button>
+</div>
 
-      // Resúmenes coherentes con caso1.js
-      const resumenPistas = {
-        forense: "Informe forense: hora de muerte entre 23:00 y 23:45. Cráneo fracturado, olor a queroseno.",
-        escena: "Escena: cuerpo al pie de la escalera, objetos con sangre y arena húmeda en la entrada.",
-        bitacora: "Bitácora: Ortega sospechaba de contrabando, mencionó barcos sospechosos.",
-        ramirez: "Notas de Ramírez: pescador miente, sobrina oculta algo, guardia y cura implicados."
-      };
-      const resumenSospechosos = {
-        sofia: "Sofía Ortega: sobrina, herencia y deudas. Coartada dudosa.",
-        mateo: "Mateo Duarte: pescador, sospechas de contrabando.",
-        camila: "Camila Torres: periodista, investigaba contrabando.",
-        ernesto: "Ernesto Vega: guardia, coartada incompleta, huellas en el faro.",
-        padre: "Padre Anselmo: cura, rosario roto en la escena."
-      };
+<script>
+// Resúmenes de pistas y sospechosos (coincide con caso1.js)
+const resumenPistas = {
+  forense: "Informe forense: hora de muerte entre 23:00 y 23:45. Cráneo fracturado, olor a queroseno.",
+  escena: "Escena: cuerpo al pie de la escalera, objetos con sangre y arena húmeda en la entrada.",
+  bitacora: "Bitácora: Ortega sospechaba de contrabando, mencionó barcos sospechosos.",
+  ramirez: "Notas de Ramírez: pescador miente, sobrina oculta algo, guardia y cura implicados."
+};
+const resumenSospechosos = {
+  sofia: "Sofía Ortega: sobrina, herencia y deudas. Coartada dudosa.",
+  mateo: "Mateo Duarte: pescador, sospechas de contrabando.",
+  camila: "Camila Torres: periodista, investigaba contrabando.",
+  ernesto: "Ernesto Vega: guardia, coartada incompleta, huellas en el faro.",
+  padre: "Padre Anselmo: cura, rosario roto en la escena."
+};
 
-      const ulPistas = document.getElementById("dossier-pistas");
-      pistas.forEach(p => {
-        const li = document.createElement("li");
-        li.textContent = resumenPistas[p] || p;
-        ulPistas.appendChild(li);
+// Cargar dossier
+function cargarDossier() {
+  const pistas = JSON.parse(localStorage.getItem("pistasCaso1")) || [];
+  const sospechosos = JSON.parse(localStorage.getItem("interrogadosCaso1")) || [];
+  const secretas = JSON.parse(localStorage.getItem("pistasSecretasCaso1")) || [];
+  const notas = JSON.parse(localStorage.getItem("notasCaso1")) || "";
+
+  // Pistas descubiertas
+  const ulPistas = document.getElementById("dossier-pistas");
+  ulPistas.innerHTML = "";
+  pistas.forEach(p => {
+    const li = document.createElement("li");
+    li.textContent = resumenPistas[p] || p;
+    ulPistas.appendChild(li);
+  });
+
+  // Pistas secretas
+  const ulSecretas = document.getElementById("dossier-secretas");
+  ulSecretas.innerHTML = "";
+  secretas.forEach(ps => {
+    const li = document.createElement("li");
+    li.textContent = ps;
+    ulSecretas.appendChild(li);
+  });
+
+  // Sospechosos interrogados con extracto de respuestas
+  const ulSospechosos = document.getElementById("dossier-sospechosos");
+  ulSospechosos.innerHTML = "";
+  const respuestas = JSON.parse(localStorage.getItem("respuestasInterrogatorio")) || {};
+  sospechosos.forEach(s => {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${s}</strong>:<br>`;
+    if (respuestas[s]) {
+      Object.keys(respuestas[s]).forEach(preg => {
+        li.innerHTML += `- ${preg}: ${respuestas[s][preg]}<br>`;
       });
-
-      const ulSospechosos = document.getElementById("dossier-sospechosos");
-      sospechosos.forEach(s => {
-        const li = document.createElement("li");
-        li.textContent = resumenSospechosos[s] || s;
-        ulSospechosos.appendChild(li);
-      });
-
-      const ulSecretas = document.getElementById("dossier-secretas");
-      secretas.forEach(ps => {
-        const li = document.createElement("li");
-        li.textContent = ps;
-        ulSecretas.appendChild(li);
-      });
+    } else {
+      li.innerHTML += "No hay respuestas registradas.<br>";
     }
+    ulSospechosos.appendChild(li);
+  });
 
-    document.addEventListener("DOMContentLoaded", cargarDossier);
-  </script>
+  // Cargar notas
+  document.getElementById("notas").value = notas;
+}
+
+// Guardar notas del detective
+function guardarNotas() {
+  const notas = document.getElementById("notas").value;
+  localStorage.setItem("notasCaso1", JSON.stringify(notas));
+  alert("Notas guardadas");
+}
+
+// Inicialización
+document.addEventListener("DOMContentLoaded", cargarDossier);
+</script>
 </body>
 </html>
