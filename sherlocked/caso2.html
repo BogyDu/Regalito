@@ -38,11 +38,11 @@
   <div class="carpeta"><div class="etiqueta">Resultado del Caso</div><div class="contenido" id="resultado"></div></div>
 </div>
 
-<button onclick="abrirDossier()">📂 Abrir Dossier</button>
+<button onclick="window.open('dossier.html','Dossier','width=800,height=600,scrollbars=yes')">📂 Abrir Dossier</button>
 
 <script src="caso-generico.js"></script>
 <script>
-const casoActual="caso2";
+window.casoActual="caso2";
 
 const pistas = {
   huellas:"Huellas de pisadas en la sala de exposición.",
@@ -73,18 +73,7 @@ const contradicciones = {
   "ana-pedro":{texto:"Ana y Pedro no coinciden en horarios de patrulla/restauración",pista:"Registro del reloj de entrada"}
 };
 
-// Inicializar botones y selects
-document.addEventListener("DOMContentLoaded",()=>{
-  const pistasSec = document.getElementById("pistas-seccion");
-  for(const id in pistas){ let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarPista(id); pistasSec.appendChild(btn); }
-
-  const sospSec = document.getElementById("sospechosos-seccion");
-  const selects = [document.getElementById("conf1"),document.getElementById("conf2"),document.getElementById("inter-sospechoso"),document.getElementById("culpable")];
-  for(const id in sospechosos){
-    let btn=document.createElement("button"); btn.textContent=id; btn.onclick=()=>mostrarSospechoso(id); sospSec.appendChild(btn);
-    selects.forEach(s=>{let opt=document.createElement("option"); opt.value=id; opt.textContent=id; s.appendChild(opt);});
-  }
-});
+document.addEventListener("DOMContentLoaded",()=>{ inicializarCaso(); });
 </script>
 </body>
 </html>
