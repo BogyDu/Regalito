@@ -7,28 +7,9 @@
 <style>
 body { font-family: "Courier New", monospace; background:#e5e2d0; margin:20px; }
 h1 { text-align:center; color:#3e3a2f; margin-bottom:20px; }
-
-/* Layout 50/50 */
-.container {
-  display: flex;
-  gap:20px;
-}
-
-/* Izquierda: interacciones */
-.interacciones {
-  width:50%;
-  display:flex;
-  flex-direction:column;
-}
-
-/* Derecha: pistas y notas */
-.informacion {
-  width:50%;
-  display:flex;
-  flex-direction:column;
-}
-
-/* Carpetas estilo detective */
+.container { display:flex; gap:20px; }
+.interacciones { width:50%; display:flex; flex-direction:column; }
+.informacion { width:50%; display:flex; flex-direction:column; }
 .carpeta { background:#fdf6e3; border:2px solid #a77b4d; border-radius:6px; padding:12px; margin-bottom:10px; box-shadow:4px 4px 8px rgba(0,0,0,0.3); }
 .etiqueta { font-weight:bold; font-size:1.2em; margin-bottom:8px; color:#5d4730; text-shadow:1px 1px 0 #fff; }
 .contenido { padding-left:12px; font-size:0.95em; }
@@ -41,7 +22,6 @@ button:hover { background:#b59f71; color:#fff; }
 .estado { font-weight:bold; margin-bottom:10px; }
 .estado.resuelto { color:#5cb85c; }
 .estado.pendiente { color:#ff9800; }
-
 .interaccion-boton { margin-bottom:5px; }
 </style>
 </head>
@@ -55,6 +35,10 @@ button:hover { background:#b59f71; color:#fff; }
     <div class="carpeta">
       <div class="etiqueta">Interrogar Sospechosos</div>
       <div class="contenido" id="botones-sospechosos"></div>
+    </div>
+    <div class="carpeta">
+      <div class="etiqueta">Confrontar Sospechosos</div>
+      <div class="contenido" id="botones-confrontar"></div>
     </div>
   </div>
 
@@ -85,103 +69,6 @@ button:hover { background:#b59f71; color:#fff; }
   </div>
 </div>
 
-<script>
-// Datos del caso
-window.casoActual = "caso1";
-
-const sospechosos = ["Sofia","Mateo","Clara","Javier","Lucas"];
-const respuestas = {
-  "Sofia":{"¿Qué viste la noche del crimen?":"Vi a Mateo salir del faro a las 10 pm.","¿Conoces a los demás sospechosos?":"Sí, los he visto varias veces."},
-  "Mateo":{"¿Dónde estabas a las 10 pm?":"Estaba con Clara… pero el diario del faro muestra que eso no coincide.","¿Ves a alguien sospechoso?":"No puedo decir, todos parecen normales."},
-  "Clara":{"¿Qué estabas haciendo en el faro?":"Tomando fotos de la torre.","¿Viste algo extraño?":"No, todo parecía tranquilo."},
-  "Javier":{"¿Cuál era tu propósito en el faro?":"Investigar la historia del faro.","¿Alguien más estaba allí?":"Sí, vi a Mateo y Lucas."},
-  "Lucas":{"¿Guardabas el faro esa noche?":"Sí, estuve revisando cada hora.","¿Alguien entró sin permiso?":"No estoy seguro, pero la puerta estaba cerrada."}
-};
-
-const pistas = ["Huella en la ventana","Llave del faro","Zapato roto"];
-const pistasSecretas = ["Documento Secreto: Diario del Faro","Carta del Historiador"];
-
-// Inicializar localStorage
-if(!localStorage.getItem("pistas"+casoActual)) localStorage.setItem("pistas"+casoActual, JSON.stringify(pistas));
-if(!localStorage.getItem("pistasSecretas"+casoActual)) localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify([]));
-if(!localStorage.getItem("interrogados"+casoActual)) localStorage.setItem("interrogados"+casoActual, JSON.stringify([]));
-if(!localStorage.getItem("notas"+casoActual)) localStorage.setItem("notas"+casoActual, JSON.stringify(""));
-
-// Crear botones de sospechosos
-function crearBotonesSospechosos(){
-  const cont = document.getElementById("botones-sospechosos");
-  cont.innerHTML="";
-  sospechosos.forEach(s=>{
-    const btn = document.createElement("button");
-    btn.textContent = s;
-    btn.className="interaccion-boton";
-    btn.onclick = ()=>interrogar(s);
-    cont.appendChild(btn);
-  });
-}
-
-// Interrogar sospechoso
-function interrogar(nombre){
-  let interrogados = JSON.parse(localStorage.getItem("interrogados"+casoActual)) || [];
-  if(!interrogados.includes(nombre)) interrogados.push(nombre);
-  localStorage.setItem("interrogados"+casoActual, JSON.stringify(interrogados));
-
-  // Agregar pista secreta si hay documento secreto
-  if(nombre==="Mateo"){
-    let secretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
-    if(!secretas.includes("Documento Secreto: Diario del Faro")){
-      secretas.push("Documento Secreto: Diario del Faro");
-      localStorage.setItem("pistasSecretas"+casoActual, JSON.stringify(secretas));
-      alert("Se ha descubierto una pista secreta!");
-    }
-  }
-}
-
-// Guardar notas
-function guardarNotas(){
-  const notas = document.getElementById("notas-caso1").value;
-  localStorage.setItem("notas"+casoActual, JSON.stringify(notas));
-  alert("Notas guardadas");
-}
-
-// Cargar caso
-function cargarCaso(){
-  // Estado del caso
-  const progreso = JSON.parse(localStorage.getItem("progresoCasos")) || {};
-  const estadoSpan = document.getElementById("estado-caso");
-  const estado = progreso[casoActual] ? "Resuelto ✅" : "Pendiente 🟡";
-  estadoSpan.textContent = estado;
-  estadoSpan.className = progreso[casoActual] ? "estado resuelto" : "estado pendiente";
-
-  // Pistas
-  const ulPistas = document.getElementById("pistas");
-  const listaPistas = JSON.parse(localStorage.getItem("pistas"+casoActual)) || [];
-  ulPistas.innerHTML="";
-  listaPistas.forEach(p=>{
-    let li = document.createElement("li");
-    li.textContent = p;
-    li.className="nueva";
-    ulPistas.appendChild(li);
-  });
-
-  // Pistas secretas
-  const ulSecretas = document.getElementById("secretas");
-  const listaSecretas = JSON.parse(localStorage.getItem("pistasSecretas"+casoActual)) || [];
-  ulSecretas.innerHTML="";
-  listaSecretas.forEach(s=>{
-    let li = document.createElement("li");
-    li.textContent = s;
-    li.className="secretas";
-    ulSecretas.appendChild(li);
-  });
-
-  // Notas
-  document.getElementById("notas-caso1").value = JSON.parse(localStorage.getItem("notas"+casoActual)) || "";
-}
-
-crearBotonesSospechosos();
-setInterval(cargarCaso,500);
-cargarCaso();
-</script>
+<script src="caso1.js"></script>
 </body>
 </html>
