@@ -4,32 +4,31 @@ body {
   margin: 0;
   padding: 20px;
   color: #2d2d2d;
-}
-
-h1, h2 {
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.archivador {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: row;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+h1, h2 { text-align: center; text-transform: uppercase; }
+
+/* Paneles izquierdo y derecho */
+#panel-izquierdo, #panel-derecho {
+  width: 50%;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
 .carpeta {
-  width: 220px;
   background: #c8a165;
   border: 2px solid #8a5a2d;
   border-radius: 5px 5px 0 0;
   padding: 10px;
-  margin: 10px 0;
   box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
 }
-.carpeta:hover { transform: translateY(-5px); }
-
 .etiqueta {
   display: inline-block;
   padding: 5px 10px;
@@ -39,8 +38,6 @@ h1, h2 {
   border-radius: 5px 5px 0 0;
   font-weight: bold;
 }
-.etiqueta.pendiente { background: #d9534f; border-color: #a94442; }
-.etiqueta.resuelto { background: #5cb85c; border-color: #4cae4c; }
 
 .contenido {
   padding: 10px;
@@ -73,7 +70,10 @@ textarea {
   box-sizing: border-box;
 }
 
-section { margin-bottom: 20px; }
-
-#pistas, #sospechosos, #confrontacion, #resultado, #respuesta-interrogatorio,
-#dossier-pistas, #dossier-secretas, #dossier-sospechosos { background: #fffdf6; border: 1px solid #333; padding: 10px; margin-top: 5px; }
+#pistas, #sospechosos, #confrontacion, #resultado, #respuesta-interrogatorio {
+  background: #fffdf6;
+  border: 1px solid #333;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
