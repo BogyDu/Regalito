@@ -1,0 +1,42 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #f5f5f5;
+  color: #333;
+}
+
+h1, h2 {
+  color: #222;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background: #0077cc;
+  color: white;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #005fa3;
+}
+
+.resuelto {
+  color: green;
+  margin-left: 10px;
+}
+
+.pendiente {
+  color: orange;
+  margin-left: 10px;
+}
+
+#pistas, #sospechosos, #resultado {
+  margin-top: 15px;
+  padding: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
