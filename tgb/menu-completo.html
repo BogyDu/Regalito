@@ -3,35 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carta - Tecnic Pasta Bar</title>
+  <title>Tecnic Pasta Bar</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #FFD600; /* Amarillo */
       --dark: #000000;    /* Negro */
       --light: #ffffff;
-      --bg: #111111;      /* Fondo elegante */
     }
+
     body {
-      background: var(--bg);
+      background: linear-gradient(135deg, #000000, #222222);
       color: var(--light);
       font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 0;
     }
 
-    /* Header */
     header {
       text-align: center;
-      padding: 2rem 1rem 4rem;
+      padding: 2rem 1rem;
     }
     header h1 {
       font-size: 2.5rem;
       color: var(--primary);
-      margin-bottom: 0.5rem;
     }
     header p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #ccc;
     }
 
@@ -40,204 +38,238 @@
       display: flex;
       justify-content: center;
       gap: 2rem;
-      background: var(--dark);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
       padding: 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
       position: sticky;
       top: 0;
       z-index: 1000;
-      overflow-x: auto;
-      scrollbar-width: none;
     }
-    .main-menu::-webkit-scrollbar { display: none; }
-    .main-menu a {
+    .main-menu button {
+      background: transparent;
+      border: none;
       color: var(--light);
       font-weight: 600;
-      text-decoration: none;
+      font-size: 1rem;
+      cursor: pointer;
       padding: 0.5rem 1rem;
-      transition: background 0.3s, color 0.3s;
-      white-space: nowrap;
+      transition: 0.3s;
     }
-    .main-menu a:hover {
+    .main-menu button:hover,
+    .main-menu button.active {
       background: var(--primary);
       color: var(--dark);
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
-    /* Submenú con scroll horizontal */
+    /* Contenedor de secciones */
+    .section {
+      display: none;
+      padding: 3rem 5%;
+      animation: fadeIn 0.6s ease;
+    }
+    .section.active {
+      display: block;
+    }
+
+    /* Submenú horizontal */
     .submenu {
       display: flex;
       gap: 1rem;
       overflow-x: auto;
       padding: 1rem;
-      background: #1a1a1a;
-      position: sticky;
-      top: 3.5rem;
-      z-index: 900;
-      scrollbar-width: thin;
+      margin-bottom: 2rem;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(6px);
+      border-radius: 8px;
     }
-    .submenu::-webkit-scrollbar { height: 6px; }
-    .submenu::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-    .submenu a {
+    .submenu button {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
       color: #ccc;
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border: 1px solid #333;
       border-radius: 6px;
-      transition: background 0.3s, color 0.3s;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: 0.3s;
       white-space: nowrap;
     }
-    .submenu a:hover {
+    .submenu button:hover,
+    .submenu button.active {
       background: var(--primary);
       color: var(--dark);
     }
 
-    /* Secciones */
-    .menu-section {
-      padding: 3rem 5%;
-    }
-    .menu-section h2 {
-      font-size: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      color: var(--primary);
-    }
-
-    /* Grid de platos */
+    /* Bloques de menú */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 2rem;
     }
     .menu-item {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(8px);
+      padding: 1rem;
+      border-radius: 12px;
       text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .menu-item img {
-      width: 180px;
-      height: 180px;
+      width: 160px;
+      height: 160px;
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 1rem;
       border: 2px solid var(--primary);
     }
     .menu-item h3 {
-      font-size: 1.1rem;
-      margin: 0.5rem 0;
       color: var(--light);
+      margin: 0.5rem 0;
     }
     .menu-item p {
       font-size: 0.9rem;
       color: #aaa;
     }
-    .menu-item .precio {
-      font-size: 1rem;
+    .precio {
+      margin-top: 0.5rem;
       color: var(--primary);
       font-weight: bold;
-      margin-top: 0.5rem;
     }
 
     /* Menú degustación */
-    .degustacion {
-      background: #1a1a1a;
-      padding: 3rem 5%;
-      border-radius: 10px;
-      margin: 2rem auto;
-      max-width: 1000px;
-    }
-    .degustacion h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: var(--primary);
-      margin-bottom: 2rem;
-    }
-    .pase {
-      margin-bottom: 2rem;
+    .degustacion .pase {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(8px);
+      padding: 1rem 1.5rem;
       border-left: 4px solid var(--primary);
-      padding-left: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
     }
-    .pase h3 {
-      font-size: 1.3rem;
+    .degustacion .pase h3 {
       margin: 0.5rem 0;
-      color: var(--light);
     }
-    .pase p {
+    .degustacion .pase p {
       color: #bbb;
       font-size: 0.95rem;
     }
 
-    /* Footer */
+    /* Animación */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     footer {
       text-align: center;
       padding: 2rem;
-      background: var(--dark);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
       border-top: 1px solid rgba(255,255,255,0.1);
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Carta Tecnic Pasta Bar</h1>
-    <p>Un recorrido por nuestra cocina</p>
-  </header>
+<header>
+  <h1>Tecnic Pasta Bar</h1>
+  <p>Una experiencia gastronómica con técnica y pasión</p>
+</header>
 
-  <!-- Menú principal -->
-  <nav class="main-menu">
-    <a href="#menu-normal">Menú Normal</a>
-    <a href="#menu-degustacion">Menú Degustación</a>
-    <a href="#otros">Otros Menús</a>
-  </nav>
+<!-- Menú principal -->
+<nav class="main-menu">
+  <button class="active" onclick="showSection('carta')">Carta</button>
+  <button onclick="showSection('degustacion')">Menú Degustación</button>
+  <button onclick="showSection('menu-dia')">Menú del Día</button>
+</nav>
 
-  <!-- Menú Normal con Submenú -->
-  <section id="menu-normal" class="menu-section">
-    <h2>Menú Normal</h2>
-    <div class="submenu">
-      <a href="#entrantes">Entrantes</a>
-      <a href="#primeros">Primeros</a>
-      <a href="#segundos">Segundos</a>
-      <a href="#bebidas">Bebidas</a>
-      <a href="#vinos">Vinos</a>
-      <a href="#postres">Postres</a>
-    </div>
+<!-- Carta -->
+<section id="carta" class="section active">
+  <h2 style="color:var(--primary); text-align:center;">Nuestra Carta</h2>
 
-    <!-- Ejemplo Entrantes -->
-    <div id="entrantes" class="menu-grid">
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?bread" alt=""><h3>Pan de origen</h3><p>Unidad</p><div class="precio">1.90€</div></div>
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?salad" alt=""><h3>Sunset Salad</h3><p>Mix fresco y frutos secos</p><div class="precio">7.50€</div></div>
-      <!-- ... más entrantes ... -->
-    </div>
-  </section>
+  <div class="submenu">
+    <button class="active" onclick="showSubmenu('entrantes')">Entrantes</button>
+    <button onclick="showSubmenu('primeros')">Primeros</button>
+    <button onclick="showSubmenu('segundos')">Segundos</button>
+    <button onclick="showSubmenu('vinos')">Vinos</button>
+    <button onclick="showSubmenu('bebidas')">Bebidas</button>
+    <button onclick="showSubmenu('postres')">Postres</button>
+  </div>
 
-  <!-- Menú Degustación -->
-  <section id="menu-degustacion" class="degustacion">
-    <h2>Menú Degustación</h2>
-    <div class="pase">
-      <h3>Pase 1: Aperitivo de la casa</h3>
-      <p>Un bocado crujiente de pan de masa madre con emulsión de albahaca. Ingredientes locales de pequeños productores.</p>
+  <!-- Subcategorías -->
+  <div id="entrantes" class="submenu-content active">
+    <div class="menu-grid">
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?bread"><h3>Pan de origen</h3><p>Unidad</p><div class="precio">1.90€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?salad"><h3>Sunset Salad</h3><p>Mix fresco</p><div class="precio">7.50€</div></div>
     </div>
-    <div class="pase">
-      <h3>Pase 2: Entrante fresco</h3>
-      <p>Carpaccio de pulpo con aceite cítrico. El pulpo proviene de pesca sostenible en Galicia.</p>
-    </div>
-    <div class="pase">
-      <h3>Pase 3: Principal</h3>
-      <p>Pappardelle al Ragù con carne de pasto ecológica, cocinada 8 horas en vino tinto.</p>
-    </div>
-    <div class="pase">
-      <h3>Pase 4: Postre</h3>
-      <p>Tiramisú clásico reinterpretado con cacao puro y café de origen colombiano.</p>
-    </div>
-  </section>
+  </div>
 
-  <!-- Otros menús -->
-  <section id="otros" class="menu-section">
-    <h2>Otros Menús</h2>
-    <p style="text-align:center; color:#aaa;">Próximamente: Menú de temporada, Menú Vegano, y más...</p>
-  </section>
+  <div id="primeros" class="submenu-content" style="display:none;">
+    <div class="menu-grid">
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?pasta"><h3>Spaghetti Carbonara</h3><p>Receta clásica</p><div class="precio">12.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?lasagna"><h3>Lasagna Vegetal</h3><p>Con verduras</p><div class="precio">11.00€</div></div>
+    </div>
+  </div>
 
-  <footer>
-    <p>© 2025 Tecnic Pasta Bar - Todos los derechos reservados</p>
-  </footer>
+  <!-- más submenús aquí -->
+</section>
+
+<!-- Menú Degustación -->
+<section id="degustacion" class="section degustacion">
+  <h2>Menú Degustación</h2>
+  <div class="pase">
+    <h3>Pase 1: Aperitivo</h3>
+    <p>Bocado crujiente con emulsión de albahaca. Ingredientes locales.</p>
+  </div>
+  <div class="pase">
+    <h3>Pase 2: Entrante</h3>
+    <p>Carpaccio de pulpo con aceite cítrico, pesca sostenible gallega.</p>
+  </div>
+  <div class="pase">
+    <h3>Pase 3: Principal</h3>
+    <p>Pappardelle al ragù con carne ecológica, cocción lenta 8h.</p>
+  </div>
+  <div class="pase">
+    <h3>Pase 4: Postre</h3>
+    <p>Tiramisú reinterpretado con cacao puro y café colombiano.</p>
+  </div>
+</section>
+
+<!-- Menú del Día -->
+<section id="menu-dia" class="section">
+  <h2 style="color:var(--primary); text-align:center;">Menú del Día</h2>
+  <div class="menu-grid">
+    <div class="menu-item"><h3>Entrante 1</h3><p>Ensalada fresca con queso feta</p></div>
+    <div class="menu-item"><h3>Entrante 2</h3><p>Sopa de verduras de temporada</p></div>
+    <div class="menu-item"><h3>Principal 1</h3><p>Pasta al pesto genovés</p></div>
+    <div class="menu-item"><h3>Principal 2</h3><p>Risotto de setas</p></div>
+    <div class="menu-item"><h3>Segundo 1</h3><p>Pollo al limón con hierbas</p></div>
+    <div class="menu-item"><h3>Segundo 2</h3><p>Pescado del día a la plancha</p></div>
+    <div class="menu-item"><h3>Postre 1</h3><p>Panacota con frutos rojos</p></div>
+    <div class="menu-item"><h3>Postre 2</h3><p>Helado artesanal</p></div>
+    <div class="menu-item"><h3>Bebida</h3><p>Incluye agua, refresco o copa de vino</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Tecnic Pasta Bar - Todos los derechos reservados</p>
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    document.querySelectorAll('.main-menu button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function showSubmenu(id) {
+    document.querySelectorAll('.submenu-content').forEach(s => s.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+
+    document.querySelectorAll('.submenu button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+</script>
 
 </body>
 </html>
