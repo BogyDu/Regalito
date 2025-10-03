@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tecnic Pasta Bar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FFD600; /* Amarillo */
+      --dark: #000000;    /* Negro */
+      --light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
+    }
+
+    header {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: var(--dark);
+    }
+
+    header h1 {
+      font-size: 4rem;
+      color: var(--primary);
+      letter-spacing: 4px;
+      opacity: 0;
+    }
+
+    header p {
+      margin-top: 1rem;
+      font-size: 1.3rem;
+      color: var(--light);
+      opacity: 0;
+    }
+
+    section {
+      padding: 6rem 10%;
+      position: relative;
+    }
+
+    /* Menú con efecto glassmorphism */
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .menu-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Historia */
+    .historia {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .historia img {
+      width: 400px;
+      border-radius: 12px;
+    }
+
+    .historia-text {
+      flex: 1;
+    }
+
+    .historia-text h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    /* Instagram */
+    .media {
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: var(--dark);
+      color: var(--light);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Tecnic Pasta Bar</h1>
+    <p>Donde la técnica se une con el sabor</p>
+  </header>
+
+  <section id="menu">
+    <h2 style="color:var(--primary); margin-bottom:2rem;">Nuestro Menú</h2>
+    <div class="menu">
+      <div class="menu-item">
+        <h3>Spaghetti Carbonara</h3>
+        <p>Receta clásica italiana con un toque moderno.</p>
+      </div>
+      <div class="menu-item">
+        <h3>Pappardelle al Ragù</h3>
+        <p>Cocinado a fuego lento, tradición en cada bocado.</p>
+      </div>
+      <div class="menu-item">
+        <h3>Tagliatelle al Limone</h3>
+        <p>Fresco, cítrico y perfecto para el verano.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="historia" class="historia">
+    <img src="https://source.unsplash.com/400x400/?pasta,chef" alt="Chef preparando pasta">
+    <div class="historia-text">
+      <h2>Nuestra Historia</h2>
+      <p>Tecnic Pasta Bar nace de la pasión por la cocina italiana y la técnica culinaria moderna. Nuestro fundador, un chef apasionado por la innovación, ha creado un espacio donde tradición y creatividad se encuentran en cada plato.</p>
+    </div>
+  </section>
+
+  <section id="media" class="media">
+    <h2 style="color:var(--primary); margin-bottom:2rem;">Síguenos en Instagram</h2>
+    <!-- Embed de Instagram -->
+    <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/C0xJkCnrXyY/" data-instgrm-version="14"></blockquote>
+    <script async src="//www.instagram.com/embed.js"></script>
+  </section>
+
+  <footer>
+    <p>© 2025 Tecnic Pasta Bar - Todos los derechos reservados</p>
+  </footer>
+
+  <!-- GSAP Animaciones -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.to("header h1", {opacity:1, y:-20, duration:1});
+    gsap.to("header p", {opacity:1, y:-10, duration:1, delay:0.5});
+
+    gsap.utils.toArray("section").forEach(section => {
+      gsap.from(section, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+        }
+      });
+    });
+  </script>
+</body>
+</html>
