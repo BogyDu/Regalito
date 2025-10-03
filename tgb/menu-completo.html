@@ -10,8 +10,8 @@
 
   <style>
     :root {
-      --primary: #FFD600; /* Amarillo */
-      --dark: #000000;    /* Negro */
+      --primary: #FFD600;
+      --dark: #000000;
       --light: #ffffff;
     }
 
@@ -25,18 +25,21 @@
 
     header {
       text-align: center;
-      padding: 7rem 1rem 3rem;
+      padding: 8rem 2rem 4rem;
     }
     header h1 {
       font-family: 'Great Vibes', cursive;
-      font-size: 3.5rem;
+      font-size: 4rem;
       color: var(--primary);
       margin: 0;
     }
     header p {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #bbb;
-      margin-top: 0.5rem;
+      margin-top: 1rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* Menú principal */
@@ -73,7 +76,7 @@
       overflow-x: auto;
       padding: 0.8rem 1rem;
       position: fixed;
-      top: 60px; /* debajo del menú principal */
+      top: 60px;
       width: 100%;
       background: rgba(0,0,0,0.5);
       backdrop-filter: blur(6px);
@@ -96,49 +99,41 @@
     /* Secciones */
     .section {
       display: none;
-      padding: 8rem 5% 3rem; /* margen por menú fijo */
+      padding: 10rem 8% 4rem;
     }
     .section.active {
       display: block;
       animation: fadeIn 0.6s ease;
     }
 
-    /* Items */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 4rem 3rem;
-      margin-top: 3rem;
+    /* Carta en dos columnas */
+    .menu-column {
+      display: flex;
+      justify-content: space-between;
+      gap: 5%;
+      flex-wrap: wrap;
     }
-    .menu-item {
-      text-align: center;
+    .menu-block {
+      flex: 1 1 45%;
+      margin-bottom: 2rem;
     }
-    .menu-item img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-    }
-    .menu-item h3 {
+    .menu-block h3 {
       font-family: 'Great Vibes', cursive;
       font-size: 2rem;
       color: var(--primary);
-      margin: 0.2rem 0;
+      margin-bottom: 0.5rem;
     }
-    .menu-item p {
-      font-family: 'Montserrat', sans-serif;
+    .menu-block p {
       font-size: 0.95rem;
       color: #ccc;
-      margin: 0.3rem 0;
+      margin: 0.2rem 0;
     }
     .precio {
-      margin-top: 0.3rem;
-      color: #eee;
-      font-weight: 500;
+      float: right;
+      color: var(--light);
     }
 
-    /* Menú degustación */
+    /* Degustación */
     .degustacion {
       max-width: 800px;
       margin: auto;
@@ -157,7 +152,7 @@
       line-height: 1.5;
     }
 
-    /* Animaciones */
+    /* Animación */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
@@ -176,7 +171,7 @@
 
 <header>
   <h1>Tecnic Pasta Bar</h1>
-  <p>Una experiencia gastronómica con técnica y pasión</p>
+  <p>En el corazón de la ciudad, fusionamos tradición italiana y técnica contemporánea. Una cocina donde cada plato cuenta una historia.</p>
 </header>
 
 <!-- Menú principal -->
@@ -186,51 +181,95 @@
   <button onclick="showSection('menu-dia')">Menú del Día</button>
 </nav>
 
-<!-- Submenú (solo visible en Carta) -->
+<!-- Submenú de la Carta -->
 <div class="submenu" id="submenu">
-  <button class="active" onclick="showSubmenu('entrantes')">Entrantes</button>
+  <button class="active" onclick="showSubmenu('compartir')">Compartir</button>
+  <button onclick="showSubmenu('entrantes')">Entrantes</button>
   <button onclick="showSubmenu('primeros')">Primeros</button>
   <button onclick="showSubmenu('segundos')">Segundos</button>
-  <button onclick="showSubmenu('vinos')">Vinos</button>
-  <button onclick="showSubmenu('bebidas')">Bebidas</button>
   <button onclick="showSubmenu('postres')">Postres</button>
+  <button onclick="showSubmenu('bebidas')">Bebidas</button>
+  <button onclick="showSubmenu('vinos')">Vinos</button>
 </div>
 
-<!-- Carta -->
+<!-- CARTA -->
 <section id="carta" class="section active">
-  <div id="entrantes" class="submenu-content active">
-    <div class="menu-grid">
-      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?bread"><h3>Pan de origen</h3><p>Horneado diariamente, masa madre</p><div class="precio">1.90€</div></div>
-      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?salad"><h3>Sunset Salad</h3><p>Mix fresco con frutos secos y cítricos</p><div class="precio">7.50€</div></div>
+  <!-- Compartir -->
+  <div id="compartir" class="submenu-content active">
+    <div class="menu-column">
+      <div class="menu-block">
+        <h3>Tabla de quesos<span class="precio">12€</span></h3>
+        <p>Selección de quesos artesanales europeos</p>
+        <h3>Antipasti<span class="precio">10€</span></h3>
+        <p>Olivas, alcachofas, embutidos italianos</p>
+      </div>
+      <div class="menu-block">
+        <h3>Focaccia casera<span class="precio">6€</span></h3>
+        <p>Romero fresco y aceite de oliva virgen</p>
+        <h3>Provolone al horno<span class="precio">9€</span></h3>
+        <p>Con tomate seco y albahaca</p>
+      </div>
     </div>
   </div>
-  <div id="primeros" class="submenu-content" style="display:none;">
-    <div class="menu-grid">
-      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?pasta"><h3>Spaghetti Carbonara</h3><p>Receta clásica con guanciale</p><div class="precio">12.00€</div></div>
+
+  <!-- Entrantes -->
+  <div id="entrantes" class="submenu-content" style="display:none;">
+    <div class="menu-column">
+      <div class="menu-block">
+        <h3>Carpaccio de ternera<span class="precio">14€</span></h3>
+        <p>Láminas finas, parmesano, rúcula</p>
+        <h3>Burrata con tomate<span class="precio">13€</span></h3>
+        <p>Tomates de temporada, aceite virgen</p>
+      </div>
+      <div class="menu-block">
+        <h3>Vitello tonnato<span class="precio">15€</span></h3>
+        <p>Ternera blanca con salsa de atún</p>
+        <h3>Ensalada caprese<span class="precio">12€</span></h3>
+        <p>Mozzarella fresca, albahaca, pesto</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Menú Degustación -->
+<!-- DEGUSTACIÓN -->
 <section id="degustacion" class="section degustacion">
   <h2 style="text-align:center; font-family:'Great Vibes'; color:var(--primary); font-size:2.5rem;">Menú Degustación</h2>
   <div class="pase">
     <h3>Pase 1</h3>
-    <p>Bocado crujiente con emulsión de albahaca, ingredientes locales frescos.</p>
+    <p>Bocado crujiente con emulsión de albahaca.</p>
   </div>
   <div class="pase">
     <h3>Pase 2</h3>
-    <p>Carpaccio de pulpo con aceite cítrico, pesca sostenible gallega.</p>
+    <p>Carpaccio de pulpo con aceite cítrico, pesca sostenible.</p>
+  </div>
+  <div class="pase">
+    <h3>Pase 3</h3>
+    <p>Pappardelle al ragù con carne ecológica, cocción lenta.</p>
+  </div>
+  <div class="pase">
+    <h3>Pase 4</h3>
+    <p>Tiramisú reinterpretado con cacao puro y café colombiano.</p>
   </div>
 </section>
 
-<!-- Menú del Día -->
+<!-- MENÚ DEL DÍA -->
 <section id="menu-dia" class="section">
   <h2 style="text-align:center; font-family:'Great Vibes'; color:var(--primary); font-size:2.5rem;">Menú del Día</h2>
-  <div class="menu-grid">
-    <div class="menu-item"><h3>Entrante 1</h3><p>Ensalada fresca con queso feta</p></div>
-    <div class="menu-item"><h3>Entrante 2</h3><p>Sopa de verduras de temporada</p></div>
+  <div class="menu-column">
+    <div class="menu-block">
+      <h3>Entrante 1</h3><p>Ensalada de temporada con feta</p>
+      <h3>Principal 1</h3><p>Pasta al pesto genovés</p>
+      <h3>Segundo 1</h3><p>Pollo al limón con hierbas</p>
+      <h3>Postre 1</h3><p>Panacota con frutos rojos</p>
+    </div>
+    <div class="menu-block">
+      <h3>Entrante 2</h3><p>Sopa de verduras frescas</p>
+      <h3>Principal 2</h3><p>Risotto de setas</p>
+      <h3>Segundo 2</h3><p>Pescado del día a la plancha</p>
+      <h3>Postre 2</h3><p>Helado artesanal</p>
+    </div>
   </div>
+  <p style="text-align:center; color:#ccc; margin-top:2rem;">Incluye agua, refresco o copa de vino</p>
 </section>
 
 <footer>
@@ -245,8 +284,12 @@
     document.querySelectorAll('.main-menu button').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
 
-    // Mostrar/ocultar el submenú solo en Carta
-    document.getElementById('submenu').style.display = (id === 'carta') ? 'flex' : 'none';
+    // Mostrar/ocultar el submenú solo en Carta y Menú del día
+    if(id === 'carta' || id === 'menu-dia'){
+      document.getElementById('submenu').style.display = 'flex';
+    } else {
+      document.getElementById('submenu').style.display = 'none';
+    }
   }
 
   function showSubmenu(id) {
