@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tecnic Pasta Bar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+  <!-- Tipografías -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --primary: #FFD600; /* Amarillo */
@@ -13,7 +16,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #000000, #222222);
+      background: linear-gradient(135deg, #000, #1a1a1a);
       color: var(--light);
       font-family: 'Montserrat', sans-serif;
       margin: 0;
@@ -22,15 +25,18 @@
 
     header {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 7rem 1rem 3rem;
     }
     header h1 {
-      font-size: 2.5rem;
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.5rem;
       color: var(--primary);
+      margin: 0;
     }
     header p {
       font-size: 1.1rem;
-      color: #ccc;
+      color: #bbb;
+      margin-top: 0.5rem;
     }
 
     /* Menú principal */
@@ -38,132 +44,131 @@
       display: flex;
       justify-content: center;
       gap: 2rem;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.6);
       backdrop-filter: blur(8px);
       padding: 1rem;
-      position: sticky;
+      position: fixed;
       top: 0;
+      width: 100%;
       z-index: 1000;
     }
     .main-menu button {
       background: transparent;
       border: none;
       color: var(--light);
-      font-weight: 600;
+      font-weight: 500;
       font-size: 1rem;
       cursor: pointer;
-      padding: 0.5rem 1rem;
       transition: 0.3s;
     }
     .main-menu button:hover,
     .main-menu button.active {
-      background: var(--primary);
-      color: var(--dark);
-      border-radius: 6px;
+      color: var(--primary);
     }
 
-    /* Contenedor de secciones */
-    .section {
-      display: none;
-      padding: 3rem 5%;
-      animation: fadeIn 0.6s ease;
-    }
-    .section.active {
-      display: block;
-    }
-
-    /* Submenú horizontal */
+    /* Submenú */
     .submenu {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       overflow-x: auto;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      background: rgba(255,255,255,0.05);
+      padding: 0.8rem 1rem;
+      position: fixed;
+      top: 60px; /* debajo del menú principal */
+      width: 100%;
+      background: rgba(0,0,0,0.5);
       backdrop-filter: blur(6px);
-      border-radius: 8px;
+      z-index: 999;
     }
     .submenu button {
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #ccc;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
+      border: none;
+      font-size: 0.95rem;
       cursor: pointer;
-      transition: 0.3s;
+      color: #aaa;
       white-space: nowrap;
+      transition: 0.3s;
     }
     .submenu button:hover,
     .submenu button.active {
-      background: var(--primary);
-      color: var(--dark);
+      color: var(--primary);
     }
 
-    /* Bloques de menú */
+    /* Secciones */
+    .section {
+      display: none;
+      padding: 8rem 5% 3rem; /* margen por menú fijo */
+    }
+    .section.active {
+      display: block;
+      animation: fadeIn 0.6s ease;
+    }
+
+    /* Items */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 4rem 3rem;
+      margin-top: 3rem;
     }
     .menu-item {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(8px);
-      padding: 1rem;
-      border-radius: 12px;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
     }
     .menu-item img {
-      width: 160px;
-      height: 160px;
+      width: 200px;
+      height: 200px;
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 1rem;
-      border: 2px solid var(--primary);
     }
     .menu-item h3 {
-      color: var(--light);
-      margin: 0.5rem 0;
+      font-family: 'Great Vibes', cursive;
+      font-size: 2rem;
+      color: var(--primary);
+      margin: 0.2rem 0;
     }
     .menu-item p {
-      font-size: 0.9rem;
-      color: #aaa;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      color: #ccc;
+      margin: 0.3rem 0;
     }
     .precio {
-      margin-top: 0.5rem;
-      color: var(--primary);
-      font-weight: bold;
+      margin-top: 0.3rem;
+      color: #eee;
+      font-weight: 500;
     }
 
     /* Menú degustación */
+    .degustacion {
+      max-width: 800px;
+      margin: auto;
+    }
     .degustacion .pase {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(8px);
-      padding: 1rem 1.5rem;
-      border-left: 4px solid var(--primary);
-      margin-bottom: 1rem;
-      border-radius: 8px;
+      margin: 2rem 0;
     }
-    .degustacion .pase h3 {
-      margin: 0.5rem 0;
+    .degustacion h3 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
     }
-    .degustacion .pase p {
+    .degustacion p {
       color: #bbb;
-      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
-    /* Animación */
+    /* Animaciones */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     footer {
       text-align: center;
       padding: 2rem;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.5);
       backdrop-filter: blur(8px);
-      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 3rem;
     }
   </style>
 </head>
@@ -181,71 +186,50 @@
   <button onclick="showSection('menu-dia')">Menú del Día</button>
 </nav>
 
+<!-- Submenú (solo visible en Carta) -->
+<div class="submenu" id="submenu">
+  <button class="active" onclick="showSubmenu('entrantes')">Entrantes</button>
+  <button onclick="showSubmenu('primeros')">Primeros</button>
+  <button onclick="showSubmenu('segundos')">Segundos</button>
+  <button onclick="showSubmenu('vinos')">Vinos</button>
+  <button onclick="showSubmenu('bebidas')">Bebidas</button>
+  <button onclick="showSubmenu('postres')">Postres</button>
+</div>
+
 <!-- Carta -->
 <section id="carta" class="section active">
-  <h2 style="color:var(--primary); text-align:center;">Nuestra Carta</h2>
-
-  <div class="submenu">
-    <button class="active" onclick="showSubmenu('entrantes')">Entrantes</button>
-    <button onclick="showSubmenu('primeros')">Primeros</button>
-    <button onclick="showSubmenu('segundos')">Segundos</button>
-    <button onclick="showSubmenu('vinos')">Vinos</button>
-    <button onclick="showSubmenu('bebidas')">Bebidas</button>
-    <button onclick="showSubmenu('postres')">Postres</button>
-  </div>
-
-  <!-- Subcategorías -->
   <div id="entrantes" class="submenu-content active">
     <div class="menu-grid">
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?bread"><h3>Pan de origen</h3><p>Unidad</p><div class="precio">1.90€</div></div>
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?salad"><h3>Sunset Salad</h3><p>Mix fresco</p><div class="precio">7.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?bread"><h3>Pan de origen</h3><p>Horneado diariamente, masa madre</p><div class="precio">1.90€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?salad"><h3>Sunset Salad</h3><p>Mix fresco con frutos secos y cítricos</p><div class="precio">7.50€</div></div>
     </div>
   </div>
-
   <div id="primeros" class="submenu-content" style="display:none;">
     <div class="menu-grid">
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?pasta"><h3>Spaghetti Carbonara</h3><p>Receta clásica</p><div class="precio">12.00€</div></div>
-      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?lasagna"><h3>Lasagna Vegetal</h3><p>Con verduras</p><div class="precio">11.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/400x400/?pasta"><h3>Spaghetti Carbonara</h3><p>Receta clásica con guanciale</p><div class="precio">12.00€</div></div>
     </div>
   </div>
-
-  <!-- más submenús aquí -->
 </section>
 
 <!-- Menú Degustación -->
 <section id="degustacion" class="section degustacion">
-  <h2>Menú Degustación</h2>
+  <h2 style="text-align:center; font-family:'Great Vibes'; color:var(--primary); font-size:2.5rem;">Menú Degustación</h2>
   <div class="pase">
-    <h3>Pase 1: Aperitivo</h3>
-    <p>Bocado crujiente con emulsión de albahaca. Ingredientes locales.</p>
+    <h3>Pase 1</h3>
+    <p>Bocado crujiente con emulsión de albahaca, ingredientes locales frescos.</p>
   </div>
   <div class="pase">
-    <h3>Pase 2: Entrante</h3>
+    <h3>Pase 2</h3>
     <p>Carpaccio de pulpo con aceite cítrico, pesca sostenible gallega.</p>
-  </div>
-  <div class="pase">
-    <h3>Pase 3: Principal</h3>
-    <p>Pappardelle al ragù con carne ecológica, cocción lenta 8h.</p>
-  </div>
-  <div class="pase">
-    <h3>Pase 4: Postre</h3>
-    <p>Tiramisú reinterpretado con cacao puro y café colombiano.</p>
   </div>
 </section>
 
 <!-- Menú del Día -->
 <section id="menu-dia" class="section">
-  <h2 style="color:var(--primary); text-align:center;">Menú del Día</h2>
+  <h2 style="text-align:center; font-family:'Great Vibes'; color:var(--primary); font-size:2.5rem;">Menú del Día</h2>
   <div class="menu-grid">
     <div class="menu-item"><h3>Entrante 1</h3><p>Ensalada fresca con queso feta</p></div>
     <div class="menu-item"><h3>Entrante 2</h3><p>Sopa de verduras de temporada</p></div>
-    <div class="menu-item"><h3>Principal 1</h3><p>Pasta al pesto genovés</p></div>
-    <div class="menu-item"><h3>Principal 2</h3><p>Risotto de setas</p></div>
-    <div class="menu-item"><h3>Segundo 1</h3><p>Pollo al limón con hierbas</p></div>
-    <div class="menu-item"><h3>Segundo 2</h3><p>Pescado del día a la plancha</p></div>
-    <div class="menu-item"><h3>Postre 1</h3><p>Panacota con frutos rojos</p></div>
-    <div class="menu-item"><h3>Postre 2</h3><p>Helado artesanal</p></div>
-    <div class="menu-item"><h3>Bebida</h3><p>Incluye agua, refresco o copa de vino</p></div>
   </div>
 </section>
 
@@ -260,6 +244,9 @@
 
     document.querySelectorAll('.main-menu button').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
+
+    // Mostrar/ocultar el submenú solo en Carta
+    document.getElementById('submenu').style.display = (id === 'carta') ? 'flex' : 'none';
   }
 
   function showSubmenu(id) {
