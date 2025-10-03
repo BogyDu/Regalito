@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tecnic Pasta Bar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FFD600;
+      --dark: #000000;
+      --light: #ffffff;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    body {
+      background-color: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
+    }
+    header {
+      height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: var(--dark);
+    }
+    header h1 {
+      font-size: 3.5rem;
+      color: var(--primary);
+      letter-spacing: 4px;
+      opacity: 0;
+    }
+    header p {
+      margin-top: 1rem;
+      font-size: 1.3rem;
+      color: var(--light);
+      opacity: 0;
+    }
+    section {
+      padding: 4rem 10%;
+      position: relative;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Sección de Instagram – grid 3 columnas */
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .insta-grid .insta-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .insta-grid .insta-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .descripcion-menu {
+      margin: 2rem 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--light);
+    }
+
+    /* Link al menú completo */
+    .link-menu {
+      margin-top: 1.5rem;
+      display: inline-block;
+      padding: 0.8rem 1.6rem;
+      background: var(--primary);
+      color: var(--dark);
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    .link-menu:hover {
+      background: #e0c100;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: var(--dark);
+      color: var(--light);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Tecnic Pasta Bar</h1>
+    <p>Donde la técnica se une con el sabor</p>
+  </header>
+
+  <section id="instagram-section">
+    <h2 style="color:var(--primary); margin-bottom:2rem;">Síguenos en Instagram</h2>
+    <div class="insta-grid">
+      <!-- Aquí van los 3 embeds manuales -->
+      <div class="insta-item">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/XXXXXXXXX1/" data-instgrm-version="14"></blockquote>
+      </div>
+      <div class="insta-item">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/XXXXXXXXX2/" data-instgrm-version="14"></blockquote>
+      </div>
+      <div class="insta-item">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/XXXXXXXXX3/" data-instgrm-version="14"></blockquote>
+      </div>
+    </div>
+    <script async src="//www.instagram.com/embed.js"></script>
+  </section>
+
+  <section id="breve-menu">
+    <h2 style="color:var(--primary); margin-bottom:1rem;">Breve descripción del menú</h2>
+    <p class="descripcion-menu">
+      En Tecnic Pasta Bar combinamos técnicas modernas con recetas clásicas.  
+      Nuestro menú ofrece una cuidada selección de entrantes ligeros como bruschettas artesanales o carpaccios,  
+      una variedad de pastas frescas hechas a mano para primeros platos,  
+      opciones de segundos audaces con ingredientes de temporada,  
+      y una carta de bebidas que incluye vinos seleccionados, cócteles sutiles y refrescos artesanales.  
+      Cada plato nace de la precisión técnica y el respeto por el sabor.
+    </p>
+    <a href="menu-completo.html" class="link-menu">Ver menú completo</a>
+  </section>
+
+  <footer>
+    <p>© 2025 Tecnic Pasta Bar - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.to("header h1", {opacity:1, y:-20, duration:1});
+    gsap.to("header p", {opacity:1, y:-10, duration:1, delay:0.5});
+    gsap.utils.toArray("section").forEach(section => {
+      gsap.from(section, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
