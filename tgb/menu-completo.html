@@ -19,10 +19,11 @@
       margin: 0;
       padding: 0;
     }
+
+    /* Header */
     header {
       text-align: center;
-      padding: 3rem 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem 1rem 6rem;
     }
     header h1 {
       font-size: 2.5rem;
@@ -34,16 +35,40 @@
       color: #ccc;
     }
 
-    /* Estilo menú */
+    /* Navegación horizontal */
+    .nav-menu {
+      position: sticky;
+      top: 0;
+      background: var(--dark);
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      z-index: 1000;
+    }
+    .nav-menu a {
+      color: var(--light);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-menu a:hover {
+      color: var(--primary);
+    }
+
+    /* Secciones */
     .menu-section {
-      padding: 3rem 5%;
+      padding: 4rem 5%;
     }
     .menu-section h2 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       text-align: center;
       margin-bottom: 2rem;
       color: var(--primary);
     }
+
+    /* Grid de platos */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -61,7 +86,7 @@
       border: 2px solid var(--primary);
     }
     .menu-item h3 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin: 0.5rem 0;
       color: var(--light);
     }
@@ -76,6 +101,7 @@
       margin-top: 0.5rem;
     }
 
+    /* Footer */
     footer {
       text-align: center;
       padding: 2rem;
@@ -85,108 +111,85 @@
   </style>
 </head>
 <body>
+
   <header>
     <h1>Nuestra Carta</h1>
     <p>El equilibrio entre técnica, sabor y creatividad</p>
   </header>
 
+  <!-- Menú navegación horizontal -->
+  <nav class="nav-menu">
+    <a href="#entrantes">Entrantes</a>
+    <a href="#primeros">Primeros</a>
+    <a href="#segundos">Segundos</a>
+    <a href="#bebidas">Bebidas</a>
+  </nav>
+
   <!-- Entrantes -->
-  <section class="menu-section">
+  <section class="menu-section" id="entrantes">
     <h2>Entrantes</h2>
     <div class="menu-grid">
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?bread" alt="Pan de origen">
-        <h3>Pan de origen</h3>
-        <p>Unidad</p>
-        <div class="precio">1.90€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?salad" alt="Sunset Salad">
-        <h3>Sunset Salad</h3>
-        <p>El comienzo perfecto</p>
-        <div class="precio">7.50€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?bruschetta" alt="Bruschetta">
-        <h3>Bruschetta</h3>
-        <p>Tomate fresco y albahaca</p>
-        <div class="precio">6.00€</div>
-      </div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?bread" alt=""><h3>Pan de origen</h3><p>Unidad</p><div class="precio">1.90€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?salad" alt=""><h3>Sunset Salad</h3><p>Mix fresco y frutos secos</p><div class="precio">7.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?bruschetta" alt=""><h3>Bruschetta</h3><p>Tomate fresco y albahaca</p><div class="precio">6.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?soup" alt=""><h3>Sopa de temporada</h3><p>Con pan crujiente</p><div class="precio">5.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?carpaccio" alt=""><h3>Carpaccio de pulpo</h3><p>Con aceite cítrico</p><div class="precio">9.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?cheese" alt=""><h3>Tabla de quesos</h3><p>Selección artesanal</p><div class="precio">10.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?mushroom" alt=""><h3>Champiñones al ajillo</h3><p>Con hierbas frescas</p><div class="precio">6.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?tapas" alt=""><h3>Tapenade</h3><p>Olivas negras y pan</p><div class="precio">5.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?eggplant" alt=""><h3>Berenjenas gratinadas</h3><p>Con parmesano</p><div class="precio">8.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?gazpacho" alt=""><h3>Gazpacho</h3><p>Refrescante andaluz</p><div class="precio">6.00€</div></div>
     </div>
   </section>
 
   <!-- Primeros -->
-  <section class="menu-section">
+  <section class="menu-section" id="primeros">
     <h2>Primeros</h2>
     <div class="menu-grid">
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?pasta" alt="Carbonara">
-        <h3>Spaghetti Carbonara</h3>
-        <p>Receta clásica italiana</p>
-        <div class="precio">12.00€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?pasta2" alt="Tagliatelle">
-        <h3>Tagliatelle al Limone</h3>
-        <p>Fresco y cítrico</p>
-        <div class="precio">11.50€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?ravioli" alt="Ravioli">
-        <h3>Ravioli de Ricotta</h3>
-        <p>Con mantequilla y salvia</p>
-        <div class="precio">13.00€</div>
-      </div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?carbonara" alt=""><h3>Spaghetti Carbonara</h3><p>Receta clásica</p><div class="precio">12.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?tagliatelle" alt=""><h3>Tagliatelle al Limone</h3><p>Fresco y cítrico</p><div class="precio">11.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?pappardelle" alt=""><h3>Pappardelle al Ragù</h3><p>Estofado de carne</p><div class="precio">13.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?ravioli" alt=""><h3>Ravioli Ricotta</h3><p>Con salvia</p><div class="precio">13.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?lasagna" alt=""><h3>Lasagna Vegetal</h3><p>Verduras asadas</p><div class="precio">12.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?gnocchi" alt=""><h3>Gnocchi al pesto</h3><p>Albahaca fresca</p><div class="precio">11.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?risotto" alt=""><h3>Risotto Funghi</h3><p>Con setas silvestres</p><div class="precio">14.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?penne" alt=""><h3>Penne Arrabbiata</h3><p>Toque picante</p><div class="precio">10.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?fettuccine" alt=""><h3>Fettuccine Alfredo</h3><p>Cremoso</p><div class="precio">11.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?tortellini" alt=""><h3>Tortellini</h3><p>Rellenos de carne</p><div class="precio">13.00€</div></div>
     </div>
   </section>
 
   <!-- Segundos -->
-  <section class="menu-section">
+  <section class="menu-section" id="segundos">
     <h2>Segundos</h2>
     <div class="menu-grid">
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?steak" alt="Solomillo">
-        <h3>Solomillo al vino</h3>
-        <p>Con reducción de tinto</p>
-        <div class="precio">18.00€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?fish" alt="Pescado del día">
-        <h3>Pescado del día</h3>
-        <p>Fresco de temporada</p>
-        <div class="precio">16.50€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?risotto" alt="Risotto">
-        <h3>Risotto de setas</h3>
-        <p>Con hongos silvestres</p>
-        <div class="precio">14.00€</div>
-      </div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?steak" alt=""><h3>Solomillo al vino</h3><p>Con reducción de tinto</p><div class="precio">18.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?fish" alt=""><h3>Pescado del día</h3><p>Fresco de mercado</p><div class="precio">16.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?risotto" alt=""><h3>Risotto mar y montaña</h3><p>Con gambas y setas</p><div class="precio">15.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?chicken" alt=""><h3>Pollo al limón</h3><p>Hierbas provenzales</p><div class="precio">14.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?pork" alt=""><h3>Costillas BBQ</h3><p>Cocinadas lento</p><div class="precio">17.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?duck" alt=""><h3>Pato confitado</h3><p>Salsa de naranja</p><div class="precio">19.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?veal" alt=""><h3>Ossobuco</h3><p>Estofado milanés</p><div class="precio">18.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?vegetables" alt=""><h3>Verduras grill</h3><p>Con salsa ligera</p><div class="precio">12.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?burger" alt=""><h3>Burger gourmet</h3><p>Con pan brioche</p><div class="precio">13.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?shrimp" alt=""><h3>Gambas al ajillo</h3><p>Clásico español</p><div class="precio">15.50€</div></div>
     </div>
   </section>
 
   <!-- Bebidas -->
-  <section class="menu-section">
+  <section class="menu-section" id="bebidas">
     <h2>Bebidas</h2>
     <div class="menu-grid">
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?wine" alt="Vino">
-        <h3>Vino tinto reserva</h3>
-        <p>Selección nacional</p>
-        <div class="precio">3.50€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?cocktail" alt="Cóctel italiano">
-        <h3>Cóctel italiano</h3>
-        <p>Aperol Spritz o Negroni</p>
-        <div class="precio">7.00€</div>
-      </div>
-      <div class="menu-item">
-        <img src="https://source.unsplash.com/300x300/?lemonade" alt="Limonada">
-        <h3>Limonada casera</h3>
-        <p>Refrescante y natural</p>
-        <div class="precio">3.00€</div>
-      </div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?wine" alt=""><h3>Vino tinto reserva</h3><p>Selección nacional</p><div class="precio">3.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?white-wine" alt=""><h3>Vino blanco joven</h3><p>Ligero y fresco</p><div class="precio">3.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?cocktail" alt=""><h3>Aperol Spritz</h3><p>Clásico italiano</p><div class="precio">7.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?negroni" alt=""><h3>Negroni</h3><p>Amargo y elegante</p><div class="precio">8.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?beer" alt=""><h3>Cerveza artesanal</h3><p>Local</p><div class="precio">4.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?mojito" alt=""><h3>Mojito</h3><p>Refrescante</p><div class="precio">6.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?whisky" alt=""><h3>Whisky premium</h3><p>Selección internacional</p><div class="precio">9.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?soft-drink" alt=""><h3>Refrescos</h3><p>Clásicos</p><div class="precio">2.50€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?water" alt=""><h3>Agua mineral</h3><p>Con gas o sin</p><div class="precio">2.00€</div></div>
+      <div class="menu-item"><img src="https://source.unsplash.com/300x300/?juice" alt=""><h3>Zumo natural</h3><p>De frutas frescas</p><div class="precio">3.50€</div></div>
     </div>
   </section>
 
