@@ -3,192 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menú Completo - Tecnic Pasta Bar</title>
+  <title>Carta - Tecnic Pasta Bar</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #FFD600;
-      --dark: #000000;
+      --primary: #FFD600; /* Amarillo */
+      --dark: #000000;    /* Negro */
       --light: #ffffff;
-    }
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Montserrat', sans-serif;
+      --bg: #111111;      /* Fondo oscuro elegante */
     }
     body {
-      background: var(--dark);
+      background: var(--bg);
       color: var(--light);
-      padding: 3rem 10%;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
     }
-    h1, h2 {
+    header {
+      text-align: center;
+      padding: 3rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    header h1 {
+      font-size: 2.5rem;
       color: var(--primary);
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
     }
+    header p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    /* Estilo menú */
     .menu-section {
-      margin-bottom: 3rem;
+      padding: 3rem 5%;
     }
-    .menu-items {
+    .menu-section h2 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--primary);
+    }
+    .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2.5rem;
     }
     .menu-item {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: transform 0.3s ease;
+      text-align: center;
     }
-    .menu-item:hover {
-      transform: translateY(-5px);
+    .menu-item img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 2px solid var(--primary);
     }
     .menu-item h3 {
-      margin-bottom: 0.8rem;
-      color: var(--primary);
-    }
-    .menu-item p {
-      font-size: 0.95rem;
-      line-height: 1.4;
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
       color: var(--light);
     }
-    .back-link {
-      display: inline-block;
-      margin-top: 2rem;
-      padding: 0.8rem 1.6rem;
-      background: var(--primary);
-      color: var(--dark);
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
+    .menu-item p {
+      font-size: 0.9rem;
+      color: #aaa;
     }
-    .back-link:hover {
-      background: #e0c100;
+    .menu-item .precio {
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Nuestra Carta</h1>
+    <p>El equilibrio entre técnica, sabor y creatividad</p>
+  </header>
 
-  <h1>Menú Completo</h1>
-
-  <div class="menu-section" id="entrantes">
+  <!-- Entrantes -->
+  <section class="menu-section">
     <h2>Entrantes</h2>
-    <div class="menu-items">
+    <div class="menu-grid">
       <div class="menu-item">
-        <h3>Bruschetta clásica</h3>
-        <p>Pan tostado con tomate, ajo, albahaca y un toque de aceite virgen extra.</p>
+        <img src="https://source.unsplash.com/300x300/?bread" alt="Pan de origen">
+        <h3>Pan de origen</h3>
+        <p>Unidad</p>
+        <div class="precio">1.90€</div>
       </div>
       <div class="menu-item">
-        <h3>Calamares a la romana</h3>
-        <p>Calamares frescos rebozados ligeros con alioli suave.</p>
+        <img src="https://source.unsplash.com/300x300/?salad" alt="Sunset Salad">
+        <h3>Sunset Salad</h3>
+        <p>El comienzo perfecto</p>
+        <div class="precio">7.50€</div>
       </div>
       <div class="menu-item">
-        <h3>Carpaccio de pulpo</h3>
-        <p>Finísimas láminas de pulpo con aceite cítrico y brotes frescos.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Ensalada burrata</h3>
-        <p>Burrata cremosa con tomate confitado, rúcula y reducción de balsámico.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Sopa de temporada</h3>
-        <p>Crema o consomé según la temporada, con pan crujiente.</p>
+        <img src="https://source.unsplash.com/300x300/?bruschetta" alt="Bruschetta">
+        <h3>Bruschetta</h3>
+        <p>Tomate fresco y albahaca</p>
+        <div class="precio">6.00€</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="menu-section" id="primeros">
-    <h2>Primeros Platos</h2>
-    <div class="menu-items">
+  <!-- Primeros -->
+  <section class="menu-section">
+    <h2>Primeros</h2>
+    <div class="menu-grid">
       <div class="menu-item">
+        <img src="https://source.unsplash.com/300x300/?pasta" alt="Carbonara">
         <h3>Spaghetti Carbonara</h3>
-        <p>Salsa cremosa con guanciale, pecorino y huevo.</p>
+        <p>Receta clásica italiana</p>
+        <div class="precio">12.00€</div>
       </div>
       <div class="menu-item">
+        <img src="https://source.unsplash.com/300x300/?pasta2" alt="Tagliatelle">
         <h3>Tagliatelle al Limone</h3>
-        <p>Salsa ligera de limón, mantequilla y parmesano.</p>
+        <p>Fresco y cítrico</p>
+        <div class="precio">11.50€</div>
       </div>
       <div class="menu-item">
-        <h3>Pappardelle al Ragù</h3>
-        <p>Ragú de carne estofada lentamente con hierbas.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Ravioli de ricotta y espinacas</h3>
-        <p>Relleno suave con salsa de mantequilla y salvia.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Lasagna vegetal</h3>
-        <p>Capas de verduras asadas, bechamel ligera y queso fundido.</p>
+        <img src="https://source.unsplash.com/300x300/?ravioli" alt="Ravioli">
+        <h3>Ravioli de Ricotta</h3>
+        <p>Con mantequilla y salvia</p>
+        <div class="precio">13.00€</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="menu-section" id="segundos">
+  <!-- Segundos -->
+  <section class="menu-section">
     <h2>Segundos</h2>
-    <div class="menu-items">
+    <div class="menu-grid">
       <div class="menu-item">
-        <h3>Pollo al limón con hierbas</h3>
-        <p>Pechuga de pollo con salsa cítrica y guarnición de vegetales.</p>
+        <img src="https://source.unsplash.com/300x300/?steak" alt="Solomillo">
+        <h3>Solomillo al vino</h3>
+        <p>Con reducción de tinto</p>
+        <div class="precio">18.00€</div>
       </div>
       <div class="menu-item">
+        <img src="https://source.unsplash.com/300x300/?fish" alt="Pescado del día">
         <h3>Pescado del día</h3>
-        <p>Selección fresca según la temporada, cocinado al horno.</p>
+        <p>Fresco de temporada</p>
+        <div class="precio">16.50€</div>
       </div>
       <div class="menu-item">
-        <h3>Risotto de setas silvestres</h3>
-        <p>Arroz cremoso con hongos y parmesano envejecido.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Solomillo con reducción de vino</h3>
-        <p>Solomillo jugoso con salsa de vino tinto y puré de patata.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Verduras asadas mixtas</h3>
-        <p>Selección de vegetales de temporada con vinagreta suave.</p>
+        <img src="https://source.unsplash.com/300x300/?risotto" alt="Risotto">
+        <h3>Risotto de setas</h3>
+        <p>Con hongos silvestres</p>
+        <div class="precio">14.00€</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="menu-section" id="bebidas">
+  <!-- Bebidas -->
+  <section class="menu-section">
     <h2>Bebidas</h2>
-    <div class="menu-items">
+    <div class="menu-grid">
       <div class="menu-item">
+        <img src="https://source.unsplash.com/300x300/?wine" alt="Vino">
         <h3>Vino tinto reserva</h3>
-        <p>Selección nacional con cuerpo y carácter.</p>
+        <p>Selección nacional</p>
+        <div class="precio">3.50€</div>
       </div>
       <div class="menu-item">
-        <h3>Vino blanco joven</h3>
-        <p>Fresco, ligero, perfecto para acompañar pasta blanca.</p>
+        <img src="https://source.unsplash.com/300x300/?cocktail" alt="Cóctel italiano">
+        <h3>Cóctel italiano</h3>
+        <p>Aperol Spritz o Negroni</p>
+        <div class="precio">7.00€</div>
       </div>
       <div class="menu-item">
-        <h3>Cóctel italiano clásico</h3>
-        <p>Aperol Spritz o Negroni preparado al estilo del chef.</p>
-      </div>
-      <div class="menu-item">
+        <img src="https://source.unsplash.com/300x300/?lemonade" alt="Limonada">
         <h3>Limonada casera</h3>
-        <p>Hecha con limones frescos, toque de hierbas y hielo.</p>
-      </div>
-      <div class="menu-item">
-        <h3>Agua mineral / refrescos</h3>
-        <p>Opción con gas o sin gas, y refrescos selectos.</p>
+        <p>Refrescante y natural</p>
+        <div class="precio">3.00€</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <a href="index.html" class="back-link">Volver a inicio</a>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  <script>
-    gsap.utils.toArray(".menu-section").forEach(sec => {
-      gsap.from(sec, {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        scrollTrigger: {
-          trigger: sec,
-          start: "top 80%"
-        }
-      });
-    });
-  </script>
+  <footer>
+    <p>© 2025 Tecnic Pasta Bar - Todos los derechos reservados</p>
+  </footer>
 </body>
 </html>
