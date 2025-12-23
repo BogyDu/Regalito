@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carta a los Reyes Magos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --verde: #5f6f52;
+        --beige: #f3efe7;
+        --dorado: #c9a24d;
+        --texto: #3a3a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(to bottom, #fdfcf8, var(--beige));
+        color: var(--texto);
+        overflow-x: hidden;
+    }
+
+    /* Nieve */
+    .snowflake {
+        position: fixed;
+        top: -10px;
+        color: white;
+        font-size: 1em;
+        user-select: none;
+        animation: fall linear infinite;
+        opacity: 0.8;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(100vh);
+        }
+    }
+
+    /* Carta */
+    .carta {
+        max-width: 800px;
+        margin: 60px auto;
+        background: #ffffffee;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        text-align: center;
+        color: var(--verde);
+        margin-bottom: 40px;
+    }
+
+    h1 span {
+        color: var(--dorado);
+    }
+
+    p {
+        line-height: 1.8;
+        font-size: 1.05em;
+    }
+
+    ul {
+        margin: 30px 0;
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 12px;
+    }
+
+    .firma {
+        margin-top: 50px;
+        text-align: right;
+        font-style: italic;
+    }
+
+    footer {
+        text-align: center;
+        color: var(--verde);
+        margin-bottom: 30px;
+        font-size: 0.9em;
+    }
+
+    /* Detalle decorativo */
+    .estrella {
+        text-align: center;
+        font-size: 2em;
+        color: var(--dorado);
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+        .carta {
+            margin: 20px;
+            padding: 30px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Carta -->
+<div class="carta">
+    <div class="estrella">⭐ ⭐ ⭐</div>
+    <h1>Carta a los <span>Reyes Magos</span></h1>
+
+    <p>Queridos Reyes Magos:</p>
+
+    <p>
+        Este año he intentado portarme lo mejor posible y, si no es mucho pedir,
+        me haría muchísima ilusión encontrar alguno de estos regalos la mañana de Reyes:
+    </p>
+
+    <ul>
+        <li>🪖 Cascos LEGO Star Wars (Dark Trooper, TIE Fighter Pilot, Leia Boushh, Mandalorian o Stormtrooper)</li>
+        <li>🎿 Casco de snow Anti Ordinary A2 Beanie (talla S, rosa o azul clarito)</li>
+        <li>📹 Palo para GoPro para grabar en la nieve</li>
+        <li>🧤 Manoplas de snow blancas (talla M)</li>
+        <li>🧩 Puzzle gigante de mínimo 10.000 piezas</li>
+        <li>👕 Sudaderas oversize estilo nude / Scuffers</li>
+    </ul>
+
+    <p>
+        Prometo seguir cuidando mis cosas y compartir la ilusión de este día tan especial.
+    </p>
+
+    <div class="firma">
+        <p>Con mucho cariño,</p>
+        <p><strong>Firmado:</strong> ✍️</p>
+    </div>
+</div>
+
+<footer>
+    🎄 Que la magia de los Reyes Magos llene tu casa 🎄
+</footer>
+
+<!-- Script Nieve -->
+<script>
+    const snowflakes = 40;
+
+    for (let i = 0; i < snowflakes; i++) {
+        const snow = document.createElement("div");
+        snow.className = "snowflake";
+        snow.innerHTML = "❄";
+        snow.style.left = Math.random() * 100 + "vw";
+        snow.style.animationDuration = 5 + Math.random() * 5 + "s";
+        snow.style.fontSize = 10 + Math.random() * 20 + "px";
+        snow.style.opacity = Math.random();
+        document.body.appendChild(snow);
+    }
+</script>
+
+</body>
+</html>
