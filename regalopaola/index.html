@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🎁 Rasca y Gana</title>
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f5f2ee;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        width: 350px;
+        height: 350px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        background: #fff;
+    }
+
+    .gift {
+        width: 100%;
+        height: 100%;
+        background: url("regalo.jpg") center/cover no-repeat;
+    }
+
+    canvas {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+    }
+
+    .congrats {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #ffffff;
+        background: rgba(0,0,0,0.6);
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.6s ease;
+        text-align: center;
+    }
+
+    .congrats.show {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .sparkles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .sparkle {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: gold;
+        border-radius: 50%;
+        animation: sparkle 1.5s infinite;
+    }
+
+    @keyframes sparkle {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        100% { transform: scale(1.5) translateY(-80px); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="gift"></div>
+    <canvas id="scratch"></canvas>
+
+    <div class="congrats" id="congrats">
+        🎉 ¡Congratulations! 🎉<br>Tu regalo está aquí
+        <div class="sparkles" id="sparkles"></div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("scratch");
+const ctx = canvas.getContext("2d");
+const container = document.querySelector(".container");
+const congrats = document.getElementById("congrats");
+const sparkles = document.getElementById("sparkles");
+
+canvas.width = container.offsetWidth;
+canvas.height = container.offsetHeight;
+
+// Capa a rascar
+ctx.fillStyle = "#c0c0c0";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.globalCompositeOperation = "destination-out";
+
+let isDrawing = false;
+
+function scratch(x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, 25, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+canvas.addEventListener("mousedown", () => isDrawing = true);
+canvas.addEventListener("mouseup", () => isDrawing = false);
+canvas.addEventListener("mouseleave", () => isDrawing = false);
+
+canvas.addEventListener("mousemove", (e) => {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    scratch(e.clientX - rect.left, e.clientY - rect.top);
+    checkReveal();
+});
+
+// Soporte móvil
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    checkReveal();
+});
+
+function checkReveal() {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let transparent = 0;
+
+    for (let i = 3; i < imageData.length; i += 4) {
+        if (imageData[i] === 0) transparent++;
+    }
+
+    if (transparent > imageData.length / 8) {
+        canvas.style.display = "none";
+        showCongrats();
+    }
+}
+
+function showCongrats() {
+    congrats.classList.add("show");
+    createSparkles();
+}
+
+function createSparkles() {
+    for (let i = 0; i < 25; i++) {
+        const s = document.createElement("div");
+        s.className = "sparkle";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.top = "80%";
+        s.style.animationDelay = Math.random() + "s";
+        sparkles.appendChild(s);
+    }
+}
+</script>
+
+</body>
+</html>
