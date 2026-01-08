@@ -2,23 +2,29 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Para Paola 💖</title>
 
 <style>
-body {
+html, body {
     margin: 0;
-    height: 100vh;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* 🔒 elimina scroll */
+    touch-action: none;
+    font-family: 'Georgia', serif;
     background: linear-gradient(180deg, #f8e8e8, #fdf6f2);
+}
+
+body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Georgia', serif;
 }
 
 .card {
     width: 320px;
-    height: 520px;
+    height: 500px;
     background: #fff;
     border-radius: 24px;
     box-shadow: 0 25px 50px rgba(0,0,0,0.2);
@@ -27,34 +33,38 @@ body {
 }
 
 .header {
-    padding: 22px 16px;
     text-align: center;
+    padding: 20px 16px 10px;
 }
 
 .header h1 {
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     color: #c95c6a;
 }
 
 .header p {
-    margin-top: 6px;
-    font-size: 1rem;
+    margin: 6px 0 0;
+    font-size: 0.95rem;
     color: #777;
 }
 
+/* 🔑 CONTENEDOR EXACTO DE LA IMAGEN */
 .reveal {
     position: relative;
     width: 100%;
     height: 280px;
+    overflow: hidden;
 }
 
 .gift {
     width: 100%;
     height: 100%;
-    background: url("https://cdn.grupoelcorteingles.es/SGFM/dctm/MEDIA03/202507/21/00107220342252____7__1200x1200.jpg") center/cover no-repeat;
+    background: url("https://cdn.grupoelcorteingles.es/SGFM/dctm/MEDIA03/202507/21/00107220342252____7__1200x1200.jpg") center/contain no-repeat;
+    background-color: #fff;
 }
 
+/* CANVAS AJUSTADO 1:1 */
 canvas {
     position: absolute;
     inset: 0;
@@ -62,8 +72,8 @@ canvas {
 
 .footer {
     text-align: center;
-    padding: 14px;
-    font-size: 0.95rem;
+    padding: 12px;
+    font-size: 0.9rem;
     color: #999;
 }
 
@@ -76,8 +86,8 @@ canvas {
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transform: scale(0.85);
-    transition: all 0.9s ease;
+    transform: scale(0.9);
+    transition: all 0.8s ease;
     text-align: center;
     padding: 24px;
 }
@@ -89,19 +99,21 @@ canvas {
 
 .congrats h2 {
     color: #c95c6a;
-    font-size: 1.9rem;
+    font-size: 1.8rem;
 }
 
 .congrats p {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #555;
 }
 
+/* corazones */
 .heart {
     position: absolute;
     bottom: 0;
     font-size: 1.6rem;
     animation: float 4s infinite ease-in;
+    pointer-events: none;
 }
 
 @keyframes float {
@@ -119,7 +131,7 @@ canvas {
         <p>Un regalo de Reyes para ti</p>
     </div>
 
-    <div class="reveal">
+    <div class="reveal" id="reveal">
         <div class="gift"></div>
         <canvas id="scratch"></canvas>
     </div>
@@ -141,12 +153,14 @@ canvas {
 <script>
 const canvas = document.getElementById("scratch");
 const ctx = canvas.getContext("2d");
+const reveal = document.getElementById("reveal");
 const congrats = document.getElementById("congrats");
 
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+/* Ajuste exacto del canvas al tamaño visible */
+canvas.width = reveal.clientWidth;
+canvas.height = reveal.clientHeight;
 
-// Capa a rascar
+/* Capa de rasca */
 ctx.fillStyle = "#e4bcc2";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 ctx.globalCompositeOperation = "destination-out";
@@ -155,39 +169,39 @@ let drawing = false;
 
 function scratch(x, y) {
     ctx.beginPath();
-    ctx.arc(x, y, 22, 0, Math.PI * 2);
+    ctx.arc(x, y, 24, 0, Math.PI * 2);
     ctx.fill();
 }
 
-canvas.addEventListener("touchstart", () => drawing = true);
+/* Touch optimizado para móvil */
+canvas.addEventListener("touchstart", () => drawing = true, {passive:false});
 canvas.addEventListener("touchend", () => drawing = false);
-
 canvas.addEventListener("touchmove", e => {
     e.preventDefault();
     if (!drawing) return;
     const rect = canvas.getBoundingClientRect();
     const t = e.touches[0];
     scratch(t.clientX - rect.left, t.clientY - rect.top);
-    check();
-});
+    checkReveal();
+}, {passive:false});
 
-function check() {
+function checkReveal() {
     const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
     let cleared = 0;
     for (let i = 3; i < data.length; i += 4) {
         if (data[i] === 0) cleared++;
     }
-    if (cleared > data.length / 6) reveal();
+    if (cleared > data.length / 5) showCongrats();
 }
 
-function reveal() {
+function showCongrats() {
     canvas.style.display = "none";
     congrats.classList.add("show");
     hearts();
 }
 
 function hearts() {
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < 16; i++) {
         const h = document.createElement("div");
         h.className = "heart";
         h.textContent = "❤️";
