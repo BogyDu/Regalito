@@ -2,155 +2,209 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Tests de Práctica – Educación</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test educativo</title>
+
 <style>
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
+    font-family: system-ui, Arial, sans-serif;
+    background: #f2f4f8;
     margin: 0;
-    padding: 20px;
+    padding: 0;
 }
-h1, h2 {
+
+header {
+    background: #2d6cdf;
+    color: white;
+    padding: 15px;
     text-align: center;
 }
+
 .container {
-    max-width: 900px;
+    max-width: 600px;
     margin: auto;
     background: white;
+    min-height: 100vh;
     padding: 20px;
-    border-radius: 8px;
 }
+
 button {
-    padding: 10px 15px;
+    width: 100%;
+    padding: 14px;
     margin: 10px 0;
-    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2d6cdf;
+    color: white;
 }
-.question {
-    margin-bottom: 15px;
+
+button.secondary {
+    background: #ccc;
+    color: black;
 }
-.result {
-    font-size: 18px;
-    font-weight: bold;
+
+.question-box {
     margin-top: 20px;
 }
+
+.option {
+    background: #eef1f6;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.option input {
+    margin-right: 10px;
+}
+
+.progress {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
 .hidden {
     display: none;
+}
+
+.result {
+    font-size: 20px;
+    text-align: center;
+    margin-top: 30px;
+    font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Práctica tipo test</h1>
+<header>
+    <h2>Práctica tipo test</h2>
+</header>
 
 <div class="container">
-    <button onclick="startTest('tema1')">Tema 1: Comunidades de Aprendizaje</button>
-    <button onclick="startTest('tema2')">Tema 2: Dificultades de Aprendizaje</button>
 
-    <form id="testForm" class="hidden"></form>
+    <div id="menu">
+        <button onclick="startTest('tema1')">Tema 1: Comunidades de Aprendizaje</button>
+        <button onclick="startTest('tema2')">Tema 2: Dificultades de Aprendizaje</button>
+    </div>
 
-    <button id="submitBtn" class="hidden" onclick="gradeTest()">Corregir</button>
+    <div id="test" class="hidden">
+        <div class="progress" id="progress"></div>
+        <div class="question-box" id="questionBox"></div>
+
+        <button onclick="prevQuestion()" class="secondary">Anterior</button>
+        <button onclick="nextQuestion()">Siguiente</button>
+        <button onclick="finishTest()" id="finishBtn" class="hidden">Finalizar</button>
+    </div>
+
     <div id="result" class="result"></div>
+
 </div>
 
 <script>
-const bancoPreguntas = {
-
+const banco = {
 tema1: [
-{ q:"¿Qué es el neurodesarrollo?", a:["Proceso educativo","Desarrollo del sistema nervioso","Método de evaluación","Tipo de trastorno"], c:1 },
-{ q:"La neuroplasticidad es:", a:["Rigidez cerebral","Capacidad de cambio del cerebro","Un trastorno","Una etapa infantil"], c:1 },
-{ q:"¿Quién formuló las etapas del desarrollo?", a:["Kandel","Piaget","Ramón y Cajal","MacLean"], c:1 },
-{ q:"La neuroeducación relaciona:", a:["Escuela y familia","Cerebro y aprendizaje","Juego y ocio","Evaluación y castigo"], c:1 },
-{ q:"El NGF fue descubierto por:", a:["Piaget","Levi-Montalcini","Kandel","MacLean"], c:1 },
-{ q:"La epigenética estudia:", a:["Genes aislados","Influencia del ambiente en genes","Solo ADN","Trastornos mentales"], c:1 },
-{ q:"La plasticidad cerebral permite:", a:["Memoria fotográfica","Aprender y recuperarse","Eliminar emociones","Evitar errores"], c:1 },
-{ q:"El cerebro triuno incluye:", a:["Dos partes","Tres partes","Cuatro partes","Cinco partes"], c:1 },
-{ q:"Las comunidades de aprendizaje se basan en:", a:["Competencia","Colaboración","Individualismo","Memorización"], c:1 },
-{ q:"Un síntoma de problema auditivo es:", a:["Buena atención","Hablar muy bajo","Confundir órdenes","Leer rápido"], c:2 },
-{ q:"Un síntoma visual es:", a:["Copiar rápido","Alejarse del libro","Acercarse mucho","No escribir"], c:2 },
-{ q:"El retraso motor incluye:", a:["Gran equilibrio","Torpeza","Hiperactividad","Lectura avanzada"], c:1 },
-{ q:"Las dificultades de aprendizaje son:", a:["Permanentes","Transitorias","Genéticas siempre","Irreversibles"], c:1 },
-{ q:"Los trastornos del desarrollo son:", a:["Situacionales","Permanentes","Leves","Solo escolares"], c:1 },
-{ q:"DSM-5 es:", a:["Un test escolar","Manual diagnóstico","Ley educativa","Método pedagógico"], c:1 },
-{ q:"La evaluación debe ser:", a:["Única","Multidisciplinar","Rápida","Solo académica"], c:1 },
-{ q:"Los cuestionarios sirven para:", a:["Castigar","Recoger información","Calificar","Excluir"], c:1 },
-{ q:"La observación en aula permite:", a:["Juzgar","Detectar conductas","Suspender","Etiquetar"], c:1 },
-{ q:"Las dificultades suelen afectar a:", a:["Todas las áreas","Áreas específicas","Solo conducta","Solo memoria"], c:1 },
-{ q:"Un trastorno afecta:", a:["Un ámbito","Varios ámbitos","Solo lectura","Solo matemáticas"], c:1 },
-{ q:"La neuroeducación busca:", a:["Control","Optimizar aprendizaje","Excluir","Homogeneizar"], c:1 },
-{ q:"La educación inclusiva se basa en:", a:["Segregación","Equidad","Competición","Selección"], c:1 },
-{ q:"Los apoyos deben darse:", a:["Fuera del aula","En aula ordinaria","Solo en casa","Solo con especialistas"], c:1 },
-{ q:"La diversidad es:", a:["Un problema","Una riqueza","Un error","Una dificultad"], c:1 },
-{ q:"Aprender es un proceso:", a:["Estático","Dinámico","Cerrado","Lineal"], c:1 }
+{q:"¿Qué es el neurodesarrollo?",a:["Proceso educativo","Desarrollo del sistema nervioso","Método de evaluación","Trastorno"],c:1},
+{q:"La neuroplasticidad es:",a:["Rigidez","Cambio cerebral","Trastorno","Etapa"],c:1},
+{q:"Piaget es conocido por:",a:["NGF","Etapas del desarrollo","DSM","CIE"],c:1},
+{q:"La neuroeducación une:",a:["Juego y ocio","Cerebro y aprendizaje","Familia y escuela","Evaluación"],c:1},
+{q:"DSM-5 es:",a:["Ley","Manual diagnóstico","Adaptación","Informe"],c:1},
+{q:"Las dificultades de aprendizaje son:",a:["Permanentes","Transitorias","Genéticas","Irreversibles"],c:1},
+{q:"Un síntoma visual es:",a:["Atención alta","Se acerca mucho al libro","Lee rápido","No escribe"],c:1},
+{q:"Un retraso motor implica:",a:["Torpeza","Lectura","Habla","Memoria"],c:0},
+{q:"La evaluación debe ser:",a:["Única","Multidisciplinar","Rápida","Simple"],c:1},
+{q:"La diversidad es:",a:["Problema","Riqueza","Error","Barreras"],c:1},
+{q:"La inclusión promueve:",a:["Segregación","Equidad","Competición","Selección"],c:1},
+{q:"Neuroplasticidad permite:",a:["Evitar errores","Aprender","Bloqueo","Memoria fotográfica"],c:1},
+{q:"NGF fue descubierto por:",a:["Piaget","Levi-Montalcini","Kandel","MacLean"],c:1},
+{q:"La observación sirve para:",a:["Castigar","Detectar","Suspender","Excluir"],c:1},
+{q:"Aprender es un proceso:",a:["Estático","Dinámico","Cerrado","Lineal"],c:1},
+{q:"Los trastornos son:",a:["Situacionales","Permanentes","Leves","Temporales"],c:1},
+{q:"La neuroeducación busca:",a:["Control","Optimizar","Excluir","Uniformar"],c:1},
+{q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
+{q:"La comunidad de aprendizaje se basa en:",a:["Individualismo","Colaboración","Competición","Aislamiento"],c:1},
+{q:"La evaluación psicopedagógica es:",a:["Castigo","Diagnóstico educativo","Suspensión","Examen"],c:1},
+{q:"La plasticidad ocurre:",a:["Solo infancia","Toda la vida","Nunca","En enfermedad"],c:1},
+{q:"El cerebro triuno tiene:",a:["2 partes","3 partes","4 partes","5 partes"],c:1},
+{q:"Los apoyos deben darse:",a:["Aislados","En aula ordinaria","Solo en casa","Solo fuera"],c:1},
+{q:"La educación inclusiva es:",a:["Selectiva","Para todos","Excluyente","Compensatoria"],c:1},
+{q:"La diversidad enriquece:",a:["Nada","Aprendizaje","Problemas","Conflictos"],c:1}
 ],
 
 tema2: [
-{ q:"Las dificultades de aprendizaje son:", a:["Trastornos graves","Obstáculos parciales","Discapacidades","Enfermedades"], c:1 },
-{ q:"Las teorías mecanicistas se centran en:", a:["Familia","Escuela","Individuo","Sociedad"], c:2 },
-{ q:"Ejemplo mecanicista:", a:["Falta de motivación","Parto prematuro","Mala enseñanza","Contexto social"], c:1 },
-{ q:"Las teorías contextualistas destacan:", a:["Genes","Ambiente","Neurología","Hormonas"], c:1 },
-{ q:"Las teorías interaccionistas combinan:", a:["Castigo y premio","Individuo y ambiente","Escuela y familia","Profesor y alumno"], c:1 },
-{ q:"La ley educativa vigente es:", a:["LOE","LOMCE","LOMLOE","LOGSE"], c:2 },
-{ q:"ACNEAE es:", a:["Categoría amplia","Solo discapacidad","Solo TDAH","Exclusión"], c:0 },
-{ q:"ACNEE incluye:", a:["Altas capacidades","Discapacidad","Migrantes","Absentismo"], c:1 },
-{ q:"El TDAH es:", a:["Trastorno de atención","Discapacidad física","Problema visual","Retraso motor"], c:0 },
-{ q:"La educación inclusiva prioriza:", a:["Aula especial","Aula ordinaria","Segregación","Exclusión"], c:1 },
-{ q:"La inclusión mixta combina:", a:["Casa y escuela","Aula ordinaria y apoyo","Juego y estudio","Familia y centro"], c:1 },
-{ q:"La conferencia de Salamanca fue en:", a:["1990","1994","2000","2010"], c:1 },
-{ q:"ODS 4 se refiere a:", a:["Salud","Educación de calidad","Igualdad","Trabajo"], c:1 },
-{ q:"Una adaptación no significativa modifica:", a:["Objetivos","Contenidos","Metodología","Currículo completo"], c:2 },
-{ q:"Una adaptación significativa modifica:", a:["Material","Tiempo","Objetivos","Explicaciones"], c:2 },
-{ q:"DIAC es:", a:["Informe médico","Documento curricular","Ley","Prueba"], c:1 },
-{ q:"La evaluación psicopedagógica sirve para:", a:["Etiquetar","Detectar necesidades","Castigar","Excluir"], c:1 },
-{ q:"Antes de evaluar se debe:", a:["Suspender","Observar","Derivar","Castigar"], c:1 },
-{ q:"Durante el proceso se realizan:", a:["Exámenes","Pruebas profesionales","Castigos","Informes disciplinarios"], c:1 },
-{ q:"Después se deben aplicar:", a:["Sanciones","Adaptaciones","Repeticiones","Cambios de centro"], c:1 },
-{ q:"El maestro aporta:", a:["Diagnóstico clínico","Observaciones","Medicación","Terapia"], c:1 },
-{ q:"El pedagogo realiza:", a:["Castigos","Evaluación","Exámenes","Notas"], c:1 },
-{ q:"La familia debe:", a:["Desconocer","Aprobar decisiones","No intervenir","Delegar todo"], c:1 },
-{ q:"La coordinación implica:", a:["Un profesional","Varios agentes","Solo escuela","Solo familia"], c:1 },
-{ q:"La inclusión favorece:", a:["Desigualdad","Equidad","Exclusión","Homogeneidad"], c:1 }
+{q:"Las dificultades de aprendizaje son:",a:["Discapacidades","Obstáculos parciales","Enfermedades","Trastornos"],c:1},
+{q:"Teorías mecanicistas se centran en:",a:["Familia","Individuo","Escuela","Sociedad"],c:1},
+{q:"Teorías contextualistas destacan:",a:["Genes","Ambiente","Neurología","Hormonas"],c:1},
+{q:"Teorías interaccionistas combinan:",a:["Castigo-premio","Individuo-ambiente","Escuela-casa","Profesor-alumno"],c:1},
+{q:"La ley vigente es:",a:["LOGSE","LOMCE","LOMLOE","LOE"],c:2},
+{q:"ACNEAE es:",a:["Categoría amplia","Solo discapacidad","Solo TDAH","Exclusión"],c:0},
+{q:"ACNEE incluye:",a:["Altas capacidades","Discapacidad","Migrantes","Absentismo"],c:1},
+{q:"TDAH es:",a:["Trastorno atención","Discapacidad","Problema visual","Retraso motor"],c:0},
+{q:"Educación inclusiva prioriza:",a:["Aula especial","Aula ordinaria","Segregación","Exclusión"],c:1},
+{q:"Adaptación no significativa modifica:",a:["Objetivos","Contenidos","Metodología","Currículo"],c:2},
+{q:"Adaptación significativa modifica:",a:["Material","Tiempo","Objetivos","Explicaciones"],c:2},
+{q:"DIAC es:",a:["Informe médico","Documento curricular","Ley","Prueba"],c:1},
+{q:"Evaluación sirve para:",a:["Etiquetar","Detectar","Castigar","Excluir"],c:1},
+{q:"La coordinación implica:",a:["Uno","Varios agentes","Solo escuela","Solo familia"],c:1},
+{q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
+{q:"La familia debe:",a:["Desconocer","Aprobar","Delegar","No participar"],c:1},
+{q:"Antes de evaluar se debe:",a:["Suspender","Observar","Derivar","Castigar"],c:1},
+{q:"Durante el proceso se realizan:",a:["Exámenes","Pruebas","Castigos","Notas"],c:1},
+{q:"Después se aplican:",a:["Sanciones","Adaptaciones","Cambios","Repetición"],c:1},
+{q:"El maestro aporta:",a:["Diagnóstico","Observación","Medicación","Terapia"],c:1},
+{q:"El pedagogo realiza:",a:["Castigos","Evaluación","Exámenes","Notas"],c:1},
+{q:"ODS 4 se refiere a:",a:["Salud","Educación","Igualdad","Trabajo"],c:1},
+{q:"Conferencia Salamanca fue en:",a:["1990","1994","2000","2010"],c:1},
+{q:"Inclusión mixta combina:",a:["Casa-escuela","Aula y apoyo","Juego-estudio","Familia-centro"],c:1},
+{q:"La inclusión elimina:",a:["Apoyos","Barreras","Diversidad","Ajustes"],c:1}
 ]
 };
 
-let preguntasActuales = [];
+let preguntas=[], respuestas=[], index=0;
 
-function startTest(tema) {
-    preguntasActuales = shuffle([...bancoPreguntas[tema]]).slice(0,25);
-    const form = document.getElementById("testForm");
-    form.innerHTML = "";
-    document.getElementById("result").innerText = "";
-
-    preguntasActuales.forEach((p, i) => {
-        let html = `<div class="question"><p>${i+1}. ${p.q}</p>`;
-        p.a = shuffle(p.a.map((txt,idx)=>({txt,idx})));
-        p.a.forEach(opt => {
-            html += `<label>
-                <input type="radio" name="q${i}" value="${opt.idx}">
-                ${opt.txt}
-            </label><br>`;
-        });
-        html += `</div>`;
-        form.innerHTML += html;
-    });
-
-    form.classList.remove("hidden");
-    document.getElementById("submitBtn").classList.remove("hidden");
+function startTest(tema){
+    preguntas = shuffle([...banco[tema]]).slice(0,25);
+    respuestas = Array(25).fill(null);
+    index=0;
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("test").classList.remove("hidden");
+    render();
 }
 
-function gradeTest() {
+function render(){
+    const p = preguntas[index];
+    document.getElementById("progress").innerText =
+        `Pregunta ${index+1} de 25`;
+    let html = `<h3>${p.q}</h3>`;
+    p.a.forEach((op,i)=>{
+        html += `
+        <div class="option">
+        <label>
+        <input type="radio" name="opt" ${respuestas[index]==i?"checked":""}
+        onclick="respuestas[${index}]=${i}">
+        ${op}
+        </label>
+        </div>`;
+    });
+    document.getElementById("questionBox").innerHTML = html;
+    document.getElementById("finishBtn").classList.toggle("hidden", index<24);
+}
+
+function nextQuestion(){ if(index<24){ index++; render(); } }
+function prevQuestion(){ if(index>0){ index--; render(); } }
+
+function finishTest(){
     let score = 0;
-    preguntasActuales.forEach((p, i) => {
-        const sel = document.querySelector(`input[name="q${i}"]:checked`);
-        if (sel && parseInt(sel.value) === p.c) score++;
-    });
+    preguntas.forEach((p,i)=>{ if(respuestas[i]===p.c) score++; });
+    document.getElementById("test").classList.add("hidden");
     document.getElementById("result").innerText =
-        `Resultado: ${score} / 25`;
+        `Resultado final: ${score} / 25`;
 }
 
-function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
-}
+function shuffle(a){ return a.sort(()=>Math.random()-0.5); }
 </script>
 
 </body>
