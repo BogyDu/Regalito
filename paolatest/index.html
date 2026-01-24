@@ -10,7 +10,6 @@ body {
     font-family: system-ui, Arial, sans-serif;
     background: #f2f4f8;
     margin: 0;
-    padding: 0;
 }
 
 header {
@@ -44,36 +43,36 @@ button.secondary {
     color: black;
 }
 
-.question-box {
-    margin-top: 20px;
+.progress {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .option {
     background: #eef1f6;
-    padding: 12px;
+    padding: 14px;
     border-radius: 8px;
     margin: 10px 0;
+    cursor: pointer;
 }
 
-.option input {
-    margin-right: 10px;
+.option.correct {
+    background: #c8f7c5;
+    border: 2px solid #2ecc71;
 }
 
-.progress {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 14px;
+.option.incorrect {
+    background: #f7c5c5;
+    border: 2px solid #e74c3c;
+}
+
+.option.disabled {
+    pointer-events: none;
 }
 
 .hidden {
     display: none;
-}
-
-.result {
-    font-size: 20px;
-    text-align: center;
-    margin-top: 30px;
-    font-weight: bold;
 }
 </style>
 </head>
@@ -87,43 +86,48 @@ button.secondary {
 <div class="container">
 
     <div id="menu">
-        <button onclick="startTest('tema1')">Tema 1: Comunidades de Aprendizaje</button>
-        <button onclick="startTest('tema2')">Tema 2: Dificultades de Aprendizaje</button>
+        <button onclick="startTest('tema1')">
+            Tema 1 · Comunidades de Aprendizaje
+        </button>
+        <button onclick="startTest('tema2')">
+            Tema 2 · Dificultades de Aprendizaje
+        </button>
     </div>
 
     <div id="test" class="hidden">
         <div class="progress" id="progress"></div>
-        <div class="question-box" id="questionBox"></div>
+        <div id="questionBox"></div>
 
-        <button onclick="prevQuestion()" class="secondary">Anterior</button>
+        <button class="secondary" onclick="prevQuestion()">Anterior</button>
         <button onclick="nextQuestion()">Siguiente</button>
-        <button onclick="finishTest()" id="finishBtn" class="hidden">Finalizar</button>
+        <button id="finishBtn" class="hidden" onclick="finishTest()">Finalizar</button>
     </div>
 
-    <div id="result" class="result"></div>
+    <div id="result"></div>
 
 </div>
 
 <script>
 const banco = {
+
 tema1: [
 {q:"¿Qué es el neurodesarrollo?",a:["Proceso educativo","Desarrollo del sistema nervioso","Método de evaluación","Trastorno"],c:1},
-{q:"La neuroplasticidad es:",a:["Rigidez","Cambio cerebral","Trastorno","Etapa"],c:1},
+{q:"La neuroplasticidad es:",a:["Rigidez cerebral","Capacidad de cambio del cerebro","Trastorno","Etapa"],c:1},
 {q:"Piaget es conocido por:",a:["NGF","Etapas del desarrollo","DSM","CIE"],c:1},
 {q:"La neuroeducación une:",a:["Juego y ocio","Cerebro y aprendizaje","Familia y escuela","Evaluación"],c:1},
-{q:"DSM-5 es:",a:["Ley","Manual diagnóstico","Adaptación","Informe"],c:1},
+{q:"DSM-5 es:",a:["Ley educativa","Manual diagnóstico","Adaptación","Informe"],c:1},
 {q:"Las dificultades de aprendizaje son:",a:["Permanentes","Transitorias","Genéticas","Irreversibles"],c:1},
 {q:"Un síntoma visual es:",a:["Atención alta","Se acerca mucho al libro","Lee rápido","No escribe"],c:1},
 {q:"Un retraso motor implica:",a:["Torpeza","Lectura","Habla","Memoria"],c:0},
 {q:"La evaluación debe ser:",a:["Única","Multidisciplinar","Rápida","Simple"],c:1},
 {q:"La diversidad es:",a:["Problema","Riqueza","Error","Barreras"],c:1},
 {q:"La inclusión promueve:",a:["Segregación","Equidad","Competición","Selección"],c:1},
-{q:"Neuroplasticidad permite:",a:["Evitar errores","Aprender","Bloqueo","Memoria fotográfica"],c:1},
+{q:"La neuroplasticidad permite:",a:["Evitar errores","Aprender","Bloqueo","Memoria fotográfica"],c:1},
 {q:"NGF fue descubierto por:",a:["Piaget","Levi-Montalcini","Kandel","MacLean"],c:1},
 {q:"La observación sirve para:",a:["Castigar","Detectar","Suspender","Excluir"],c:1},
 {q:"Aprender es un proceso:",a:["Estático","Dinámico","Cerrado","Lineal"],c:1},
-{q:"Los trastornos son:",a:["Situacionales","Permanentes","Leves","Temporales"],c:1},
-{q:"La neuroeducación busca:",a:["Control","Optimizar","Excluir","Uniformar"],c:1},
+{q:"Los trastornos del desarrollo son:",a:["Situacionales","Permanentes","Leves","Temporales"],c:1},
+{q:"La neuroeducación busca:",a:["Control","Optimizar aprendizaje","Excluir","Uniformar"],c:1},
 {q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
 {q:"La comunidad de aprendizaje se basa en:",a:["Individualismo","Colaboración","Competición","Aislamiento"],c:1},
 {q:"La evaluación psicopedagógica es:",a:["Castigo","Diagnóstico educativo","Suspensión","Examen"],c:1},
@@ -136,75 +140,91 @@ tema1: [
 
 tema2: [
 {q:"Las dificultades de aprendizaje son:",a:["Discapacidades","Obstáculos parciales","Enfermedades","Trastornos"],c:1},
-{q:"Teorías mecanicistas se centran en:",a:["Familia","Individuo","Escuela","Sociedad"],c:1},
-{q:"Teorías contextualistas destacan:",a:["Genes","Ambiente","Neurología","Hormonas"],c:1},
-{q:"Teorías interaccionistas combinan:",a:["Castigo-premio","Individuo-ambiente","Escuela-casa","Profesor-alumno"],c:1},
-{q:"La ley vigente es:",a:["LOGSE","LOMCE","LOMLOE","LOE"],c:2},
+{q:"Las teorías mecanicistas se centran en:",a:["Familia","Individuo","Escuela","Sociedad"],c:1},
+{q:"Las teorías contextualistas destacan:",a:["Genes","Ambiente","Neurología","Hormonas"],c:1},
+{q:"Las teorías interaccionistas combinan:",a:["Castigo-premio","Individuo-ambiente","Escuela-casa","Profesor-alumno"],c:1},
+{q:"La ley educativa vigente es:",a:["LOGSE","LOMCE","LOMLOE","LOE"],c:2},
 {q:"ACNEAE es:",a:["Categoría amplia","Solo discapacidad","Solo TDAH","Exclusión"],c:0},
 {q:"ACNEE incluye:",a:["Altas capacidades","Discapacidad","Migrantes","Absentismo"],c:1},
-{q:"TDAH es:",a:["Trastorno atención","Discapacidad","Problema visual","Retraso motor"],c:0},
-{q:"Educación inclusiva prioriza:",a:["Aula especial","Aula ordinaria","Segregación","Exclusión"],c:1},
+{q:"TDAH es:",a:["Trastorno de atención","Discapacidad","Problema visual","Retraso motor"],c:0},
+{q:"La educación inclusiva prioriza:",a:["Aula especial","Aula ordinaria","Segregación","Exclusión"],c:1},
 {q:"Adaptación no significativa modifica:",a:["Objetivos","Contenidos","Metodología","Currículo"],c:2},
 {q:"Adaptación significativa modifica:",a:["Material","Tiempo","Objetivos","Explicaciones"],c:2},
 {q:"DIAC es:",a:["Informe médico","Documento curricular","Ley","Prueba"],c:1},
-{q:"Evaluación sirve para:",a:["Etiquetar","Detectar","Castigar","Excluir"],c:1},
+{q:"La evaluación sirve para:",a:["Etiquetar","Detectar necesidades","Castigar","Excluir"],c:1},
 {q:"La coordinación implica:",a:["Uno","Varios agentes","Solo escuela","Solo familia"],c:1},
 {q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
-{q:"La familia debe:",a:["Desconocer","Aprobar","Delegar","No participar"],c:1},
+{q:"La familia debe:",a:["Desconocer","Aprobar decisiones","Delegar","No participar"],c:1},
 {q:"Antes de evaluar se debe:",a:["Suspender","Observar","Derivar","Castigar"],c:1},
-{q:"Durante el proceso se realizan:",a:["Exámenes","Pruebas","Castigos","Notas"],c:1},
+{q:"Durante el proceso se realizan:",a:["Exámenes","Pruebas profesionales","Castigos","Notas"],c:1},
 {q:"Después se aplican:",a:["Sanciones","Adaptaciones","Cambios","Repetición"],c:1},
 {q:"El maestro aporta:",a:["Diagnóstico","Observación","Medicación","Terapia"],c:1},
 {q:"El pedagogo realiza:",a:["Castigos","Evaluación","Exámenes","Notas"],c:1},
-{q:"ODS 4 se refiere a:",a:["Salud","Educación","Igualdad","Trabajo"],c:1},
-{q:"Conferencia Salamanca fue en:",a:["1990","1994","2000","2010"],c:1},
-{q:"Inclusión mixta combina:",a:["Casa-escuela","Aula y apoyo","Juego-estudio","Familia-centro"],c:1},
+{q:"ODS 4 se refiere a:",a:["Salud","Educación de calidad","Igualdad","Trabajo"],c:1},
+{q:"La conferencia de Salamanca fue en:",a:["1990","1994","2000","2010"],c:1},
+{q:"La inclusión mixta combina:",a:["Casa-escuela","Aula ordinaria y apoyo","Juego-estudio","Familia-centro"],c:1},
 {q:"La inclusión elimina:",a:["Apoyos","Barreras","Diversidad","Ajustes"],c:1}
 ]
 };
 
-let preguntas=[], respuestas=[], index=0;
+let preguntas = [], index = 0, answered = false;
 
 function startTest(tema){
     preguntas = shuffle([...banco[tema]]).slice(0,25);
-    respuestas = Array(25).fill(null);
-    index=0;
+    index = 0;
     document.getElementById("menu").classList.add("hidden");
     document.getElementById("test").classList.remove("hidden");
     render();
 }
 
 function render(){
+    answered = false;
     const p = preguntas[index];
     document.getElementById("progress").innerText =
         `Pregunta ${index+1} de 25`;
+
     let html = `<h3>${p.q}</h3>`;
     p.a.forEach((op,i)=>{
         html += `
-        <div class="option">
-        <label>
-        <input type="radio" name="opt" ${respuestas[index]==i?"checked":""}
-        onclick="respuestas[${index}]=${i}">
-        ${op}
-        </label>
-        </div>`;
+        <div class="option" id="opt${i}"
+             onclick="checkAnswer(${i})">${op}</div>`;
     });
+
     document.getElementById("questionBox").innerHTML = html;
-    document.getElementById("finishBtn").classList.toggle("hidden", index<24);
+    document.getElementById("finishBtn")
+        .classList.toggle("hidden", index < 24);
 }
 
-function nextQuestion(){ if(index<24){ index++; render(); } }
-function prevQuestion(){ if(index>0){ index--; render(); } }
+function checkAnswer(sel){
+    if(answered) return;
+    answered = true;
+
+    const correct = preguntas[index].c;
+
+    for(let i=0;i<preguntas[index].a.length;i++){
+        const opt = document.getElementById("opt"+i);
+        opt.classList.add("disabled");
+        if(i === correct) opt.classList.add("correct");
+        if(i === sel && i !== correct) opt.classList.add("incorrect");
+    }
+}
+
+function nextQuestion(){
+    if(index < 24){ index++; render(); }
+}
+
+function prevQuestion(){
+    if(index > 0){ index--; render(); }
+}
 
 function finishTest(){
-    let score = 0;
-    preguntas.forEach((p,i)=>{ if(respuestas[i]===p.c) score++; });
     document.getElementById("test").classList.add("hidden");
-    document.getElementById("result").innerText =
-        `Resultado final: ${score} / 25`;
+    document.getElementById("menu").classList.remove("hidden");
 }
 
-function shuffle(a){ return a.sort(()=>Math.random()-0.5); }
+function shuffle(a){
+    return a.sort(() => Math.random() - 0.5);
+}
 </script>
 
 </body>
