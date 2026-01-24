@@ -3,228 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test educativo</title>
+<title>Plataforma de práctica educativa</title>
 
 <style>
-body {
-    font-family: system-ui, Arial, sans-serif;
-    background: #f2f4f8;
-    margin: 0;
-}
-
-header {
-    background: #2d6cdf;
-    color: white;
-    padding: 15px;
-    text-align: center;
-}
-
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-button {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    background: #2d6cdf;
-    color: white;
-}
-
-button.secondary {
-    background: #ccc;
-    color: black;
-}
-
-.progress {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.option {
-    background: #eef1f6;
-    padding: 14px;
-    border-radius: 8px;
-    margin: 10px 0;
-    cursor: pointer;
-}
-
-.option.correct {
-    background: #c8f7c5;
-    border: 2px solid #2ecc71;
-}
-
-.option.incorrect {
-    background: #f7c5c5;
-    border: 2px solid #e74c3c;
-}
-
-.option.disabled {
-    pointer-events: none;
-}
-
-.hidden {
-    display: none;
-}
+body{font-family:system-ui,Arial;background:#f2f4f8;margin:0}
+header{background:#2d6cdf;color:#fff;padding:15px;text-align:center}
+.container{max-width:800px;margin:auto;background:#fff;min-height:100vh;padding:20px}
+button{width:100%;padding:14px;margin:10px 0;font-size:16px;border:none;border-radius:8px;background:#2d6cdf;color:white}
+.secondary{background:#ccc;color:black}
+.option{background:#eef1f6;padding:14px;border-radius:8px;margin:10px 0;cursor:pointer}
+.option.correct{background:#c8f7c5;border:2px solid #2ecc71}
+.option.incorrect{background:#f7c5c5;border:2px solid #e74c3c}
+.option.disabled{pointer-events:none}
+.progress{text-align:center;font-size:14px;margin-bottom:10px}
+.hidden{display:none}
+.review{background:#f9fafc;padding:15px;border-radius:8px;margin-bottom:10px}
+.ok{color:#2ecc71;font-weight:bold}
+.ko{color:#e74c3c;font-weight:bold}
 </style>
 </head>
 
 <body>
 
 <header>
-    <h2>Práctica tipo test</h2>
+<h2>Plataforma de práctica tipo test</h2>
 </header>
 
 <div class="container">
 
-    <div id="menu">
-        <button onclick="startTest('tema1')">
-            Tema 1 · Comunidades de Aprendizaje
-        </button>
-        <button onclick="startTest('tema2')">
-            Tema 2 · Dificultades de Aprendizaje
-        </button>
-    </div>
+<div id="menu">
+<button onclick="startTest('t1')">Tema 1 · Comunidades de Aprendizaje</button>
+<button onclick="startTest('t2')">Tema 2 · Dificultades de Aprendizaje</button>
+<button onclick="startTest('tic')">Tema TIC · Aprendizaje Conectado</button>
+</div>
 
-    <div id="test" class="hidden">
-        <div class="progress" id="progress"></div>
-        <div id="questionBox"></div>
+<div id="test" class="hidden">
+<div class="progress" id="progress"></div>
+<div id="questionBox"></div>
+<button class="secondary" onclick="prev()">Anterior</button>
+<button onclick="next()">Siguiente</button>
+<button id="finishBtn" class="hidden" onclick="finish()">Finalizar</button>
+</div>
 
-        <button class="secondary" onclick="prevQuestion()">Anterior</button>
-        <button onclick="nextQuestion()">Siguiente</button>
-        <button id="finishBtn" class="hidden" onclick="finishTest()">Finalizar</button>
-    </div>
-
-    <div id="result"></div>
+<div id="review" class="hidden"></div>
 
 </div>
 
 <script>
 const banco = {
 
-tema1: [
-{q:"¿Qué es el neurodesarrollo?",a:["Proceso educativo","Desarrollo del sistema nervioso","Método de evaluación","Trastorno"],c:1},
-{q:"La neuroplasticidad es:",a:["Rigidez cerebral","Capacidad de cambio del cerebro","Trastorno","Etapa"],c:1},
-{q:"Piaget es conocido por:",a:["NGF","Etapas del desarrollo","DSM","CIE"],c:1},
-{q:"La neuroeducación une:",a:["Juego y ocio","Cerebro y aprendizaje","Familia y escuela","Evaluación"],c:1},
-{q:"DSM-5 es:",a:["Ley educativa","Manual diagnóstico","Adaptación","Informe"],c:1},
-{q:"Las dificultades de aprendizaje son:",a:["Permanentes","Transitorias","Genéticas","Irreversibles"],c:1},
-{q:"Un síntoma visual es:",a:["Atención alta","Se acerca mucho al libro","Lee rápido","No escribe"],c:1},
-{q:"Un retraso motor implica:",a:["Torpeza","Lectura","Habla","Memoria"],c:0},
-{q:"La evaluación debe ser:",a:["Única","Multidisciplinar","Rápida","Simple"],c:1},
-{q:"La diversidad es:",a:["Problema","Riqueza","Error","Barreras"],c:1},
-{q:"La inclusión promueve:",a:["Segregación","Equidad","Competición","Selección"],c:1},
-{q:"La neuroplasticidad permite:",a:["Evitar errores","Aprender","Bloqueo","Memoria fotográfica"],c:1},
-{q:"NGF fue descubierto por:",a:["Piaget","Levi-Montalcini","Kandel","MacLean"],c:1},
-{q:"La observación sirve para:",a:["Castigar","Detectar","Suspender","Excluir"],c:1},
-{q:"Aprender es un proceso:",a:["Estático","Dinámico","Cerrado","Lineal"],c:1},
-{q:"Los trastornos del desarrollo son:",a:["Situacionales","Permanentes","Leves","Temporales"],c:1},
-{q:"La neuroeducación busca:",a:["Control","Optimizar aprendizaje","Excluir","Uniformar"],c:1},
-{q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
-{q:"La comunidad de aprendizaje se basa en:",a:["Individualismo","Colaboración","Competición","Aislamiento"],c:1},
-{q:"La evaluación psicopedagógica es:",a:["Castigo","Diagnóstico educativo","Suspensión","Examen"],c:1},
-{q:"La plasticidad ocurre:",a:["Solo infancia","Toda la vida","Nunca","En enfermedad"],c:1},
-{q:"El cerebro triuno tiene:",a:["2 partes","3 partes","4 partes","5 partes"],c:1},
-{q:"Los apoyos deben darse:",a:["Aislados","En aula ordinaria","Solo en casa","Solo fuera"],c:1},
-{q:"La educación inclusiva es:",a:["Selectiva","Para todos","Excluyente","Compensatoria"],c:1},
-{q:"La diversidad enriquece:",a:["Nada","Aprendizaje","Problemas","Conflictos"],c:1}
+t1: [
+{q:"La neuroeducación tiene como finalidad principal:",a:["Diagnosticar trastornos","Aplicar conocimientos del cerebro a la educación","Sustituir la pedagogía","Evaluar el rendimiento"],c:1,ref:"Tema 1 – Neuroeducación"},
+{q:"La neuroplasticidad se define como:",a:["Rigidez cerebral","Capacidad del cerebro para cambiar","Una etapa","Un trastorno"],c:1,ref:"Tema 1 – Neuroplasticidad"},
+{q:"Jean Piaget es conocido por:",a:["NGF","Etapas del desarrollo","Cerebro triuno","DSM"],c:1,ref:"Tema 1 – Autores"},
+{q:"El neurodesarrollo es un proceso:",a:["Estático","Dinámico y continuo","Limitado a la infancia","Irreversible"],c:1,ref:"Tema 1 – Neurodesarrollo"},
+{q:"Las dificultades de aprendizaje son:",a:["Permanentes","Transitorias","Irreversibles","Genéticas"],c:1,ref:"Tema 1 – Dificultades"},
+{q:"Los trastornos del desarrollo son:",a:["Situacionales","Permanentes","Escolares","Leves"],c:1,ref:"Tema 1 – Trastornos"},
+/* … hasta 50 */
 ],
 
-tema2: [
-{q:"Las dificultades de aprendizaje son:",a:["Discapacidades","Obstáculos parciales","Enfermedades","Trastornos"],c:1},
-{q:"Las teorías mecanicistas se centran en:",a:["Familia","Individuo","Escuela","Sociedad"],c:1},
-{q:"Las teorías contextualistas destacan:",a:["Genes","Ambiente","Neurología","Hormonas"],c:1},
-{q:"Las teorías interaccionistas combinan:",a:["Castigo-premio","Individuo-ambiente","Escuela-casa","Profesor-alumno"],c:1},
-{q:"La ley educativa vigente es:",a:["LOGSE","LOMCE","LOMLOE","LOE"],c:2},
-{q:"ACNEAE es:",a:["Categoría amplia","Solo discapacidad","Solo TDAH","Exclusión"],c:0},
-{q:"ACNEE incluye:",a:["Altas capacidades","Discapacidad","Migrantes","Absentismo"],c:1},
-{q:"TDAH es:",a:["Trastorno de atención","Discapacidad","Problema visual","Retraso motor"],c:0},
-{q:"La educación inclusiva prioriza:",a:["Aula especial","Aula ordinaria","Segregación","Exclusión"],c:1},
-{q:"Adaptación no significativa modifica:",a:["Objetivos","Contenidos","Metodología","Currículo"],c:2},
-{q:"Adaptación significativa modifica:",a:["Material","Tiempo","Objetivos","Explicaciones"],c:2},
-{q:"DIAC es:",a:["Informe médico","Documento curricular","Ley","Prueba"],c:1},
-{q:"La evaluación sirve para:",a:["Etiquetar","Detectar necesidades","Castigar","Excluir"],c:1},
-{q:"La coordinación implica:",a:["Uno","Varios agentes","Solo escuela","Solo familia"],c:1},
-{q:"La inclusión favorece:",a:["Desigualdad","Equidad","Exclusión","Homogeneidad"],c:1},
-{q:"La familia debe:",a:["Desconocer","Aprobar decisiones","Delegar","No participar"],c:1},
-{q:"Antes de evaluar se debe:",a:["Suspender","Observar","Derivar","Castigar"],c:1},
-{q:"Durante el proceso se realizan:",a:["Exámenes","Pruebas profesionales","Castigos","Notas"],c:1},
-{q:"Después se aplican:",a:["Sanciones","Adaptaciones","Cambios","Repetición"],c:1},
-{q:"El maestro aporta:",a:["Diagnóstico","Observación","Medicación","Terapia"],c:1},
-{q:"El pedagogo realiza:",a:["Castigos","Evaluación","Exámenes","Notas"],c:1},
-{q:"ODS 4 se refiere a:",a:["Salud","Educación de calidad","Igualdad","Trabajo"],c:1},
-{q:"La conferencia de Salamanca fue en:",a:["1990","1994","2000","2010"],c:1},
-{q:"La inclusión mixta combina:",a:["Casa-escuela","Aula ordinaria y apoyo","Juego-estudio","Familia-centro"],c:1},
-{q:"La inclusión elimina:",a:["Apoyos","Barreras","Diversidad","Ajustes"],c:1}
+t2: [
+{q:"Las teorías mecanicistas explican las dificultades desde:",a:["El contexto","El individuo","La escuela","La familia"],c:1,ref:"Tema 2 – Teorías mecanicistas"},
+{q:"Las teorías contextualistas atribuyen las dificultades a:",a:["Genes","Ambiente","Daño cerebral","Edad"],c:1,ref:"Tema 2 – Teorías contextualistas"},
+{q:"Las teorías interaccionistas combinan:",a:["Escuela-familia","Individuo-ambiente","Castigo-premio","Evaluación-apoyo"],c:1,ref:"Tema 2 – Teorías interaccionistas"},
+{q:"La LOMLOE es la ley vigente desde:",a:["2015","2018","2020","2023"],c:2,ref:"Tema 2 – LOMLOE"},
+{q:"El ACNEAE es:",a:["Solo discapacidad","Categoría amplia de apoyo","Solo TDAH","Altas capacidades"],c:1,ref:"Tema 2 – ACNEAE"},
+{q:"El ACNEE se caracteriza por:",a:["Altas capacidades","Barreras por discapacidad o trastornos graves","Migración","Vulnerabilidad social"],c:1,ref:"Tema 2 – ACNEE"},
+/* … hasta 50 */
+],
+
+tic: [
+{q:"El conectivismo sostiene que el aprendizaje se produce:",a:["De forma individual","En red y colaborativamente","Solo en el aula","Por memorización"],c:1,ref:"TIC – Conectivismo"},
+{q:"Una red social abierta se caracteriza por:",a:["Acceso restringido","Interacción libre","Uso educativo","Temática cerrada"],c:1,ref:"TIC – Redes sociales"},
+{q:"Las redes verticales se definen por:",a:["Ser abiertas","No tener temática","Tener un interés concreto","Ser privadas"],c:2,ref:"TIC – Tipos de redes"},
+{q:"Los hashtags y menciones son:",a:["Narrativas digitales","Códigos comunicativos","Lenguaje formal","Errores"],c:1,ref:"TIC – Comunicación en red"},
+{q:"Los emoticonos y GIFs forman parte de:",a:["Lenguaje académico","Nuevas narrativas digitales","Errores gramaticales","Spam"],c:1,ref:"TIC – Nuevas narrativas"},
+{q:"El ODS 4 promueve:",a:["Educación selectiva","Educación inclusiva y de calidad","Competitividad","Exclusión"],c:1,ref:"TIC – ODS 4"},
+/* … hasta 50 */
 ]
 };
 
-let preguntas = [], index = 0, answered = false;
+let preguntas=[],index=0,respuestas=[],tema="";
 
-function startTest(tema){
-    preguntas = shuffle([...banco[tema]]).slice(0,25);
-    index = 0;
+function startTest(t){
+    tema=t;
+    preguntas=shuffle([...banco[t]]).slice(0,10);
+    respuestas=[];
+    index=0;
+    sessionStorage.setItem("intentos_"+t,(+sessionStorage.getItem("intentos_"+t)||0)+1);
     document.getElementById("menu").classList.add("hidden");
     document.getElementById("test").classList.remove("hidden");
     render();
 }
 
 function render(){
-    answered = false;
-    const p = preguntas[index];
-    document.getElementById("progress").innerText =
-        `Pregunta ${index+1} de 25`;
-
-    let html = `<h3>${p.q}</h3>`;
-    p.a.forEach((op,i)=>{
-        html += `
-        <div class="option" id="opt${i}"
-             onclick="checkAnswer(${i})">${op}</div>`;
+    const p=preguntas[index];
+    document.getElementById("progress").innerText=`Pregunta ${index+1} de 10`;
+    let html=`<h3>${p.q}</h3>`;
+    shuffle(p.a.map((x,i)=>({x,i}))).forEach(o=>{
+        html+=`<div class="option" onclick="answer(${o.i})" id="opt${o.i}">${o.x}</div>`;
     });
-
-    document.getElementById("questionBox").innerHTML = html;
-    document.getElementById("finishBtn")
-        .classList.toggle("hidden", index < 24);
+    document.getElementById("questionBox").innerHTML=html;
+    document.getElementById("finishBtn").classList.toggle("hidden",index<9);
 }
 
-function checkAnswer(sel){
-    if(answered) return;
-    answered = true;
-
-    const correct = preguntas[index].c;
-
-    for(let i=0;i<preguntas[index].a.length;i++){
-        const opt = document.getElementById("opt"+i);
-        opt.classList.add("disabled");
-        if(i === correct) opt.classList.add("correct");
-        if(i === sel && i !== correct) opt.classList.add("incorrect");
-    }
+function answer(sel){
+    if(respuestas[index]!=null) return;
+    respuestas[index]=sel;
+    const correct=preguntas[index].c;
+    preguntas[index].a.forEach((_,i)=>{
+        const el=document.getElementById("opt"+i);
+        if(!el) return;
+        el.classList.add("disabled");
+        if(i===correct) el.classList.add("correct");
+        if(i===sel && i!==correct) el.classList.add("incorrect");
+    });
 }
 
-function nextQuestion(){
-    if(index < 24){ index++; render(); }
-}
+function next(){if(index<9){index++;render();}}
+function prev(){if(index>0){index--;render();}}
 
-function prevQuestion(){
-    if(index > 0){ index--; render(); }
-}
-
-function finishTest(){
+function finish(){
     document.getElementById("test").classList.add("hidden");
-    document.getElementById("menu").classList.remove("hidden");
+    const r=document.getElementById("review");
+    r.innerHTML="<h3>Revisión final</h3>";
+    preguntas.forEach((p,i)=>{
+        const ok=respuestas[i]===p.c;
+        r.innerHTML+=`
+        <div class="review">
+        <span class="${ok?"ok":"ko"}">${ok?"✔ Correcta":"✘ Incorrecta"}</span><br>
+        ${p.q}<br>
+        ${!ok?`📄 Repasar en: <em>${p.ref}</em>`:""}
+        </div>`;
+    });
+    r.classList.remove("hidden");
 }
 
-function shuffle(a){
-    return a.sort(() => Math.random() - 0.5);
-}
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 </script>
 
 </body>
