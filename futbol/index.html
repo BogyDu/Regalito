@@ -5,60 +5,39 @@
 <title>IPTV Web</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #111;
+  font-family: system-ui, Arial, sans-serif;
+  background: #0d0d0d;
   color: #fff;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
-
 header {
   padding: 10px;
-  background: #222;
+  background: #1a1a1a;
 }
-
-input, button {
+input, select, button {
+  width: 100%;
   padding: 8px;
-  border-radius: 5px;
+  margin-top: 6px;
+  border-radius: 6px;
   border: none;
 }
-
-#urlInput {
-  width: 100%;
-  margin-bottom: 8px;
-}
-
-#search {
-  width: 100%;
-  margin-top: 5px;
-}
-
 main {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
-
-#channels {
+#sidebar {
   width: 35%;
   background: #000;
   overflow-y: auto;
 }
-
-#channels div {
-  padding: 10px;
-  border-bottom: 1px solid #222;
-  cursor: pointer;
-}
-
-#channels div:hover {
-  background: #333;
-}
-
 #player-container {
   flex: 1;
   background: black;
@@ -66,22 +45,37 @@ main {
   justify-content: center;
   align-items: center;
 }
-
+.channel {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+}
+.channel img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  object-fit: contain;
+  background: #111;
+}
+.channel:hover {
+  background: #222;
+}
 video {
   width: 100%;
   height: 100%;
 }
-
 @media (max-width: 768px) {
   main {
     flex-direction: column;
   }
-  #channels {
+  #sidebar {
     width: 100%;
-    height: 40%;
+    height: 45%;
   }
   #player-container {
-    height: 60%;
+    height: 55%;
   }
 }
 </style>
@@ -91,32 +85,54 @@ video {
 
 <header>
   <input type="text" id="urlInput" placeholder="Introduce URL M3U">
-  <button onclick="loadM3U()">Cargar lista</button>
+  <button id="loadBtn">Cargar lista</button>
   <input type="text" id="search" placeholder="Buscar canal...">
+  <select id="groupFilter"></select>
 </header>
 
 <main>
-  <div id="channels"></div>
+  <div id="sidebar"></div>
   <div id="player-container">
-    <video id="video" controls autoplay></video>
+    <video id="player" controls autoplay playsinline></video>
   </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
 <script>
 const defaultURL = "https://iptv-org.github.io/iptv/index.m3u";
-document.getElementById("urlInput").value = defaultURL;
+const urlInput = document.getElementById("urlInput");
+const loadBtn = document.getElementById("loadBtn");
+const searchInput = document.getElementById("search");
+const groupFilter = document.getElementById("groupFilter");
+const sidebar = document.getElementById("sidebar");
+const video = document.getElementById("player");
 
 let channels = [];
-let hls;
+let hls = null;
+
+// Cargar URL guardada o por defecto
+urlInput.value = localStorage.getItem("m3u_url") || defaultURL;
+
+loadBtn.addEventListener("click", loadM3U);
+searchInput.addEventListener("input", applyFilters);
+groupFilter.addEventListener("change", applyFilters);
 
 function loadM3U() {
-  const url = document.getElementById("urlInput").value;
+  const url = urlInput.value.trim();
+  if (!url) return;
+
+  localStorage.setItem("m3u_url", url);
+  sidebar.innerHTML = "Cargando lista...";
+
   fetch(url)
-    .then(res => res.text())
-    .then(data => parseM3U(data))
-    .catch(err => alert("Error cargando la lista M3U (CORS o URL incorrecta)"));
+    .then(res => {
+      if (!res.ok) throw new Error("No se pudo cargar la lista");
+      return res.text();
+    })
+    .then(text => parseM3U(text))
+    .catch(err => {
+      console.error(err);
+      sidebar.innerHTML = "Error cargando la lista (CORS o URL inválida)";
+    });
 }
 
 function parseM3U(data) {
@@ -124,56 +140,82 @@ function parseM3U(data) {
   channels = [];
   let name = "";
   let logo = "";
+  let group = "";
 
-  lines.forEach(line => {
+  for (let line of lines) {
     line = line.trim();
     if (line.startsWith("#EXTINF")) {
-      const nameMatch = line.match(/,(.*)/);
+      name = line.split(",").slice(1).join(",") || "Canal";
       const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-      name = nameMatch ? nameMatch[1] : "Canal";
+      const groupMatch = line.match(/group-title="([^"]+)"/);
       logo = logoMatch ? logoMatch[1] : "";
+      group = groupMatch ? groupMatch[1] : "Otros";
     } else if (line.startsWith("http")) {
-      channels.push({ name, url: line, logo });
+      channels.push({ name, logo, group, url: line });
     }
-  });
+  }
 
+  buildGroupFilter();
   renderChannels(channels);
 }
 
-function renderChannels(list) {
-  const container = document.getElementById("channels");
-  container.innerHTML = "";
+function buildGroupFilter() {
+  const groups = [...new Set(channels.map(c => c.group))].sort();
+  groupFilter.innerHTML = `<option value="">Todos</option>`;
+  for (const g of groups) {
+    const opt = document.createElement("option");
+    opt.value = g;
+    opt.textContent = g;
+    groupFilter.appendChild(opt);
+  }
+}
 
-  list.forEach(ch => {
+function renderChannels(list) {
+  sidebar.innerHTML = "";
+  for (const ch of list) {
     const div = document.createElement("div");
-    div.textContent = ch.name;
-    div.onclick = () => playChannel(ch.url);
-    container.appendChild(div);
-  });
+    div.className = "channel";
+    div.innerHTML = `
+      <img src="${ch.logo || 'https://via.placeholder.com/40?text=TV'}" alt="">
+      <span>${ch.name}</span>
+    `;
+    div.addEventListener("click", () => playChannel(ch.url));
+    sidebar.appendChild(div);
+  }
+}
+
+function applyFilters() {
+  const text = searchInput.value.toLowerCase();
+  const group = groupFilter.value;
+  const filtered = channels.filter(c =>
+    c.name.toLowerCase().includes(text) &&
+    (group === "" || c.group === group)
+  );
+  renderChannels(filtered);
 }
 
 function playChannel(url) {
-  const video = document.getElementById("video");
-
   if (hls) {
     hls.destroy();
+    hls = null;
   }
 
   if (Hls.isSupported()) {
-    hls = new Hls();
+    hls = new Hls({
+      lowLatencyMode: true,
+      backBufferLength: 30,
+      maxBufferLength: 60
+    });
     hls.loadSource(url);
     hls.attachMedia(video);
   } else {
     video.src = url;
   }
+
+  video.play().catch(() => {});
 }
 
-document.getElementById("search").addEventListener("input", function() {
-  const text = this.value.toLowerCase();
-  const filtered = channels.filter(c => c.name.toLowerCase().includes(text));
-  renderChannels(filtered);
-});
-
+// Cargar automáticamente al iniciar
 loadM3U();
 </script>
 
