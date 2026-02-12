@@ -3,42 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <title>IPTV Web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { margin:0; display:flex; height:100vh; font-family:Arial; }
-#canales { width:300px; overflow-y:auto; border-right:1px solid #ccc; }
-#canales div { padding:8px; cursor:pointer; }
-#canales div:hover { background:#eee; }
-video { flex:1; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  padding: 10px;
+  background: #222;
+}
+
+input, button {
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+}
+
+#urlInput {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+#search {
+  width: 100%;
+  margin-top: 5px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+#channels {
+  width: 35%;
+  background: #000;
+  overflow-y: auto;
+}
+
+#channels div {
+  padding: 10px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+}
+
+#channels div:hover {
+  background: #333;
+}
+
+#player-container {
+  flex: 1;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  main {
+    flex-direction: column;
+  }
+  #channels {
+    width: 100%;
+    height: 40%;
+  }
+  #player-container {
+    height: 60%;
+  }
+}
 </style>
 </head>
+
 <body>
 
-<div id="canales"></div>
-<video id="player" controls autoplay></video>
+<header>
+  <input type="text" id="urlInput" placeholder="Introduce URL M3U">
+  <button onclick="loadM3U()">Cargar lista</button>
+  <input type="text" id="search" placeholder="Buscar canal...">
+</header>
+
+<main>
+  <div id="channels"></div>
+  <div id="player-container">
+    <video id="video" controls autoplay></video>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
-const M3U_URL = "https://raw.githubusercontent.com/dzh0ni/iPTV-FREE-LIST/master/iPTV-Free-List_TV.m3u";
+const defaultURL = "https://iptv-org.github.io/iptv/index.m3u";
+document.getElementById("urlInput").value = defaultURL;
 
-fetch(M3U_URL)
-  .then(r => r.text())
-  .then(data => {
-    const lines = data.split("\n");
-    let nombre = "";
+let channels = [];
+let hls;
 
-    lines.forEach(line => {
-      if (line.startsWith("#EXTINF")) {
-        nombre = line.split(",")[1];
-      } else if (line.startsWith("http")) {
-        const div = document.createElement("div");
-        div.textContent = nombre;
-        div.onclick = () => {
-          document.getElementById("player").src = line.trim();
-        };
-        document.getElementById("canales").appendChild(div);
-      }
-    });
-  })
-  .catch(err => console.error("Error cargando M3U:", err));
+function loadM3U() {
+  const url = document.getElementById("urlInput").value;
+  fetch(url)
+    .then(res => res.text())
+    .then(data => parseM3U(data))
+    .catch(err => alert("Error cargando la lista M3U (CORS o URL incorrecta)"));
+}
+
+function parseM3U(data) {
+  const lines = data.split("\n");
+  channels = [];
+  let name = "";
+  let logo = "";
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (line.startsWith("#EXTINF")) {
+      const nameMatch = line.match(/,(.*)/);
+      const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+      name = nameMatch ? nameMatch[1] : "Canal";
+      logo = logoMatch ? logoMatch[1] : "";
+    } else if (line.startsWith("http")) {
+      channels.push({ name, url: line, logo });
+    }
+  });
+
+  renderChannels(channels);
+}
+
+function renderChannels(list) {
+  const container = document.getElementById("channels");
+  container.innerHTML = "";
+
+  list.forEach(ch => {
+    const div = document.createElement("div");
+    div.textContent = ch.name;
+    div.onclick = () => playChannel(ch.url);
+    container.appendChild(div);
+  });
+}
+
+function playChannel(url) {
+  const video = document.getElementById("video");
+
+  if (hls) {
+    hls.destroy();
+  }
+
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+  } else {
+    video.src = url;
+  }
+}
+
+document.getElementById("search").addEventListener("input", function() {
+  const text = this.value.toLowerCase();
+  const filtered = channels.filter(c => c.name.toLowerCase().includes(text));
+  renderChannels(filtered);
+});
+
+loadM3U();
 </script>
 
 </body>
