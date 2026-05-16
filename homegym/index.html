@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rutina en Casa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --card: #161616;
+    --border: #252525;
+    --accent-g: #c8f55a;
+    --accent-p: #f55a8c;
+    --accent-a: #5ac8f5;
+    --text: #f0f0f0;
+    --muted: #666;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+
+  /* Header */
+  header { margin-bottom: 56px; }
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+  }
+  h1 span { display: block; }
+  h1 .line-g { color: var(--accent-g); }
+  h1 .line-p { color: var(--accent-p); }
+  h1 .line-a { color: var(--accent-a); }
+
+  .subtitle {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 420px;
+    line-height: 1.6;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .tab-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .tab-btn[data-tab="gluteo"] { --tc: var(--accent-g); }
+  .tab-btn[data-tab="piernas"] { --tc: var(--accent-p); }
+  .tab-btn[data-tab="abdomen"] { --tc: var(--accent-a); }
+
+  .tab-btn.active, .tab-btn:hover {
+    border-color: var(--tc);
+    color: var(--tc);
+    background: color-mix(in srgb, var(--tc) 8%, transparent);
+  }
+
+  /* Grid */
+  .exercises-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .exercise-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    animation: fadeIn 0.35s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .exercise-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent-color);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.25s ease;
+  }
+  .exercise-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
+  .exercise-card:hover::after { transform: scaleY(1); }
+  .exercise-card.done { opacity: 0.45; }
+  .exercise-card.done .check { background: var(--accent-color); border-color: var(--accent-color); color: #000; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .exercise-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .exercise-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .exercise-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-color);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
+  }
+
+  .exercise-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .expand-icon {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--accent-color);
+    font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    text-transform: uppercase;
+  }
+  .exercise-card:hover .expand-icon { opacity: 1; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    max-width: 520px;
+    width: 100%;
+    padding: 36px;
+    position: relative;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: transparent; border: 1.5px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { border-color: var(--text); color: var(--text); }
+
+  .modal-icon { font-size: 48px; margin-bottom: 16px; }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .modal-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section h3 {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .modal-section p, .modal-section li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #bbb;
+    font-weight: 300;
+  }
+  .modal-section ul { padding-left: 18px; }
+  .modal-section li { margin-bottom: 4px; }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    margin-bottom: 40px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-g), var(--accent-p), var(--accent-a));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+  /* Reset btn */
+  .reset-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--muted); color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Rutina · Casa · Sin Equipamiento</p>
+    <h1>
+      <span class="line-g">GLÚTEO</span>
+      <span class="line-p">PIERNAS</span>
+      <span class="line-a">ABDOMEN</span>
+    </h1>
+    <p class="subtitle">Selecciona una zona muscular y marca cada ejercicio al completarlo. Toca cualquier ejercicio para ver instrucciones detalladas.</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="gluteo">🍑 Glúteo</button>
+    <button class="tab-btn" data-tab="piernas">🦵 Piernas</button>
+    <button class="tab-btn" data-tab="abdomen">⚡ Abdomen</button>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-label" id="progressLabel">0 / 0</span>
+    <button class="reset-btn" onclick="resetAll()">Reiniciar</button>
+  </div>
+
+  <div class="exercises-grid" id="grid"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-icon" id="mIcon"></div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-badges" id="mBadges"></div>
+    <div class="modal-section">
+      <h3>Descripción</h3>
+      <p id="mDesc"></p>
+    </div>
+    <div class="modal-section">
+      <h3>¿Cómo hacerlo?</h3>
+      <ul id="mSteps"></ul>
+    </div>
+    <div class="modal-section">
+      <h3>Consejo</h3>
+      <p id="mTip"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = {
+  gluteo: {
+    color: '#c8f55a',
+    exercises: [
+      {
+        icon: '🔥', name: 'Hip Thrust',
+        series: '4 series', reps: '15 reps',
+        desc: 'El ejercicio rey para activar y fortalecer el glúteo mayor con el peso corporal.',
+        steps: [
+          'Apoya la espalda alta en el sofá o cama.',
+          'Pies a la anchura de caderas, rodillas a 90°.',
+          'Empuja las caderas hacia arriba apretando glúteos.',
+          'Mantén 1-2 seg arriba, baja sin tocar el suelo.',
+        ],
+        tip: 'Coloca un libro o mochila sobre las caderas para añadir resistencia.'
+      },
+      {
+        icon: '🦵', name: 'Sentadilla Sumo',
+        series: '3 series', reps: '20 reps',
+        desc: 'Apertura amplia de piernas que enfoca el trabajo en glúteos y aductores.',
+        steps: [
+          'Pies más anchos que los hombros, puntas hacia afuera.',
+          'Baja manteniendo la espalda recta y el pecho erguido.',
+          'Las rodillas siguen la dirección de los pies.',
+          'Aprieta glúteos al subir.',
+        ],
+        tip: 'Cuanto más bajes, mayor activación del glúteo. Intenta tocar el suelo con los dedos.'
+      },
+      {
+        icon: '🌉', name: 'Puente de Glúteo',
+        series: '4 series', reps: '20 reps',
+        desc: 'Variante tumbada del hip thrust, ideal para principiantes y activación pélvica.',
+        steps: [
+          'Túmbate boca arriba con rodillas dobladas.',
+          'Pies planos en el suelo, brazos a los lados.',
+          'Eleva la cadera hasta formar una línea recta.',
+          'Aguanta 2 seg en la parte alta. Baja lentamente.',
+        ],
+        tip: 'Para añadir dificultad, sube una pierna extendida mientras haces el puente.'
+      },
+      {
+        icon: '🦶', name: 'Patada de Glúteo',
+        series: '3 series', reps: '15 reps/pierna',
+        desc: 'Aislamiento puro del glúteo mayor con movimiento de extensión de cadera.',
+        steps: [
+          'Posición a cuatro patas en el suelo.',
+          'Mantén la espalda plana y el core activado.',
+          'Lleva un talón hacia el techo sin rotar la cadera.',
+          'Baja sin apoyar y repite.',
+        ],
+        tip: 'El movimiento debe venir de la cadera, no de la espalda baja.'
+      },
+      {
+        icon: '⭕', name: 'Círculos de Cadera',
+        series: '3 series', reps: '12 reps/pierna',
+        desc: 'Activa el glúteo medio mejorando la estabilidad y rotación de cadera.',
+        steps: [
+          'A cuatro patas, rodilla a 90°.',
+          'Sube la rodilla lateralmente como un perro con un árbol.',
+          'Realiza círculos amplios hacia adelante y hacia atrás.',
+          'Mantén la cadera lo más quieta posible.',
+        ],
+        tip: 'Ve despacio y controlado. La velocidad no es el objetivo aquí.'
+      },
+      {
+        icon: '🏃', name: 'Zancada Inversa',
+        series: '3 series', reps: '12 reps/pierna',
+        desc: 'Variante de zancada que reduce el estrés en rodillas y maximiza la activación del glúteo.',
+        steps: [
+          'De pie, da un paso hacia atrás con una pierna.',
+          'Baja la rodilla trasera casi hasta el suelo.',
+          'La rodilla delantera no pasa la punta del pie.',
+          'Vuelve al centro empujando con el talón delantero.',
+        ],
+        tip: 'Inclina ligeramente el torso hacia adelante para aumentar la carga en glúteos.'
+      },
+    ]
+  },
+  piernas: {
+    color: '#f55a8c',
+    exercises: [
+      {
+        icon: '🏋️', name: 'Sentadilla Profunda',
+        series: '4 series', reps: '15 reps',
+        desc: 'La sentadilla completa trabaja cuádriceps, isquios, glúteos y gemelos en conjunto.',
+        steps: [
+          'Pies a la anchura de hombros, ligeramente abiertos.',
+          'Baja hasta que los muslos estén paralelos o más bajos.',
+          'Mantén el pecho arriba y la mirada al frente.',
+          'Empuja desde los talones para subir.',
+        ],
+        tip: 'Si pierdes el equilibrio, prueba a poner un libro bajo los talones.'
+      },
+      {
+        icon: '🦘', name: 'Sentadilla Jump',
+        series: '3 series', reps: '12 reps',
+        desc: 'Añade potencia y trabajo cardiovascular a la sentadilla clásica.',
+        steps: [
+          'Baja hasta sentadilla completa.',
+          'Explota hacia arriba saltando.',
+          'Aterriza suave con las rodillas ligeramente dobladas.',
+          'Absorbe el impacto y vuelve a bajar.',
+        ],
+        tip: 'Aterriza siempre con las rodillas blandas, nunca rígidas.'
+      },
+      {
+        icon: '🚶', name: 'Zancada Lateral',
+        series: '3 series', reps: '12 reps/lado',
+        desc: 'Trabaja aductores e isquiotibiales desde un ángulo diferente al de la sentadilla.',
+        steps: [
+          'De pie con piernas juntas.',
+          'Da un gran paso lateral con una pierna.',
+          'Flexiona esa rodilla hasta que el muslo esté horizontal.',
+          'Mantén la otra pierna recta. Vuelve al centro.',
+        ],
+        tip: 'El pie del lado que trabajas apunta ligeramente hacia afuera para comodidad.'
+      },
+      {
+        icon: '🦵', name: 'Isquios en el Suelo',
+        series: '3 series', reps: '10 reps',
+        desc: 'Ejercicio muy efectivo para isquiotibiales usando solo el suelo y fricción.',
+        steps: [
+          'Arrodíllate con los pies bajo un mueble pesado.',
+          'Con cuerpo recto, inclínate hacia adelante lentamente.',
+          'Aguanta el descenso controlado con isquios.',
+          'Apóyate en el suelo y vuelve empujando.',
+        ],
+        tip: 'Es un ejercicio difícil. Si no puedes, usa una banda de resistencia como ayuda.'
+      },
+      {
+        icon: '🧎', name: 'Sentadilla Búlgara',
+        series: '3 series', reps: '10 reps/pierna',
+        desc: 'Unilateral y exigente: trabaja cuádriceps y glúteo con gran profundidad.',
+        steps: [
+          'Apoya el pie trasero en el sofá o silla.',
+          'La pierna delantera bien adelantada.',
+          'Baja hasta que la rodilla trasera casi toque el suelo.',
+          'Sube empujando con el talón de la pierna delantera.',
+        ],
+        tip: 'Cuanto más adelantado esté el pie, más trabajarás el glúteo. Más cerca = más cuádriceps.'
+      },
+      {
+        icon: '🐊', name: 'Elevación de Gemelos',
+        series: '4 series', reps: '25 reps',
+        desc: 'Fortalece gemelos y sóleo, mejorando la estabilidad y definición del tobillo.',
+        steps: [
+          'De pie frente a una pared para equilibrio.',
+          'Eleva los talones lo máximo posible.',
+          'Aguanta 1 seg arriba y baja lentamente.',
+          'Para más rango, hazlo en un escalón.',
+        ],
+        tip: 'Variar la dirección de los pies (dentro/fuera) activa distintas zonas del gemelo.'
+      },
+    ]
+  },
+  abdomen: {
+    color: '#5ac8f5',
+    exercises: [
+      {
+        icon: '🎯', name: 'Plancha',
+        series: '3 series', reps: '45 seg',
+        desc: 'El ejercicio más completo para el core: activa todo el núcleo de forma isométrica.',
+        steps: [
+          'Antebrazos en el suelo, codos bajo los hombros.',
+          'Cuerpo en línea recta de cabeza a talones.',
+          'Activa abdomen y glúteos. No eleves la cadera.',
+          'Respira de forma controlada.',
+        ],
+        tip: 'Si sientes la espalda baja, baja las caderas. Calidad sobre duración.'
+      },
+      {
+        icon: '🌀', name: 'Crunch Abdominal',
+        series: '4 series', reps: '20 reps',
+        desc: 'Clásico ejercicio para el recto abdominal con movimiento controlado.',
+        steps: [
+          'Túmbate con rodillas dobladas, pies en el suelo.',
+          'Manos en la nuca sin tirar del cuello.',
+          'Eleva el torso hacia las rodillas usando el abdomen.',
+          'Baja lentamente sin llegar a apoyar del todo.',
+        ],
+        tip: 'La mirada al techo, no a las rodillas, para no forzar el cuello.'
+      },
+      {
+        icon: '✂️', name: 'Tijeras Horizontales',
+        series: '3 series', reps: '30 reps',
+        desc: 'Activa abdomen inferior y flexores de cadera con movimiento alternado de piernas.',
+        steps: [
+          'Túmbate con la espalda pegada al suelo.',
+          'Piernas extendidas a unos 20 cm del suelo.',
+          'Alterna arriba/abajo en movimiento de tijera.',
+          'Mantén el abdomen contraído todo el tiempo.',
+        ],
+        tip: 'Si sientes la espalda, sube un poco más las piernas. El suelo debe estar pegado a tu espalda.'
+      },
+      {
+        icon: '🚲', name: 'Bicicleta Abdominal',
+        series: '3 series', reps: '20 reps/lado',
+        desc: 'Uno de los mejores ejercicios: activa recto y oblicuos al mismo tiempo.',
+        steps: [
+          'Tumbado boca arriba, manos en la nuca.',
+          'Rodillas a 90° elevadas en el aire.',
+          'Lleva el codo derecho a la rodilla izquierda.',
+          'Alterna en movimiento de pedaleo lento y controlado.',
+        ],
+        tip: 'Ve lento y aprieta el abdomen en cada rotación. Sin prisa.'
+      },
+      {
+        icon: '🏔️', name: 'Mountain Climbers',
+        series: '3 series', reps: '30 seg',
+        desc: 'Ejercicio dinámico que combina core con cardio y flexores de cadera.',
+        steps: [
+          'Posición de plancha alta (brazos extendidos).',
+          'Lleva una rodilla al pecho rápidamente.',
+          'Alterna las piernas en movimiento de carrera.',
+          'Mantén las caderas bajas y la espalda plana.',
+        ],
+        tip: 'Para mayor activación del oblicuo, lleva la rodilla al codo contrario.'
+      },
+      {
+        icon: '🌊', name: 'Plancha Lateral',
+        series: '3 series', reps: '30 seg/lado',
+        desc: 'Activa oblicuos y cuadrado lumbar mejorando la estabilidad lateral del core.',
+        steps: [
+          'Apóyate en un antebrazo con el cuerpo de lado.',
+          'Los pies apilados o el de arriba delante.',
+          'Eleva la cadera para alinearte de cabeza a pies.',
+          'Mantén la posición sin hundir la cadera.',
+        ],
+        tip: 'Para más dificultad, sube y baja la cadera en cada repetición.'
+      },
+    ]
+  }
+};
+
+let currentTab = 'gluteo';
+let done = {};
+
+function renderGrid(tab) {
+  const grid = document.getElementById('grid');
+  const exercises = data[tab].exercises;
+  const color = data[tab].color;
+
+  grid.innerHTML = '';
+  exercises.forEach((ex, i) => {
+    const key = `${tab}-${i}`;
+    const isDone = done[key];
+    const card = document.createElement('div');
+    card.className = 'exercise-card' + (isDone ? ' done' : '');
+    card.style.setProperty('--accent-color', color);
+    card.style.animationDelay = `${i * 0.06}s`;
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="exercise-icon">${ex.icon}</span>
+        <div class="check" style="--accent-color:${color}">${isDone ? '✓' : ''}</div>
+      </div>
+      <div class="exercise-name">${ex.name}</div>
+      <div class="exercise-meta">
+        <span class="badge" style="--accent-color:${color}">${ex.series}</span>
+        <span class="badge" style="--accent-color:${color}">${ex.reps}</span>
+      </div>
+      <div class="exercise-desc">${ex.desc}</div>
+      <div class="expand-icon">Ver instrucciones →</div>
+    `;
+    card.onclick = (e) => {
+      if (e.target.classList.contains('check') || e.target.closest('.check')) {
+        toggleDone(key, tab);
+      } else {
+        openModal(tab, i);
+      }
+    };
+    card.querySelector('.check').onclick = (e) => {
+      e.stopPropagation();
+      toggleDone(key, tab);
+    };
+    grid.appendChild(card);
+  });
+
+  updateProgress(tab);
+}
+
+function toggleDone(key, tab) {
+  done[key] = !done[key];
+  renderGrid(tab);
+}
+
+function updateProgress(tab) {
+  const exercises = data[tab].exercises;
+  const total = exercises.length;
+  const completed = exercises.filter((_, i) => done[`${tab}-${i}`]).length;
+  const pct = total > 0 ? (completed / total) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${completed} / ${total} completados`;
+}
+
+function openModal(tab, idx) {
+  const ex = data[tab].exercises[idx];
+  const color = data[tab].color;
+  document.getElementById('mIcon').textContent = ex.icon;
+  document.getElementById('mTitle').textContent = ex.name;
+  document.getElementById('mTitle').style.color = color;
+  document.getElementById('mBadges').innerHTML = `
+    <span class="badge" style="--accent-color:${color}">${ex.series}</span>
+    <span class="badge" style="--accent-color:${color}">${ex.reps}</span>
+  `;
+  document.getElementById('mDesc').textContent = ex.desc;
+  document.getElementById('mSteps').innerHTML = ex.steps.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('mTip').textContent = ex.tip;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function resetAll() {
+  done = {};
+  renderGrid(currentTab);
+}
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab = btn.dataset.tab;
+    renderGrid(currentTab);
+  };
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalDirect();
+});
+
+renderGrid('gluteo');
+</script>
+</body>
+</html>
