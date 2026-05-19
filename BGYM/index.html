@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitCore — Plan de Fuerza & Nutrición</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --accent3: #4ecdc4;
+    --text: #f0f0f0;
+    --text2: #9090aa;
+    --text3: #5a5a70;
+    --red: #ff4757;
+    --green: #2ed573;
+    --protein: #ff6b6b;
+    --carbs: #ffa94d;
+    --fat: #74c0fc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text2); font-size: 12px; font-family: 'DM Sans', sans-serif; display: block; letter-spacing: 2px; font-weight: 300; }
+
+  nav {
+    display: flex;
+    gap: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--text2);
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  nav button.active {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  nav button:hover:not(.active) { color: var(--text); background: var(--border); }
+
+  /* MAIN LAYOUT */
+  main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+
+  /* SECTIONS */
+  .section { display: none; animation: fadeUp 0.3s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HERO STATS */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .stat-card:nth-child(2)::before { background: var(--accent2); }
+  .stat-card:nth-child(3)::before { background: var(--accent3); }
+  .stat-card:nth-child(4)::before { background: var(--protein); }
+
+  .stat-card:hover { border-color: var(--accent); }
+
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .stat-card:nth-child(2) .stat-value { color: var(--accent2); }
+  .stat-card:nth-child(3) .stat-value { color: var(--accent3); }
+  .stat-card:nth-child(4) .stat-value { color: var(--protein); }
+
+  .stat-unit { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+  /* GRID LAYOUT */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* MACROS BAR */
+  .macros-bar {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 16px 0 8px;
+    gap: 2px;
+  }
+
+  .macro-seg {
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  .macro-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  .macro-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text2);
+  }
+
+  .macro-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* DAY PILLS */
+  .day-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .day-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .day-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  .day-pill:hover:not(.active) { border-color: var(--text2); color: var(--text); }
+
+  /* MEAL CARDS */
+  .meal-section { margin-bottom: 28px; }
+
+  .meal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .meal-time { font-size: 12px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+  .meal-options { display: flex; flex-direction: column; gap: 10px; }
+
+  .meal-option {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .meal-option:hover { border-color: var(--accent); transform: translateX(4px); }
+  .meal-option.selected { border-color: var(--accent); background: rgba(232,255,71,0.05); }
+
+  .meal-option-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .meal-option-desc {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .meal-macros {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .meal-macro {
+    text-align: center;
+    font-size: 11px;
+  }
+
+  .meal-macro-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .meal-macro-lbl { color: var(--text3); font-size: 10px; }
+
+  /* GYM PLAN */
+  .gym-day {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .gym-day:hover { border-color: var(--accent2); }
+  .gym-day.open { border-color: var(--accent2); }
+
+  .gym-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gym-day-left { display: flex; align-items: center; gap: 16px; }
+
+  .gym-day-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  .gym-day-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .gym-day-muscle {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  .gym-day-badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+
+  .badge-push { background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid var(--accent2); }
+  .badge-pull { background: rgba(78,205,196,0.15); color: var(--accent3); border: 1px solid var(--accent3); }
+  .badge-legs { background: rgba(232,255,71,0.15); color: var(--accent); border: 1px solid var(--accent); }
+  .badge-rest { background: rgba(144,144,170,0.1); color: var(--text2); border: 1px solid var(--border); }
+
+  .gym-day-chevron {
+    color: var(--text3);
+    transition: transform 0.3s;
+    font-size: 18px;
+  }
+
+  .gym-day.open .gym-day-chevron { transform: rotate(180deg); }
+
+  .gym-day-exercises {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .gym-day.open .gym-day-exercises { display: block; }
+
+  .exercise-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+  }
+
+  .exercise-row:last-child { border-bottom: none; }
+
+  .exercise-name { font-size: 14px; font-weight: 500; }
+  .exercise-tip { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .exercise-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+
+  /* LOG SECTION */
+  .log-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text2);
+    font-weight: 600;
+  }
+
+  input, select, textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  select option { background: var(--bg3); }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn:hover { background: #d4eb3a; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { background: var(--border); transform: translateY(-1px); }
+
+  .btn-danger {
+    background: rgba(255,71,87,0.1);
+    color: var(--red);
+    border: 1px solid rgba(255,71,87,0.3);
+  }
+  .btn-danger:hover { background: rgba(255,71,87,0.2); }
+
+  /* LOG TABLE */
+  .log-table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    color: var(--text2);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(232,255,71,0.02); color: var(--text); }
+
+  .td-name { color: var(--text); font-weight: 500; }
+
+  .badge-small {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+
+  .badge-weight { background: rgba(78,205,196,0.15); color: var(--accent3); }
+  .badge-food { background: rgba(232,255,71,0.15); color: var(--accent); }
+  .badge-gym { background: rgba(255,107,53,0.15); color: var(--accent2); }
+
+  /* PROGRESS CHARTS */
+  .progress-wrap { position: relative; height: 160px; margin: 16px 0; }
+
+  canvas { width: 100% !important; }
+
+  /* SUPP CARDS */
+  .supp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .supp-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .supp-card:hover { border-color: var(--accent3); }
+
+  .supp-icon { font-size: 28px; margin-bottom: 10px; }
+  .supp-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .supp-dose { font-size: 12px; color: var(--accent3); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; }
+  .supp-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* WEEK PROGRESS */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .week-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 2px;
+  }
+
+  .week-day.done { background: rgba(232,255,71,0.1); border-color: var(--accent); color: var(--accent); }
+  .week-day.rest { background: rgba(90,90,112,0.1); border-color: var(--border); color: var(--text3); }
+  .week-day.today { border-color: var(--accent2); box-shadow: 0 0 0 2px rgba(255,107,53,0.2); }
+
+  .week-day-name { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+  .week-day.done .week-day-name { color: var(--accent); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text3);
+  }
+
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 14px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 9998;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* RECIPE */
+  .recipe-steps {
+    counter-reset: steps;
+    list-style: none;
+  }
+
+  .recipe-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .recipe-step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 24px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    header { padding: 16px 20px; flex-wrap: wrap; gap: 12px; }
+    main { padding: 20px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .supp-grid { grid-template-columns: repeat(2, 1fr); }
+    .log-form { grid-template-columns: 1fr; }
+    nav button { padding: 8px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    FITCORE
+    <span>PLAN DE FUERZA · 60KG → 70KG</span>
+  </div>
+  <nav>
+    <button class="active" onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('dieta')">🥗 Dieta</button>
+    <button onclick="showSection('gym')">💪 Gimnasio</button>
+    <button onclick="showSection('suplementos')">⚗️ Suplementos</button>
+    <button onclick="showSection('registro')">📋 Registro</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ========== DASHBOARD ========== -->
+  <section id="dashboard" class="section active">
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-label">Peso actual</div>
+        <div class="stat-value" id="peso-display">60</div>
+        <div class="stat-unit">kilogramos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Objetivo</div>
+        <div class="stat-value">70</div>
+        <div class="stat-unit">kg (+10 kg músculo)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Calorías diarias</div>
+        <div class="stat-value">2.8K</div>
+        <div class="stat-unit">kcal — superávit limpio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Proteína diaria</div>
+        <div class="stat-value">180</div>
+        <div class="stat-unit">gramos (3g/kg)</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Semana actual</div>
+        <div class="week-grid" id="week-grid"></div>
+        <div style="font-size:12px; color:var(--text3); margin-top:8px;">Haz click en un día para marcarlo como completado</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Distribución de macros</div>
+        <div style="font-size:13px; color:var(--text2); margin-bottom:4px;">Objetivo diario (2.800 kcal)</div>
+        <div class="macros-bar">
+          <div class="macro-seg" style="width:51%; background:var(--protein);"></div>
+          <div class="macro-seg" style="width:36%; background:var(--carbs);"></div>
+          <div class="macro-seg" style="width:13%; background:var(--fat);"></div>
+        </div>
+        <div class="macro-labels">
+          <div class="macro-label"><div class="macro-dot" style="background:var(--protein)"></div><span>Proteínas <strong style="color:var(--text)">180g</strong></span></div>
+          <div class="macro-label"><div class="macro-dot" style="background:var(--carbs)"></div><span>HC <strong style="color:var(--text)">250g</strong></span></div>
+          <div class="macro-label"><div class="macro-dot" style="background:var(--fat)"></div><span>Grasas <strong style="color:var(--text)">65g</strong></span></div>
+        </div>
+        <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+          <div style="font-size:12px; color:var(--text3); margin-bottom:12px; text-transform:uppercase; letter-spacing:1px;">Actualizar peso</div>
+          <div style="display:flex; gap:8px;">
+            <input type="number" id="nuevo-peso" placeholder="Peso en kg" style="max-width:140px;" step="0.1">
+            <button class="btn" onclick="actualizarPeso()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Regla de oro</div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> Superávit calórico <strong style="color:var(--text)">limpio</strong>: 300-500 kcal extra</li>
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> 2.5-3g proteína por kg de peso</li>
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> Priorizar alimentos densos en nutrientes</li>
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> Comer sin grasa añadida innecesaria</li>
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> Hidratación: 3L agua mínimo al día</li>
+          <li style="font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--accent)">→</span> Dormir 7-9h: el músculo crece aquí</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Tu perfil</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2)">Altura</span><span style="font-family:'JetBrains Mono'; color:var(--accent3)">170 cm</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2)">Peso inicial</span><span style="font-family:'JetBrains Mono'; color:var(--accent3)">60 kg</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2)">IMC</span><span style="font-family:'JetBrains Mono'; color:var(--accent3)">20.8</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2)">Objetivo</span><span style="font-family:'JetBrains Mono'; color:var(--accent)">+10 kg músculo</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0;">
+            <span style="color:var(--text2)">Tipo de dieta</span><span style="font-family:'JetBrains Mono'; color:var(--accent)">Recomp. corporal</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--protein)"></span>Progreso hacia meta</div>
+        <div style="margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text2); margin-bottom:6px;">
+            <span>60 kg</span><span id="prog-peso-label">60 kg</span><span>70 kg</span>
+          </div>
+          <div style="height:12px; background:var(--bg3); border-radius:6px; overflow:hidden; border:1px solid var(--border);">
+            <div id="progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,var(--accent2),var(--accent)); border-radius:6px; transition:width 0.5s;"></div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--text2);">
+          Tiempo estimado: <strong style="color:var(--text)">6-12 meses</strong> con constancia y dieta limpia.
+        </div>
+        <div style="margin-top:16px; font-size:11px; color:var(--text3);">La ganancia muscular real es de 0.5-1 kg/mes con recomposición corporal.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DIETA ========== -->
+  <section id="dieta" class="section">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Bebas Neue'; font-size:32px; letter-spacing:3px; margin-bottom:8px;">PLAN DE ALIMENTACIÓN</h2>
+      <p style="color:var(--text2); font-size:14px; max-width:600px;">Dieta de recomposición corporal: <strong style="color:var(--accent)">superávit limpio de 300-500 kcal</strong>. Alimentos densos en proteína, sin grasa añadida innecesaria. Múltiples opciones por comida para que elijas según disponibilidad. <strong style="color:var(--accent2)">Actualmente comiendo 1-2 veces al día → iremos subiendo a 3-4 comidas gradualmente.</strong></p>
+    </div>
+
+    <div class="day-pills" id="diet-pills">
+      <div class="day-pill active" onclick="selectDietDay(0, this)">Día 1</div>
+      <div class="day-pill" onclick="selectDietDay(1, this)">Día 2</div>
+      <div class="day-pill" onclick="selectDietDay(2, this)">Día 3</div>
+      <div class="day-pill" onclick="selectDietDay(3, this)">Día 4</div>
+      <div class="day-pill" onclick="selectDietDay(4, this)">Día 5</div>
+      <div class="day-pill" onclick="selectDietDay(5, this)">Día 6</div>
+      <div class="day-pill" onclick="selectDietDay(6, this)">Día 7 (Descanso)</div>
+    </div>
+
+    <div id="diet-content"></div>
+  </section>
+
+  <!-- ========== GIMNASIO ========== -->
+  <section id="gym" class="section">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Bebas Neue'; font-size:32px; letter-spacing:3px; margin-bottom:8px;">PLAN DE ENTRENAMIENTO</h2>
+      <p style="color:var(--text2); font-size:14px; max-width:600px;">PPL (Push-Pull-Legs) — 6 días de entrenamiento, 1 descanso. Progresión de carga semanal. Foco en fuerza y masa muscular magra.</p>
+    </div>
+
+    <div id="gym-days"></div>
+  </section>
+
+  <!-- ========== SUPLEMENTOS ========== -->
+  <section id="suplementos" class="section">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Bebas Neue'; font-size:32px; letter-spacing:3px; margin-bottom:8px;">SUPLEMENTACIÓN</h2>
+      <p style="color:var(--text2); font-size:14px; max-width:600px;">Suplementos basados en evidencia científica para maximizar la ganancia muscular magra. La base es siempre la dieta — los suplementos son el 10% del resultado.</p>
+    </div>
+    <div class="supp-grid" id="supp-grid"></div>
+  </section>
+
+  <!-- ========== REGISTRO ========== -->
+  <section id="registro" class="section">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Bebas Neue'; font-size:32px; letter-spacing:3px; margin-bottom:8px;">REGISTRO Y CONTROL</h2>
+      <p style="color:var(--text2); font-size:14px;">Registra tu peso, entrenamientos y comidas para seguir tu progreso.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Añadir registro</div>
+        <div class="log-form">
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" id="log-fecha">
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="log-tipo">
+              <option value="peso">⚖️ Peso corporal</option>
+              <option value="gym">💪 Entrenamiento</option>
+              <option value="comida">🥗 Comida</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Valor / Descripción</label>
+            <input type="text" id="log-valor" placeholder="Ej: 61.5 kg / Pecho completado / Pollo con arroz">
+          </div>
+          <div class="form-group">
+            <label>Kcal (opcional)</label>
+            <input type="number" id="log-kcal" placeholder="Ej: 650">
+          </div>
+          <div class="form-group full">
+            <label>Notas</label>
+            <textarea id="log-notas" placeholder="Sensaciones, fuerza, energía, sueño..."></textarea>
+          </div>
+        </div>
+        <button class="btn" onclick="addLog()">Guardar registro</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Evolución de peso</div>
+        <canvas id="weight-chart" height="200"></canvas>
+        <div id="chart-empty" class="empty-state" style="display:none;">
+          <div class="empty-state-icon">📊</div>
+          <div class="empty-state-text">Añade registros de peso para ver tu evolución</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Historial de registros</div>
+      <div class="log-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Kcal</th>
+              <th>Notas</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="log-tbody">
+            <tr id="log-empty-row">
+              <td colspan="6" style="text-align:center; padding:32px; color:var(--text3);">
+                No hay registros aún. ¡Empieza a registrar hoy!
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+
+const DIET_DAYS = [
+  {
+    name: "Día 1 — Push (Pecho/Hombros/Tríceps)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Tortilla de clara + avena", desc: "8 claras de huevo + 2 yemas en tortilla con espinacas y tomate. 80g avena cocida con canela y 1 plátano.", prot: 52, carbs: 65, fat: 12, kcal: 580 },
+          { name: "Opción B — Salmón + arroz basmati", desc: "200g salmón a la plancha (sin aceite, con limón y eneldo). 120g arroz basmati cocido. Ensalada de rúcula.", prot: 48, carbs: 60, fat: 18, kcal: 590 },
+          { name: "Opción C — Pechuga + batata", desc: "200g pechuga de pollo cocida o plancha. 150g batata asada al horno con orégano. Tomate cherry.", prot: 50, carbs: 58, fat: 5, kcal: 480 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Bacalao al horno + quinoa", desc: "250g bacalao fresco al horno con pimientos asados (sin aceite). 100g quinoa cocida. Brócoli al vapor.", prot: 58, carbs: 52, fat: 6, kcal: 510 },
+          { name: "Opción B — Ternera magra + arroz + verdura", desc: "200g solomillo de ternera a la plancha. 120g arroz largo cocido. Judías verdes salteadas sin aceite.", prot: 55, carbs: 60, fat: 14, kcal: 580 },
+          { name: "Opción C — Pechuga en escabeche + pasta proteica", desc: "200g pechuga marinada en vinagre, laurel y especias. 100g pasta de trigo duro con tomate natural sin aceite.", prot: 52, carbs: 72, fat: 4, kcal: 540 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Shake de proteína + fruta", desc: "30g proteína de suero (whey) en agua. 1 plátano maduro. 20g mantequilla de cacahuete natural.", prot: 34, carbs: 35, fat: 10, kcal: 370 },
+          { name: "Opción B — Requesón + avena + frutos rojos", desc: "200g requesón 0% grasa. 40g avena en copos. Puñado de arándanos o fresas.", prot: 30, carbs: 38, fat: 2, kcal: 300 },
+          { name: "Opción C — Atún + arroz inflado", desc: "2 latas de atún al natural. 30g arroz inflado. 1 manzana verde.", prot: 36, carbs: 40, fat: 3, kcal: 330 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Merluza + boniato + espárragos", desc: "250g merluza al vapor con limón. 120g boniato asado. Espárragos trigueros a la plancha sin aceite.", prot: 52, carbs: 48, fat: 4, kcal: 440 },
+          { name: "Opción B — Pollo al horno con verduras", desc: "250g pechuga al horno con cúrcuma, paprika y limón. Calabacín + pimiento + cebolla al horno. 60g arroz basmati.", prot: 58, carbs: 42, fat: 6, kcal: 460 },
+          { name: "Opción C — Tortilla de claras con atún", desc: "10 claras + 1 yema. 1 lata de atún al natural. Tomate y cebolla. Lechuga.", prot: 55, carbs: 10, fat: 8, kcal: 340 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 2 — Pull (Espalda/Bíceps)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Huevos revueltos + tostadas proteicas", desc: "3 huevos enteros + 4 claras revueltos con champiñones. 2 tostadas de pan de centeno. Queso fresco batido 0%.", prot: 48, carbs: 55, fat: 14, kcal: 545 },
+          { name: "Opción B — Pavo + avena salada", desc: "150g pechuga de pavo cocida. 80g avena cocida con caldo de pollo, especias sin sal. Tomate fresco.", prot: 50, carbs: 62, fat: 6, kcal: 500 },
+          { name: "Opción C — Smoked salmon bowl", desc: "150g salmón ahumado (bajo en grasa). 100g arroz yamaní. Pepino, rábano, aguacate 30g.", prot: 42, carbs: 60, fat: 16, kcal: 555 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Pechuga rellena de espinacas + pasta", desc: "250g pechuga rellena de espinacas y queso fresco 0%. Horno sin aceite. 100g pasta con tomate natural.", prot: 62, carbs: 65, fat: 8, kcal: 585 },
+          { name: "Opción B — Atún fresco a la plancha + patata cocida", desc: "250g atún rojo a la plancha con sésamo y salsa de soja baja en sodio. 200g patata cocida. Lechuga.", prot: 60, carbs: 50, fat: 10, kcal: 545 },
+          { name: "Opción C — Lentejas con pechuga", desc: "200g lentejas cocidas. 150g pechuga de pollo desmechada. Zanahoria, apio y tomate. Sin chorizo.", prot: 55, carbs: 68, fat: 5, kcal: 550 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Whey + plátano", desc: "35g proteína whey. 1 plátano grande. 5 nueces (sin sal).", prot: 38, carbs: 38, fat: 8, kcal: 385 },
+          { name: "Opción B — Skyr + granola proteica", desc: "200g skyr natural. 30g granola sin azúcar. 10 almendras crudas.", prot: 28, carbs: 34, fat: 10, kcal: 340 },
+          { name: "Opción C — Tostada pavo + queso fresco", desc: "2 tostadas centeno. 100g pechuga pavo. 80g queso fresco batido 0%.", prot: 34, carbs: 36, fat: 4, kcal: 320 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Dorada al horno + quinoa", desc: "250g dorada al horno con limón y hierbas. 80g quinoa. Tomate + cebolla morada cruda.", prot: 50, carbs: 44, fat: 8, kcal: 455 },
+          { name: "Opción B — Claras con verduras + arroz", desc: "10 claras a la plancha. Pisto de calabacín, pimiento y tomate sin aceite. 70g arroz.", prot: 45, carbs: 50, fat: 3, kcal: 410 },
+          { name: "Opción C — Sepia a la plancha + boniato", desc: "250g sepia a la plancha con ajo y perejil. 120g boniato cocido. Rúcula.", prot: 46, carbs: 46, fat: 5, kcal: 420 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 3 — Legs (Piernas/Glúteos)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Tortilla proteica + avena con proteína", desc: "6 claras + 2 huevos enteros, tortilla con espinacas. 80g avena + 20g proteína whey mezclada.", prot: 58, carbs: 68, fat: 14, kcal: 640 },
+          { name: "Opción B — Bacalao desalado + arroz", desc: "200g bacalao desalado (preparación: 48h en agua fría cambiando agua). A la plancha. 120g arroz cocido.", prot: 52, carbs: 62, fat: 4, kcal: 505 },
+          { name: "Opción C — Yogur griego + fruta + frutos secos", desc: "300g yogur griego 0% con proteína añadida (Skyr). 100g fresas. 1 plátano. 15g nueces.", prot: 40, carbs: 55, fat: 10, kcal: 475 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Pechuga en salsa de tomate casera + pasta", desc: "250g pechuga en salsa tomate natural con ajo, albahaca, orégano. 100g pasta. Sin aceite.", prot: 60, carbs: 70, fat: 6, kcal: 580 },
+          { name: "Opción B — Merluza en salsa verde + arroz", desc: "300g merluza en salsa de almejas y perejil (sin aceite extra). 100g arroz. Espárragos.", prot: 58, carbs: 58, fat: 6, kcal: 535 },
+          { name: "Opción C — Garbanzos con pollo", desc: "150g garbanzos cocidos. 180g pechuga desmigada. Tomate, cebolla y comino. Sin chorizo.", prot: 60, carbs: 60, fat: 8, kcal: 565 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Shake de proteína con avena", desc: "35g proteína whey. 40g avena molida batida con agua fría. Canela.", prot: 40, carbs: 35, fat: 4, kcal: 340 },
+          { name: "Opción B — Requesón + plátano", desc: "250g requesón 0%. 1 plátano grande. 10g miel de abeja.", prot: 32, carbs: 42, fat: 2, kcal: 320 },
+          { name: "Opción C — Atún + arroz + fruta", desc: "2 latas atún natural. 80g arroz cocido. Rodajas de naranja.", prot: 36, carbs: 42, fat: 3, kcal: 345 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Salmón + boniato + brócoli", desc: "200g salmón a la plancha (sin aceite, limón y eneldo). 130g boniato asado. Brócoli al vapor.", prot: 48, carbs: 52, fat: 16, kcal: 540 },
+          { name: "Opción B — Pollo marroquí + cuscús", desc: "250g pechuga con especias ras el hanout al horno. 80g cuscús cocido. Tomate, pepino, menta.", prot: 58, carbs: 50, fat: 6, kcal: 500 },
+          { name: "Opción C — Huevos duros + pavo + verdura", desc: "4 huevos duros (quitar 2 yemas). 100g pavo cocido. Ensalada grande con vinagre.", prot: 46, carbs: 8, fat: 10, kcal: 310 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 4 — Push (Hombros/Tríceps énfasis)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Avena proteica + huevos", desc: "100g avena cocida con leche de avena. 30g whey disuelto. 4 claras revueltas aparte. 1 kiwi.", prot: 54, carbs: 75, fat: 10, kcal: 625 },
+          { name: "Opción B — Tostadas con salmón y queso fresco", desc: "3 tostadas de pan de centeno. 150g salmón ahumado. 100g queso fresco batido 0%. Alcaparras.", prot: 48, carbs: 58, fat: 14, kcal: 570 },
+          { name: "Opción C — Pavo + batata", desc: "200g pechuga de pavo cocida con especias. 150g batata asada al horno. Tomate.", prot: 50, carbs: 56, fat: 4, kcal: 470 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Lubina al horno + quinoa", desc: "300g lubina al horno con tomate, ajo y limón. 90g quinoa. Rúcula con vinagre de manzana.", prot: 58, carbs: 48, fat: 8, kcal: 510 },
+          { name: "Opción B — Ternera en tiras con wok de verduras + arroz", desc: "200g solomillo ternera en tiras. Wok de pimiento, calabacín, zanahoria, salsa de soja. 100g arroz jazmín.", prot: 55, carbs: 62, fat: 12, kcal: 580 },
+          { name: "Opción C — Pasta con atún y tomate", desc: "100g pasta integral. 2 latas atún natural. Tomate natural con albahaca y ajo. Sin aceite.", prot: 50, carbs: 72, fat: 5, kcal: 540 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Proteína + fruta", desc: "30g whey en agua. 1 plátano. 1 manzana.", prot: 28, carbs: 40, fat: 2, kcal: 295 },
+          { name: "Opción B — Skyr + frutos rojos", desc: "250g skyr. Fresas + arándanos. 1 cucharada de semillas de chía.", prot: 30, carbs: 28, fat: 5, kcal: 285 },
+          { name: "Opción C — Pan de centeno + atún", desc: "2 tostadas centeno. 1 lata atún natural. Tomate en rodajas.", prot: 28, carbs: 30, fat: 3, kcal: 265 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Pulpo a la gallega (sin aceite extra) + patata", desc: "200g pulpo cocido con pimentón y sal marina. 120g patata cocida. Pimiento verde crudo.", prot: 42, carbs: 44, fat: 4, kcal: 385 },
+          { name: "Opción B — Pollo curry + arroz", desc: "250g pechuga en curry (leche de coco light 100ml, curry, cúrcuma). 80g arroz basmati.", prot: 56, carbs: 50, fat: 10, kcal: 525 },
+          { name: "Opción C — Tortilla de claras + verdura", desc: "10 claras + 1 yema. Espinacas, champiñones, pimiento rojo. Ensalada verde.", prot: 46, carbs: 12, fat: 6, kcal: 290 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 5 — Pull (Espalda grosor + Bíceps)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Salmon bowl proteico", desc: "180g salmón fresco a la plancha. 100g arroz yamaní. Espinacas crudas, pepino, edamame 50g, salsa de soja.", prot: 52, carbs: 62, fat: 16, kcal: 605 },
+          { name: "Opción B — Tortilla francesa grande + avena", desc: "3 huevos + 6 claras, tortilla con queso cottage 0%. 80g avena cocida con plátano triturado.", prot: 55, carbs: 68, fat: 16, kcal: 640 },
+          { name: "Opción C — Pavo + arroz + huevo cocido", desc: "150g pavo. 100g arroz. 2 huevos cocidos (1 yema). Tomate.", prot: 52, carbs: 60, fat: 8, kcal: 525 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Pechuga rellena de ricotta y verduras + patata", desc: "250g pechuga al horno rellena de ricotta 0% y espinacas. 150g patata cocida en cuadros. Ensalada.", prot: 64, carbs: 52, fat: 8, kcal: 545 },
+          { name: "Opción B — Gambas + arroz negro", desc: "300g gambas peladas a la plancha con ajo y perejil. 100g arroz negro cocido. Limón.", prot: 52, carbs: 58, fat: 6, kcal: 510 },
+          { name: "Opción C — Solomillo de cerdo + boniato + verdura", desc: "220g solomillo de cerdo (corte magro) a la plancha. 130g boniato asado. Judías verdes.", prot: 58, carbs: 54, fat: 10, kcal: 550 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Proteína + avena + plátano", desc: "35g whey. 30g avena. 1 plátano. Batido frío.", prot: 38, carbs: 50, fat: 4, kcal: 390 },
+          { name: "Opción B — Huevo duro + tostada + fruta", desc: "3 huevos duros (1 yema). 2 tostadas centeno. 1 pera o naranja.", prot: 30, carbs: 36, fat: 7, kcal: 330 },
+          { name: "Opción C — Requesón + granola + miel", desc: "200g requesón 0%. 25g granola sin azúcar. 10g miel.", prot: 28, carbs: 32, fat: 2, kcal: 260 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Bacalao al pil-pil ligero + quinoa", desc: "250g bacalao desalado confitado a baja temperatura. Salsa pil-pil con mínimo AOVE. 80g quinoa.", prot: 50, carbs: 44, fat: 8, kcal: 460 },
+          { name: "Opción B — Pollo tikka masala sin crema + arroz", desc: "250g pechuga marinada en yogur y especias. Salsa de tomate + cebolla + especias tikka. 80g arroz.", prot: 58, carbs: 52, fat: 6, kcal: 500 },
+          { name: "Opción C — Atún + aguacate + ensalada grande", desc: "2 latas atún natural. Medio aguacate (75g). Lechuga, tomate, pepino, maíz. Limón.", prot: 42, carbs: 20, fat: 16, kcal: 400 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 6 — Legs (Piernas + Fuerza total)",
+    meals: [
+      {
+        title: "DESAYUNO / PRIMERA COMIDA",
+        time: "07:30 – 09:00h",
+        options: [
+          { name: "Opción A — Mega avena proteica", desc: "120g avena cocida. 40g proteína whey mezclada en caliente. 1 plátano triturado. 15g mantequilla de cacahuete natural.", prot: 56, carbs: 88, fat: 12, kcal: 700 },
+          { name: "Opción B — Tortilla de 4 huevos + salmón ahumado", desc: "4 huevos enteros + 4 claras. Salmón ahumado 100g. Espinacas salteadas. 2 tostadas centeno.", prot: 60, carbs: 40, fat: 22, kcal: 620 },
+          { name: "Opción C — Pollo + arroz + huevo + zanahoria", desc: "200g pechuga cocida. 120g arroz. 2 huevos cocidos. Zanahoria cruda.", prot: 58, carbs: 68, fat: 12, kcal: 625 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 14:30h",
+        options: [
+          { name: "Opción A — Pechuga en salsa de champiñones + pasta", desc: "250g pechuga en salsa de champiñones con leche evaporada sin grasa. 110g pasta.", prot: 64, carbs: 72, fat: 6, kcal: 605 },
+          { name: "Opción B — Rape al horno + arroz", desc: "300g rape al horno con tomate, pimiento y cebolla. 100g arroz. Sin aceite.", prot: 58, carbs: 60, fat: 5, kcal: 535 },
+          { name: "Opción C — Judías blancas con pollo y verdura", desc: "150g judías blancas cocidas. 200g pechuga. Zanahoria, apio, tomate. Caldo de pollo.", prot: 62, carbs: 62, fat: 6, kcal: 570 }
+        ]
+      },
+      {
+        title: "MERIENDA / PRE-ENTRENO",
+        time: "16:30 – 17:30h",
+        options: [
+          { name: "Opción A — Shake post-ayuno + carbos", desc: "40g whey. 50g avena. 1 plátano. Batido espeso.", prot: 44, carbs: 60, fat: 5, kcal: 465 },
+          { name: "Opción B — Yogur griego + cereal proteico", desc: "300g skyr. 30g copos de maíz sin azúcar. Fresas.", prot: 34, carbs: 38, fat: 2, kcal: 310 },
+          { name: "Opción C — Sandwich proteico", desc: "2 tostadas centeno. 100g pechuga de pavo. 1 huevo cocido. Lechuga. Mostaza.", prot: 38, carbs: 36, fat: 6, kcal: 355 }
+        ]
+      },
+      {
+        title: "CENA (POST-ENTRENO)",
+        time: "20:30 – 22:00h",
+        options: [
+          { name: "Opción A — Salmón al papillote + boniato", desc: "220g salmón con limón, eneldo, tomate cherry y espárragos al papillote. 130g boniato.", prot: 50, carbs: 52, fat: 16, kcal: 555 },
+          { name: "Opción B — Pollo al limón + arroz + brócoli", desc: "250g pechuga al limón y hierbas. 80g arroz. Brócoli al vapor con ajo sin aceite.", prot: 56, carbs: 48, fat: 5, kcal: 470 },
+          { name: "Opción C — Huevos + atún + verdura", desc: "4 huevos enteros + 1 lata atún. Revuelto con pimientos, cebolla y tomate. Ensalada.", prot: 48, carbs: 18, fat: 14, kcal: 400 }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Día 7 — Descanso activo",
+    meals: [
+      {
+        title: "DESAYUNO TRANQUILO",
+        time: "08:00 – 10:00h",
+        options: [
+          { name: "Opción A — Avena lenta + huevos", desc: "80g avena cocida con leche de almendras sin azúcar. 3 huevos revueltos. Fruta de temporada.", prot: 38, carbs: 60, fat: 14, kcal: 530 },
+          { name: "Opción B — Pan + aguacate + salmón", desc: "2 tostadas de pan de semillas. Aguacate (75g). 100g salmón ahumado. Zumo de limón. Semillas de sésamo.", prot: 28, carbs: 38, fat: 22, kcal: 470 },
+          { name: "Opción C — Yogur + granola + frutos secos", desc: "300g skyr. 30g granola artesana sin azúcar. 20g nueces. 1 plátano.", prot: 34, carbs: 55, fat: 14, kcal: 490 }
+        ]
+      },
+      {
+        title: "COMIDA PRINCIPAL",
+        time: "13:00 – 15:00h",
+        options: [
+          { name: "Opción A — Pollo asado al horno sin piel + ensalada completa", desc: "250g pollo al horno sin piel con hierbas. Ensalada grande: lechuga, tomate, pepino, maíz, zanahoria, huevo cocido. Aceite mínimo.", prot: 58, carbs: 22, fat: 10, kcal: 420 },
+          { name: "Opción B — Cocido madrileño ligero", desc: "200g pechuga cocida, garbanzos 100g, zanahoria, nabo. Sin chorizo ni morcilla. Caldo solo.", prot: 55, carbs: 52, fat: 6, kcal: 490 },
+          { name: "Opción C — Ensalada César proteica", desc: "200g pechuga a la plancha en tiras. Lechuga romana. Pan tostado (croutons ligeros). Salsa César ligera (yogur 0% + mostaza + anchoas + limón).", prot: 52, carbs: 28, fat: 10, kcal: 415 }
+        ]
+      },
+      {
+        title: "MERIENDA / SNACK",
+        time: "17:00 – 18:00h",
+        options: [
+          { name: "Opción A — Fruta + frutos secos", desc: "1 manzana + 1 pera. 20g nueces o almendras. Infusión verde.", prot: 6, carbs: 48, fat: 14, kcal: 345 },
+          { name: "Opción B — Requesón + frutos rojos", desc: "200g requesón 0%. Arándanos y fresas. Semillas de lino.", prot: 24, carbs: 20, fat: 2, kcal: 200 },
+          { name: "Opción C — Proteína ligera", desc: "25g whey en agua. 1 fruta.", prot: 24, carbs: 20, fat: 2, kcal: 200 }
+        ]
+      },
+      {
+        title: "CENA LIGERA",
+        time: "20:00 – 21:30h",
+        options: [
+          { name: "Opción A — Crema de verduras + huevos", desc: "Crema de calabacín + cebolla + calabaza (sin nata). 4 huevos cocidos (2 yemas). Ensalada.", prot: 32, carbs: 28, fat: 10, kcal: 335 },
+          { name: "Opción B — Merluza al vapor + ensalada", desc: "200g merluza al vapor. Ensalada verde grande. Vinagre balsámico.", prot: 38, carbs: 10, fat: 4, kcal: 230 },
+          { name: "Opción C — Pavo + verdura a la plancha", desc: "150g pechuga pavo. Berenjena + calabacín + pimiento a la plancha sin aceite. Hierbas.", prot: 40, carbs: 16, fat: 4, kcal: 260 }
+        ]
+      }
+    ]
+  }
+];
+
+const GYM_DAYS = [
+  {
+    num: "01", name: "PECHO", sub: "Push A — Pectorales + Hombros anterior + Tríceps", badge: "badge-push", label: "PUSH",
+    exercises: [
+      {
+        name: "Press de banca plano",
+        musculo: "Pectoral mayor (porción esternal)",
+        maquina: "Banco plano + barra olímpica o mancuernas",
+        desc: "Túmbate en el banco con la espalda apoyada (arco lumbar natural, no exagerado). Agarre ligeramente más ancho que los hombros. Baja la barra controlando 2-3 segundos hasta rozar el pecho, empuja explosivamente. Los codos van a ~45-75° del torso, nunca perpendiculares al cuerpo.",
+        series: "4×6-8", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Press inclinado con mancuernas",
+        musculo: "Pectoral mayor (porción clavicular)",
+        maquina: "Banco inclinado 30-45° + mancuernas",
+        desc: "Banco inclinado a 30-45°. Mancuernas a la altura del pecho, codos a ~75°. Sube hasta casi juntar las mancuernas (sin tocarse), contrae el pecho en la cima. Bajada lenta de 3 segundos. Activa más la zona superior del pecho que el press plano.",
+        series: "3×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Aperturas en polea cruzada",
+        musculo: "Pectoral mayor (fibras medias e inferiores)",
+        maquina: "Polea cruzada alta (cable crossover)",
+        desc: "De pie en el centro de la máquina, poleas en posición alta. Agarra las manillas y lleva los brazos hacia abajo y al centro, como si abrazes a alguien. Mantén una ligera flexión de codo fija durante todo el movimiento. Contrae el pecho 1 segundo en el punto de unión. Control total en la vuelta.",
+        series: "3×12-15", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Press militar con barra de pie",
+        musculo: "Deltoides anterior + trapecio + tríceps",
+        maquina: "Barra olímpica en rack o en suelo",
+        desc: "De pie, agarre algo más ancho que hombros, barra a la altura de la clavícula. Core muy activo, glúteos apretados. Empuja la barra verticalmente hasta extensión completa, luego mete la cabeza hacia adelante para que la barra quede sobre los hombros. Baja controlado. No arquear la lumbar.",
+        series: "4×6-8", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Elevaciones laterales con mancuernas",
+        musculo: "Deltoides medial (cabeza lateral)",
+        maquina: "Mancuernas — de pie o sentado",
+        desc: "De pie, mancuernas a los lados. Sube los brazos lateralmente hasta la altura de los hombros (no más arriba). Codos ligeramente flexionados, muñecas neutras. El movimiento debe ser controlado — 2s subida, 2s bajada. Evita el balanceo del torso. Pausa 1s arriba.",
+        series: "3×12-15", peso: "Ligero-moderado", descanso: "90s"
+      },
+      {
+        name: "Fondos en paralelas",
+        musculo: "Pectoral inferior + tríceps + deltoides anterior",
+        maquina: "Barras paralelas del gimnasio",
+        desc: "Agárrate a las barras paralelas, cuerpo ligeramente inclinado hacia adelante (más inclinación = más pecho; erguido = más tríceps). Baja hasta que los hombros estén a la altura de los codos o algo por debajo. Empuja hacia arriba sin bloquear codos. Si eres ligero, añade peso con cinturón.",
+        series: "3×10-12", peso: "Corporal + cinturón", descanso: "2 min"
+      },
+      {
+        name: "Extensión de tríceps en polea alta",
+        musculo: "Tríceps braquial (3 cabezas)",
+        maquina: "Polea alta con cuerda o barra recta",
+        desc: "De pie frente a la polea alta, codos pegados al torso y fijos (no se mueven). Empuja la cuerda hacia abajo hasta extensión completa, separando los extremos al final para mayor contracción. Sube lentamente sin que los codos suban. El codo como bisagra fija es clave para aislar el tríceps.",
+        series: "3×12-15", peso: "Moderado", descanso: "90s"
+      }
+    ]
+  },
+  {
+    num: "02", name: "ESPALDA", sub: "Pull A — Dorsal ancho + Romboides + Bíceps", badge: "badge-pull", label: "PULL",
+    exercises: [
+      {
+        name: "Dominadas con peso",
+        musculo: "Dorsal ancho + bíceps + redondo mayor",
+        maquina: "Barra de dominadas + cinturón lastrado",
+        desc: "Agarre prono (palmas mirando al frente), más ancho que los hombros. Desde colgado completo, sube hasta que la barbilla supere la barra. Inicia el movimiento retrayendo las escápulas antes de doblar los codos — así activas el dorsal, no solo el bíceps. Baja lento (3-4s). Si aún no puedes con peso extra, hazlas libres con máximo control.",
+        series: "4×6-8", peso: "Corporal + disco", descanso: "3 min"
+      },
+      {
+        name: "Remo con barra Yates",
+        musculo: "Dorsal ancho + romboides + bíceps",
+        maquina: "Barra olímpica en suelo",
+        desc: "De pie, ligera inclinación del torso hacia adelante (~30°, no horizontal). Agarra la barra en supino (palmas arriba) con agarre medio. Tira de la barra hacia el abdomen bajo, retrayendo las escápulas al final del movimiento. Este agarre supino recluta más bíceps y dorsal inferior. Mantén la espalda rígida.",
+        series: "4×6-8", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Jalón al pecho agarre cerrado supino",
+        musculo: "Dorsal ancho (porción inferior) + bíceps",
+        maquina: "Máquina de poleas (jalón) con barra o accesorio V",
+        desc: "Sentado en la máquina con las rodillas bajo el soporte. Agarre cerrado en supino (palmas mirando a ti). Tira del accesorio hacia el esternón mientras llevas los codos hacia las caderas. En la posición baja, aprieta los omóplatos juntos 1 segundo. Sube con control sin dejar que los hombros suban.",
+        series: "3×10-12", peso: "Moderado", descanso: "2 min"
+      },
+      {
+        name: "Remo en polea baja sentado",
+        musculo: "Romboides + trapecio medio + dorsal",
+        maquina: "Máquina de remo bajo sentado (cable row)",
+        desc: "Sentado con pies en el apoyo, rodillas ligeramente flexionadas. Tira del accesorio en V hacia el abdomen, llevando los codos atrás. En el punto final, retrae las escápulas como si quisieras juntar los omóplatos. Mantén el torso recto — no te inclines atrás para ayudarte. Libera lentamente.",
+        series: "3×12-15", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Curl bíceps con barra EZ",
+        musculo: "Bíceps braquial + braquial anterior",
+        maquina: "Barra EZ (curvada) + discos",
+        desc: "De pie, espalda recta, codos pegados al torso. La barra EZ reduce el estrés en las muñecas vs barra recta. Sube la barra en arco hasta la altura del pecho, contrae el bíceps 1 segundo arriba. Baja lentamente (3s) hasta extensión casi completa. Prohibido balancear el torso o mover los codos hacia adelante.",
+        series: "4×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Curl martillo con mancuernas",
+        musculo: "Braquiorradial + bíceps (cabeza corta)",
+        maquina: "Mancuernas — de pie o alternado",
+        desc: "Agarre neutro (como si sostuvieras un martillo, pulgar arriba). Sube alternando brazos o los dos a la vez hasta la altura del hombro. Este agarre activa el músculo braquiorradial del antebrazo, que el curl normal no trabaja bien. Da grosor al brazo. Movimiento limpio, sin balanceo.",
+        series: "3×10-12", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Face pull en polea",
+        musculo: "Deltoides posterior + manguito rotador + trapecios",
+        maquina: "Polea alta con cuerda",
+        desc: "Polea a la altura de la cara. Agarra la cuerda con ambas manos y tira hacia tu cara, separando los extremos de la cuerda a los lados de tu cabeza (rotación externa). Los codos suben y se abren. Fundamental para la salud del manguito rotador y compensar el volumen de press. Hazlo siempre.",
+        series: "3×15", peso: "Ligero", descanso: "60s"
+      }
+    ]
+  },
+  {
+    num: "03", name: "PIERNAS", sub: "Legs A — Cuádriceps + Isquiotibiales + Glúteos", badge: "badge-legs", label: "LEGS",
+    exercises: [
+      {
+        name: "Sentadilla libre con barra",
+        musculo: "Cuádriceps + glúteo mayor + isquiotibiales + core",
+        maquina: "Rack de sentadillas + barra olímpica",
+        desc: "Barra sobre trapecios (sentadilla alta) o deltoides posteriores (baja). Pies a la anchura de caderas o algo más, punteras ligeramente abiertas. Desciende como si te sentaras en una silla trasera, rodillas siguiendo la dirección de los pies, hasta que los muslos estén paralelos al suelo o más bajos. Core braced, pecho arriba. Sube empujando el suelo.",
+        series: "4×5-6", peso: "Progresivo", descanso: "4 min"
+      },
+      {
+        name: "Prensa de piernas 45°",
+        musculo: "Cuádriceps + glúteo + isquiotibiales",
+        maquina: "Máquina de prensa inclinada 45°",
+        desc: "Siéntate en la máquina con la espalda apoyada. Pies en la plataforma a la anchura de caderas. Baja la plataforma lentamente (3s) hasta que las rodillas lleguen a ~90° o menos (mayor rango = mayor activación). Empuja fuerte sin bloquear las rodillas arriba. Pies altos trabajan más isquios; pies bajos, más cuádriceps.",
+        series: "4×8-10", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Extensión de cuádriceps en máquina",
+        musculo: "Cuádriceps (4 cabezas, especialmente vasto medial)",
+        maquina: "Máquina de extensión de piernas",
+        desc: "Sentado, rodillas al borde del asiento, soporte en el empeine. Extiende las piernas hasta casi bloquear las rodillas, mantén la contracción 1 segundo arriba (isometría). Baja lentamente en 3 segundos. Es un ejercicio de aislamiento — no te permitas hacer trampa con impulso. Gran activador del vasto medial (la lágrima del cuádriceps).",
+        series: "3×12-15", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Peso muerto rumano",
+        musculo: "Isquiotibiales + glúteo mayor + erectores espinales",
+        maquina: "Barra olímpica o mancuernas",
+        desc: "De pie con la barra frente a los muslos. Rodillas ligeramente flexionadas y fijas (no doblan más durante el movimiento). Empuja las caderas hacia atrás mientras bajas la barra por las piernas pegada al cuerpo, hasta sentir un estiramiento intenso en los isquios. La espalda recta todo el rato. Sube con un empuje de cadera, no con la espalda.",
+        series: "4×8-10", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Curl isquiotibiales tumbado",
+        musculo: "Isquiotibiales (bíceps femoral, semimembranoso, semitendinoso)",
+        maquina: "Máquina de curl de piernas tumbado (leg curl)",
+        desc: "Tumbado boca abajo, tobillo bajo el soporte acolchado. Flexiona las piernas llevando los talones hacia los glúteos. Contrae fuerte en la posición alta 1 segundo. Baja muy lentamente (4s) — la fase excéntrica es donde más crece el músculo. Evita el error de levantar las caderas para ganar recorrido.",
+        series: "3×12-15", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Hip thrust con barra",
+        musculo: "Glúteo mayor (máxima activación) + isquiotibiales",
+        maquina: "Banco plano + barra olímpica + pad",
+        desc: "Apoya la espalda alta en el banco, barra sobre las caderas (con pad para no hacerte daño). Pies planos en el suelo a la anchura de caderas. Empuja la barra hacia el techo extendiendo las caderas hasta que el cuerpo forme una línea recta de rodillas a hombros. Aprieta el glúteo al máximo arriba 1-2s. Es el mejor ejercicio para glúteo por activación EMG.",
+        series: "4×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Elevación de talones de pie (gemelos)",
+        musculo: "Gastrocnemio + sóleo",
+        maquina: "Máquina de gemelos de pie o step",
+        desc: "De pie en la máquina, hombros bajo los apoyos, punteras en el borde del step. Baja el talón todo lo posible (estiramiento completo) y sube de puntillas hasta la máxima contracción. La bajada debe ser lenta (3-4s) — el gemelo responde muy bien al trabajo excéntrico. Varía la posición de pies: neutro, punteras adentro, punteras afuera.",
+        series: "4×15-20", peso: "Moderado", descanso: "90s"
+      }
+    ]
+  },
+  {
+    num: "04", name: "HOMBROS", sub: "Push B — Deltoides 3 cabezas + Tríceps énfasis", badge: "badge-push", label: "PUSH",
+    exercises: [
+      {
+        name: "Press Arnold sentado",
+        musculo: "Deltoides (3 cabezas) + tríceps",
+        maquina: "Banco con respaldo + mancuernas",
+        desc: "Sentado, mancuernas al nivel de los hombros con palmas mirando hacia ti (como al final de un curl). Al subir, rota las muñecas hacia afuera de manera que al llegar arriba las palmas miren al frente. Este giro activa las 3 cabezas del deltoides en un solo movimiento. Baja con la rotación inversa. Rango de movimiento total.",
+        series: "4×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Press con mancuernas sentado",
+        musculo: "Deltoides anterior y medial + tríceps",
+        maquina: "Banco con respaldo + mancuernas",
+        desc: "Sentado con espalda apoyada, mancuernas a la altura de los oídos con codos a 90°. Empuja hacia arriba sin llegar a bloquear los codos (mantén tensión constante). Baja hasta los 90°. Más seguro para los hombros que el press militar con barra para principiantes o si hay molestias en el manguito rotador.",
+        series: "3×10-12", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Elevaciones laterales en cable",
+        musculo: "Deltoides medial (cabeza lateral)",
+        maquina: "Polea baja lateral",
+        desc: "De lado a la polea baja, agarra la manilla con la mano alejada de la máquina. Eleva el brazo lateralmente hasta la altura del hombro. El cable mantiene tensión constante durante todo el recorrido, a diferencia de las mancuernas donde el punto de tensión varía. Hazlas también cruzadas (agarra con la mano del lado contrario) para mayor estiramiento inicial.",
+        series: "4×15-20", peso: "Ligero", descanso: "60s"
+      },
+      {
+        name: "Pájaro con mancuernas (Rear delt fly)",
+        musculo: "Deltoides posterior + romboides",
+        maquina: "Mancuernas — inclinado o en máquina pec-deck invertida",
+        desc: "Inclinado hacia adelante ~45° (sentado o de pie), mancuernas colgando. Con codos ligeramente flexionados y fijos, abre los brazos hacia los lados y arriba (como alas de pájaro) hasta la altura de los hombros. Aprieta los omóplatos juntos en la cima. El deltoides posterior es crucial para la estética de la espalda y previene lesiones. Muy descuidado.",
+        series: "3×15", peso: "Ligero", descanso: "60s"
+      },
+      {
+        name: "Remo al cuello agarre ancho",
+        musculo: "Deltoides medial + trapecios + bíceps",
+        maquina: "Barra olímpica o mancuernas",
+        desc: "De pie, agarre prono ancho (más ancho que hombros). Tira de la barra hacia el cuello llevando los codos hacia los lados y arriba (no hacia el techo). El agarre ancho reduce el riesgo de pinzamiento del manguito rotador vs agarre cerrado. Para cuando los codos queden paralelos al suelo.",
+        series: "3×10-12", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Press francés tumbado (Skullcrusher)",
+        musculo: "Tríceps braquial (cabeza larga — la mayor)",
+        maquina: "Banco plano + barra EZ o mancuernas",
+        desc: "Tumbado en banco plano, barra EZ con agarre cerrado. Extiende los brazos hacia el techo, luego dobla solo los codos llevando la barra hacia la frente (no dejes que los codos se abran ni se muevan). Baja la barra por encima de la cabeza para mayor estiramiento de la cabeza larga. Empuja de vuelta a la posición inicial.",
+        series: "4×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Kickback de tríceps en polea",
+        musculo: "Tríceps (especialmente cabeza lateral)",
+        maquina: "Polea baja con manilla",
+        desc: "Inclinado hacia adelante, codo fijo al torso y elevado (~paralelo al suelo). Extiende el antebrazo hacia atrás hasta la extensión completa. Mantén 1s en extensión total apretando el tríceps. El kickback en polea mantiene tensión constante durante todo el arco, a diferencia de la mancuerna donde la fase inicial no tiene tensión.",
+        series: "3×15", peso: "Ligero", descanso: "60s"
+      }
+    ]
+  },
+  {
+    num: "05", name: "ESPALDA", sub: "Pull B — Grosor + Trapecio + Bíceps", badge: "badge-pull", label: "PULL",
+    exercises: [
+      {
+        name: "Peso muerto convencional",
+        musculo: "Toda la cadena posterior: isquios, glúteos, erectores, trapecios, dorsales",
+        maquina: "Barra olímpica + discos en suelo",
+        desc: "Pies a la anchura de caderas, barra sobre el mediopié. Agáchate, agarra la barra justo fuera de las piernas (prono o mixto). Espalda recta, pecho arriba, cadera más baja que los hombros. Empuja el suelo con los pies (no tires de la barra hacia arriba). Cuando la barra pasa las rodillas, empuja la cadera hacia adelante. El ejercicio más completo que existe.",
+        series: "4×5", peso: "Progresivo", descanso: "4 min"
+      },
+      {
+        name: "Remo a un brazo con mancuerna",
+        musculo: "Dorsal ancho + romboides + bíceps (unilateral)",
+        maquina: "Mancuerna + banco plano",
+        desc: "Apoya una rodilla y la mano del mismo lado en el banco. El otro pie en el suelo. Con la espalda paralela al suelo, tira la mancuerna desde el suelo hacia la cadera (no hacia el pecho). El codo va pegado al torso. Al llegar arriba, gira ligeramente el torso para maximizar la retracción escápular. Toca la cadera con la mancuerna.",
+        series: "4×8-10", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Jalón al pecho agarre ancho prono",
+        musculo: "Dorsal ancho (porción superior) + redondo mayor",
+        maquina: "Máquina de jalón con barra larga",
+        desc: "Sentado, agarre prono (palmas al frente) ancho — unos 20-30cm más que los hombros. Tira de la barra hacia la clavícula (no detrás del cuello, que es peligroso). Al bajar, lleva los codos hacia las caderas en diagonal. Inclínate ligeramente hacia atrás. Este agarre enfatiza el ancho del dorsal dando la forma de V a la espalda.",
+        series: "3×10-12", peso: "Moderado", descanso: "2 min"
+      },
+      {
+        name: "Encogimientos de trapecios con mancuernas",
+        musculo: "Trapecio superior (fibras superiores)",
+        maquina: "Mancuernas pesadas — de pie",
+        desc: "De pie, mancuernas a los lados. Sube los hombros directamente hacia las orejas (encogimiento puro). Mantén 1 segundo en la posición alta. Baja lentamente. NO hagas rotaciones de hombro — aumenta el riesgo de lesión sin añadir beneficio. Usa mancuernas bastante pesadas, el trapecio superior aguanta mucha carga.",
+        series: "4×10-12", peso: "Progresivo", descanso: "90s"
+      },
+      {
+        name: "Curl bíceps concentrado",
+        musculo: "Bíceps braquial (pico — cabeza corta)",
+        maquina: "Mancuerna — sentado en banco",
+        desc: "Sentado, piernas abiertas, codo apoyado en la cara interna del muslo. Sube la mancuerna sin mover el codo del apoyo — el muslo como fulcro elimina cualquier trampa. Al llegar arriba, rota la muñeca hacia afuera (supinación) para maximizar la contracción del bíceps. Baja lentísimo. Aislamiento total.",
+        series: "3×12", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Curl bíceps en polea baja",
+        musculo: "Bíceps braquial (tensión constante en todo el rango)",
+        maquina: "Polea baja con barra recta o EZ",
+        desc: "De pie frente a la polea baja, agarra la barra en supino. El cable mantiene tensión constante durante TODO el rango de movimiento (a diferencia de las mancuernas que tienen punto muerto arriba). Muy efectivo para el pico de contracción. Codos fijos al torso, movimiento limpio.",
+        series: "3×15", peso: "Moderado", descanso: "60s"
+      },
+      {
+        name: "Hiperextensiones en banco romano",
+        musculo: "Erectores espinales + glúteo mayor + isquiotibiales",
+        maquina: "Banco de hiperextensiones (banco romano)",
+        desc: "Coloca los pies bajo los apoyos con las caderas al borde del banco. Brazos cruzados en el pecho o detrás de la nuca. Baja el torso hacia el suelo hasta ~90° y sube hasta que el cuerpo forme una línea recta — no hiperextiendas la columna. Para mayor activación del glúteo, redondea la espalda alta al bajar. Esencial para lumbar sana.",
+        series: "3×15", peso: "Corporal", descanso: "90s"
+      }
+    ]
+  },
+  {
+    num: "06", name: "PIERNAS", sub: "Legs B — Fuerza máxima + Sentadilla búlgara", badge: "badge-legs", label: "LEGS",
+    exercises: [
+      {
+        name: "Sentadilla frontal",
+        musculo: "Cuádriceps (dominante) + core + dorsales",
+        maquina: "Rack de sentadillas + barra olímpica",
+        desc: "La barra descansa sobre los deltoides anteriores (no sobre las manos). Codos altos, torso muy erguido durante todo el movimiento — la posición frontal obliga a una espalda más vertical que la sentadilla trasera. Desciende profundo. Requiere buena movilidad de tobillos y muñecas. Activa el cuádriceps más que ningún otro ejercicio.",
+        series: "4×6-8", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Sentadilla búlgara (split squat)",
+        musculo: "Cuádriceps + glúteo mayor + estabilizadores de cadera",
+        maquina: "Banco plano + mancuernas o barra",
+        desc: "Pie trasero sobre un banco a ~50cm de altura, pie delantero avanzado. Desciende en línea vertical (no hacia adelante) hasta que la rodilla trasera casi toque el suelo. El tronco puede inclinarse ligeramente hacia adelante. Excelente para identificar y corregir desequilibrios entre piernas. Muy demandante para el glúteo si el pie delantero está más adelante.",
+        series: "3×10 c/pierna", peso: "Progresivo", descanso: "2 min"
+      },
+      {
+        name: "Prensa 45° unilateral",
+        musculo: "Cuádriceps + isquios + glúteo (pierna por pierna)",
+        maquina: "Máquina de prensa inclinada 45°",
+        desc: "Igual que la prensa normal pero con una sola pierna. El pie único en el centro de la plataforma. Permite detectar y trabajar asimetrías entre pierna derecha e izquierda. Baja la plataforma más de lo habitual para mayor rango de movimiento. La pierna libre puede dejarse colgando o apoyada ligeramente.",
+        series: "3×12 c/pierna", peso: "Moderado", descanso: "90s"
+      },
+      {
+        name: "Peso muerto sumo",
+        musculo: "Glúteos + aductores + isquiotibiales + cuádriceps",
+        maquina: "Barra olímpica en suelo",
+        desc: "Pies muy abiertos (más que la anchura de hombros), punteras abiertas ~45°. Agarre estrecho entre las piernas (prono o mixto). La posición del torso es más vertical que en el peso muerto convencional, activando más cuádriceps. Tira de la barra pegada al cuerpo, empujando rodillas hacia afuera. Mejor para quienes tienen piernas largas o poca movilidad de cadera.",
+        series: "4×6-8", peso: "Progresivo", descanso: "3 min"
+      },
+      {
+        name: "Curl nórdico (nordic hamstring curl)",
+        musculo: "Isquiotibiales (fase excéntrica máxima)",
+        maquina: "Banco o máquina con soporte de pies",
+        desc: "Rodillas en el suelo, pies anclados bajo un banco. Baja el torso hacia el suelo lo más lento posible usando solo los isquiotibiales para frenar la caída (4-8 segundos). Usa las manos para amortiguar al final. Sube ayudándote un poco con las manos. Uno de los ejercicios más efectivos para prevenir lesiones musculares y fortalecer isquios excéntricamente.",
+        series: "3×8", peso: "Corporal", descanso: "2 min"
+      },
+      {
+        name: "Abductores en máquina",
+        musculo: "Glúteo medio + tensor de la fascia lata",
+        maquina: "Máquina de abductores sentado",
+        desc: "Sentado en la máquina, rodillas y muslos apoyados en los soportes. Empuja hacia afuera abriendo las piernas contra la resistencia. Mantén 1s en apertura máxima. El glúteo medio es fundamental para la estabilidad de la cadera durante la marcha, carrera y sentadillas. Muy infravalorado en la ganancia muscular. Crucial para futbolistas.",
+        series: "3×20", peso: "Moderado", descanso: "60s"
+      },
+      {
+        name: "Gemelos sentado en máquina (sóleo)",
+        musculo: "Sóleo (músculo profundo de la pantorrilla)",
+        maquina: "Máquina de gemelos sentado",
+        desc: "Sentado con rodillas dobladas a 90°, soporte sobre los muslos. Con la rodilla doblada se desactiva el gastrocnemio y se aísla el sóleo — un músculo diferente al gastrocnemio que solo se trabaja así. Baja el talón todo lo posible, sube de puntillas, mantén 1s arriba. Imprescindible para una pantorrilla completa.",
+        series: "4×20", peso: "Moderado", descanso: "90s"
+      }
+    ]
+  },
+  {
+    num: "⚽", name: "FÚTBOL", sub: "Partido 1h — Cardio de alta intensidad + Trabajo de piernas", badge: "badge-futbol", label: "FÚTBOL", isFutbol: true,
+    exercises: [
+      {
+        name: "Calentamiento (10 min)",
+        musculo: "Cuerpo completo — activación general",
+        maquina: "Campo de fútbol",
+        desc: "Trote suave 3-4 min, estiramientos dinámicos (leg swings, hip circles, lunges), toques cortos. Activa pantorrillas, isquios y caderas antes del partido. Fundamental para reducir riesgo de lesión muscular, especialmente isquiotibiales (zona muy vulnerable en el fútbol).",
+        series: "10 min", peso: "—", descanso: "—"
+      },
+      {
+        name: "Partido de fútbol 1h",
+        musculo: "Cuádriceps + isquiotibiales + gemelos + core + cardiovascular",
+        maquina: "Campo de fútbol",
+        desc: "1 hora de partido completo. Estimación de carga: ~600-800 kcal quemadas, 8-12 km de carrera a intensidades mixtas (zona 2 a zona 5). Alta demanda de isquiotibiales (sprints), cuádriceps (frenadas), gemelos (cambios de dirección) y core (disputas). El fútbol genera un gasto calórico significativo — ajusta la ingesta ese día.",
+        series: "1h partido", peso: "—", descanso: "—"
+      },
+      {
+        name: "Vuelta a la calma (10 min)",
+        musculo: "Recuperación — músculos trabajados",
+        maquina: "Campo de fútbol / vestuario",
+        desc: "Trote suave o paseo 3-4 min. Estiramientos estáticos: isquiotibiales (30s c/pierna), cuádriceps (30s), gemelos (30s), psoas (30s). Rodear con foam roller si lo tienes disponible. La recuperación post-partido es crítica si entrenas en el gimnasio al día siguiente.",
+        series: "10 min", peso: "—", descanso: "—"
+      },
+      {
+        name: "Nutrición post-partido ⚠️",
+        musculo: "Recuperación sistémica",
+        maquina: "—",
+        desc: "IMPORTANTE: el fútbol quema ~600-800 kcal. Ese día necesitas +400-600 kcal extra respecto a un día de descanso. Come carbohidratos de rápida absorción (plátano, arroz, patata) + proteína (pollo, atún, whey) en los 60 minutos post-partido. Si el partido es tarde, cena más abundante. Hidratación: repón 500-750ml por cada hora de juego.",
+        series: "—", peso: "—", descanso: "—"
+      }
+    ]
+  },
+  {
+    num: "07", name: "DESCANSO", sub: "Recuperación activa — Paseo, movilidad, foam roller", badge: "badge-rest", label: "REST",
+    exercises: [
+      {
+        name: "Paseo de 30-45 min",
+        musculo: "Recuperación activa — circulación general",
+        maquina: "Exterior / parque",
+        desc: "Caminar a ritmo moderado (zona 2 cardio — puedes mantener una conversación). Activa la circulación sin producir cortisol ni catabolismo muscular. Ayuda a eliminar el lactato residual y reduce el DOMS (agujetas). Ideal el día después de piernas o después de partido de fútbol.",
+        series: "1×30-45 min", peso: "—", descanso: "—"
+      },
+      {
+        name: "Foam roller completo",
+        musculo: "Liberación miofascial — toda la musculatura",
+        maquina: "Foam roller",
+        desc: "Rueda 2 minutos por cada zona: espalda alta, espalda baja, glúteos, isquiotibiales, cuádriceps, gemelos, aductores. Al encontrar un punto doloroso, mantén presión estática 20-30 segundos. El foam roller reduce tensión muscular y mejora el rango de movimiento. Especialmente útil post-piernas y post-partido.",
+        series: "15 min", peso: "—", descanso: "—"
+      },
+      {
+        name: "Movilidad de cadera y tobillos",
+        musculo: "Movilidad articular — cadera, tobillo, columna torácica",
+        maquina: "Esterilla en el suelo",
+        desc: "90/90 hip stretch (2 min c/lado), círculos de tobillo (10 c/dirección c/pie), world's greatest stretch (5 reps c/lado), cat-cow (10 reps). La movilidad de cadera y tobillo es limitante en sentadillas y peso muerto. 10-15 minutos diarios de movilidad hacen más por tu progreso que muchos ejercicios de aislamiento.",
+        series: "15 min", peso: "—", descanso: "—"
+      },
+      {
+        name: "Estiramiento estático de isquios y psoas",
+        musculo: "Isquiotibiales + flexores de cadera (psoas)",
+        maquina: "Esterilla",
+        desc: "Estiramiento de isquios tumbado (banda o toalla) 45s c/pierna. Estiramiento de psoas en posición de caballero 45s c/lado. El psoas tenso (por estar sentado mucho) inhibe el glúteo y causa dolor lumbar. Los isquios cortos limitan la profundidad en la sentadilla. Solo en días de descanso o post-entreno, nunca antes de levantar.",
+        series: "10 min", peso: "—", descanso: "—"
+      }
+    ]
+  }
+];
+
+const SUPPLEMENTS = [
+  { icon: "🥤", name: "Proteína Whey", dose: "35-40g post-entreno", desc: "Proteína de suero de alta calidad. Ideal tras el entrenamiento para maximizar síntesis proteica. Busca mínimo 80% de proteína por 100g." },
+  { icon: "⚡", name: "Creatina Monohidrato", dose: "5g/día (siempre)", desc: "El suplemento más estudiado. Aumenta fuerza, volumen muscular y recuperación. Tomar a cualquier hora, con agua. Sin carga necesaria." },
+  { icon: "🌊", name: "Omega-3 (EPA+DHA)", dose: "2-3g/día con comida", desc: "Antiinflamatorio, apoya recuperación muscular y salud cardiovascular. Especialmente útil en dietas bajas en grasa de pescado azul." },
+  { icon: "🍃", name: "Vitamina D3 + K2", dose: "2000-4000 UI D3 + 100mcg K2", desc: "Fundamental para síntesis de testosterona y absorción de calcio. La deficiencia es muy común en España (trabajo de interior)." },
+  { icon: "🧲", name: "Magnesio Bisglicinato", dose: "300-400mg/noche", desc: "Mejora la calidad del sueño (crucial para recuperación), reduce calambres musculares y apoya síntesis proteica. Tomar antes de dormir." },
+  { icon: "🫀", name: "Zinc", dose: "15-25mg/día con comida", desc: "Implicado en producción de testosterona y recuperación muscular. Cuidado: no tomar con hierro. El sudor genera déficit en deportistas." },
+];
+
+// ===== STORAGE =====
+function loadData() {
+  try { return JSON.parse(localStorage.getItem('fitcore_logs') || '[]'); } catch { return []; }
+}
+function saveData(data) {
+  localStorage.setItem('fitcore_logs', JSON.stringify(data));
+}
+function loadWeek() {
+  try { return JSON.parse(localStorage.getItem('fitcore_week') || '[]'); } catch { return []; }
+}
+function saveWeek(data) {
+  localStorage.setItem('fitcore_week', JSON.stringify(data));
+}
+function loadPeso() {
+  return parseFloat(localStorage.getItem('fitcore_peso') || '60');
+}
+function savePeso(p) {
+  localStorage.setItem('fitcore_peso', String(p));
+}
+
+// ===== UI =====
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const labels = { dashboard: 0, dieta: 1, gym: 2, suplementos: 3, registro: 4 };
+  document.querySelectorAll('nav button')[labels[id]].classList.add('active');
+  if (id === 'registro') renderChart();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== DIET =====
+let currentDietDay = 0;
+
+function selectDietDay(idx, el) {
+  currentDietDay = idx;
+  document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderDiet();
+}
+
+function renderDiet() {
+  const day = DIET_DAYS[currentDietDay];
+  const cont = document.getElementById('diet-content');
+  cont.innerHTML = `<div class="card" style="margin-bottom:24px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--accent2);margin-bottom:4px;">${day.name}</div><div style="font-size:13px;color:var(--text2);">Selecciona la opción que prefieras en cada comida. Haz click para marcarla.</div></div>` +
+    day.meals.map((meal, mi) => `
+      <div class="meal-section">
+        <div class="meal-header">
+          <div class="meal-title">${meal.title}</div>
+          <div class="meal-time">${meal.time}</div>
+        </div>
+        <div class="meal-options">
+          ${meal.options.map((opt, oi) => `
+            <div class="meal-option" onclick="selectMeal(this, ${currentDietDay}, ${mi}, ${oi})">
+              <div>
+                <div class="meal-option-name">${opt.name}</div>
+                <div class="meal-option-desc">${opt.desc}</div>
+              </div>
+              <div class="meal-macros">
+                <div class="meal-macro"><div class="meal-macro-val" style="color:var(--protein)">${opt.prot}g</div><div class="meal-macro-lbl">Prot.</div></div>
+                <div class="meal-macro"><div class="meal-macro-val" style="color:var(--carbs)">${opt.carbs}g</div><div class="meal-macro-lbl">HC</div></div>
+                <div class="meal-macro"><div class="meal-macro-val" style="color:var(--fat)">${opt.fat}g</div><div class="meal-macro-lbl">Grasa</div></div>
+                <div class="meal-macro"><div class="meal-macro-val" style="color:var(--accent)">${opt.kcal}</div><div class="meal-macro-lbl">kcal</div></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+}
+
+function selectMeal(el, day, meal, opt) {
+  const siblings = el.parentElement.querySelectorAll('.meal-option');
+  siblings.forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ===== GYM =====
+function renderGym() {
+  const cont = document.getElementById('gym-days');
+  cont.innerHTML = GYM_DAYS.map((day, i) => `
+    <div class="gym-day" id="gym-day-${i}" onclick="toggleGymDay(${i})">
+      <div class="gym-day-header">
+        <div class="gym-day-left">
+          <div class="gym-day-num">${day.num}</div>
+          <div>
+            <div class="gym-day-name">${day.name}</div>
+            <div class="gym-day-muscle">${day.sub}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="gym-day-badge ${day.badge}">${day.label}</span>
+          <span class="gym-day-chevron">▾</span>
+        </div>
+      </div>
+      <div class="gym-day-exercises">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:12px;display:grid;grid-template-columns:1fr auto auto auto;gap:16px;padding:0 0 8px;border-bottom:1px solid var(--border);">
+          <span>Ejercicio</span><span>Series×Reps</span><span>Carga</span><span>Descanso</span>
+        </div>
+        ${day.exercises.map(ex => `
+          <div class="exercise-row">
+            <div>
+              <div class="exercise-name">${ex.name}</div>
+              <div class="exercise-tip">${ex.tip}</div>
+            </div>
+            <span class="exercise-chip">${ex.series}</span>
+            <span class="exercise-chip">${ex.peso}</span>
+            <span class="exercise-chip">${ex.descanso}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleGymDay(i) {
+  const el = document.getElementById(`gym-day-${i}`);
+  el.classList.toggle('open');
+}
+
+// ===== SUPPS =====
+function renderSupps() {
+  document.getElementById('supp-grid').innerHTML = SUPPLEMENTS.map(s => `
+    <div class="supp-card">
+      <div class="supp-icon">${s.icon}</div>
+      <div class="supp-name">${s.name}</div>
+      <div class="supp-dose">${s.dose}</div>
+      <div class="supp-desc">${s.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ===== WEEK GRID =====
+function renderWeek() {
+  const days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const types = ['PUSH','PULL','LEGS','PUSH','PULL','LEGS','REST'];
+  const week = loadWeek();
+  const today = new Date().getDay(); // 0=sun
+  const todayIdx = today === 0 ? 6 : today - 1;
+
+  document.getElementById('week-grid').innerHTML = days.map((d, i) => {
+    const done = week.includes(i);
+    const isToday = i === todayIdx;
+    const isRest = i === 6;
+    return `<div class="week-day ${done?'done':''} ${isRest?'rest':''} ${isToday?'today':''}" onclick="toggleWeekDay(${i})">
+      <div class="week-day-name">${d}</div>
+      <div style="font-size:13px;font-weight:600;">${done?'✓':isRest?'—':'○'}</div>
+      <div style="font-size:9px;opacity:0.7;">${types[i]}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleWeekDay(i) {
+  let week = loadWeek();
+  if (week.includes(i)) week = week.filter(d => d !== i);
+  else week.push(i);
+  saveWeek(week);
+  renderWeek();
+}
+
+// ===== WEIGHT / PROGRESS =====
+function actualizarPeso() {
+  const val = parseFloat(document.getElementById('nuevo-peso').value);
+  if (!val || val < 40 || val > 200) { showToast('Introduce un peso válido'); return; }
+  savePeso(val);
+  document.getElementById('peso-display').textContent = val;
+  updateProgress(val);
+  // auto-log
+  const logs = loadData();
+  logs.unshift({ fecha: new Date().toISOString().split('T')[0], tipo: 'peso', valor: val + ' kg', kcal: '', notas: 'Actualización de peso', id: Date.now() });
+  saveData(logs);
+  document.getElementById('nuevo-peso').value = '';
+  showToast('✓ Peso actualizado');
+  renderChart();
+}
+
+function updateProgress(peso) {
+  const pct = Math.max(0, Math.min(100, ((peso - 60) / 10) * 100));
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('prog-peso-label').textContent = peso + ' kg';
+}
+
+// ===== LOG =====
+function addLog() {
+  const fecha = document.getElementById('log-fecha').value;
+  const tipo = document.getElementById('log-tipo').value;
+  const valor = document.getElementById('log-valor').value.trim();
+  const kcal = document.getElementById('log-kcal').value;
+  const notas = document.getElementById('log-notas').value.trim();
+
+  if (!fecha || !valor) { showToast('Completa fecha y valor'); return; }
+
+  const logs = loadData();
+  logs.unshift({ fecha, tipo, valor, kcal, notas, id: Date.now() });
+  saveData(logs);
+  renderLogs();
+  renderChart();
+
+  document.getElementById('log-fecha').value = '';
+  document.getElementById('log-valor').value = '';
+  document.getElementById('log-kcal').value = '';
+  document.getElementById('log-notas').value = '';
+  showToast('✓ Registro guardado');
+}
+
+function deleteLog(id) {
+  const logs = loadData().filter(l => l.id !== id);
+  saveData(logs);
+  renderLogs();
+  renderChart();
+  showToast('Registro eliminado');
+}
+
+function renderLogs() {
+  const logs = loadData();
+  const tbody = document.getElementById('log-tbody');
+  if (!logs.length) {
+    tbody.innerHTML = `<tr id="log-empty-row"><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">No hay registros aún. ¡Empieza a registrar hoy!</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = logs.map(l => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono';font-size:12px;">${l.fecha}</span></td>
+      <td><span class="badge-small ${l.tipo === 'peso' ? 'badge-weight' : l.tipo === 'gym' ? 'badge-gym' : 'badge-food'}">${l.tipo === 'peso' ? '⚖️ Peso' : l.tipo === 'gym' ? '💪 Gym' : '🥗 Comida'}</span></td>
+      <td class="td-name">${l.valor}</td>
+      <td style="font-family:'JetBrains Mono';font-size:12px;">${l.kcal ? l.kcal + ' kcal' : '—'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.notas || '—'}</td>
+      <td><button class="btn btn-danger" style="padding:6px 12px;font-size:11px;" onclick="deleteLog(${l.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ===== CHART =====
+let chartInstance = null;
+function renderChart() {
+  const logs = loadData().filter(l => l.tipo === 'peso').reverse();
+  const canvas = document.getElementById('weight-chart');
+  const empty = document.getElementById('chart-empty');
+
+  if (!logs.length) {
+    canvas.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  canvas.style.display = 'block';
+  empty.style.display = 'none';
+
+  const labels = logs.map(l => l.fecha);
+  const data = logs.map(l => parseFloat(l.valor));
+
+  if (chartInstance) chartInstance.destroy();
+
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 200);
+  grad.addColorStop(0, 'rgba(232,255,71,0.3)');
+  grad.addColorStop(1, 'rgba(232,255,71,0)');
+
+  chartInstance = new (window.Chart || function() {})(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Peso (kg)',
+        data,
+        borderColor: '#e8ff47',
+        backgroundColor: grad,
+        borderWidth: 2,
+        pointBackgroundColor: '#e8ff47',
+        pointRadius: 4,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#16161f',
+          borderColor: '#2a2a3a',
+          borderWidth: 1,
+          titleColor: '#e8ff47',
+          bodyColor: '#9090aa'
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#5a5a70', font: { size: 10 } },
+          grid: { color: 'rgba(42,42,58,0.5)' }
+        },
+        y: {
+          ticks: { color: '#5a5a70', font: { size: 10 } },
+          grid: { color: 'rgba(42,42,58,0.5)' },
+          min: 55
+        }
+      }
+    }
+  });
+}
+
+// ===== CHART.JS LOADER =====
+function loadChart() {
+  return new Promise((res) => {
+    if (window.Chart) { res(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
+    s.onload = res;
+    document.head.appendChild(s);
+  });
+}
+
+// ===== INIT =====
+async function init() {
+  // Set today's date in form
+  document.getElementById('log-fecha').value = new Date().toISOString().split('T')[0];
+
+  // Load peso
+  const peso = loadPeso();
+  document.getElementById('peso-display').textContent = peso;
+  updateProgress(peso);
+
+  // Render sections
+  renderDiet();
+  renderGym();
+  renderSupps();
+  renderWeek();
+  renderLogs();
+
+  // Load chart.js
+  await loadChart();
+}
+
+init();
+</script>
+</body>
+</html>
