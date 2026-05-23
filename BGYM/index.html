@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FitCore">
+  <meta name="theme-color" content="#0d0d12">
+  <title>FitCore — Plan de Fuerza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app-shell">
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header id="top-nav">
+    <div class="nav-logo">
+      FITCORE
+      <span>60 KG → 70 KG · RECOMPOSICIÓN</span>
+    </div>
+    <nav class="nav-links">
+      <button class="nav-link active" data-page="dashboard" onclick="go('dashboard')">
+        <span class="nav-link-icon">⚡</span> Dashboard
+      </button>
+      <button class="nav-link" data-page="gym" onclick="go('gym')">
+        <span class="nav-link-icon">💪</span> Entreno
+      </button>
+      <button class="nav-link" data-page="dieta" onclick="go('dieta')">
+        <span class="nav-link-icon">🥗</span> Dieta
+      </button>
+      <button class="nav-link" data-page="suplementos" onclick="go('suplementos')">
+        <span class="nav-link-icon">⚗️</span> Suplementos
+      </button>
+      <button class="nav-link" data-page="registro" onclick="go('registro')">
+        <span class="nav-link-icon">📋</span> Registro
+      </button>
+    </nav>
+  </header>
+
+  <!-- ═══ PAGES ═══ -->
+  <div id="page-container">
+
+    <!-- ── DASHBOARD ── -->
+    <section id="p-dashboard" class="page active">
+      <div class="page-header">
+        <div class="page-title t-display">Tu progreso</div>
+        <div class="page-sub">Plan de recomposición corporal · Fuerza sin volumen graso</div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="hero-stats grid-4" style="margin-bottom:16px;">
+        <div class="stat-card c-lime">
+          <div class="stat-label">Peso actual</div>
+          <div class="stat-value" id="peso-display">60</div>
+          <div class="stat-unit">kilogramos</div>
+        </div>
+        <div class="stat-card c-orange">
+          <div class="stat-label">Objetivo</div>
+          <div class="stat-value">70</div>
+          <div class="stat-unit">kg músculo magro</div>
+        </div>
+        <div class="stat-card c-teal">
+          <div class="stat-label">Calorías/día</div>
+          <div class="stat-value">2.8K</div>
+          <div class="stat-unit">kcal superávit limpio</div>
+        </div>
+        <div class="stat-card c-red">
+          <div class="stat-label">Proteína/día</div>
+          <div class="stat-value">180</div>
+          <div class="stat-unit">gramos · 3g/kg</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <!-- Semana -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot"></div>Semana actual</div>
+          </div>
+          <div class="week-grid" id="week-grid"></div>
+          <div style="font-size:11px;color:var(--t2);margin-top:8px;">Toca un día para marcarlo completado · ⚽ = fútbol</div>
+        </div>
+
+        <!-- Macros + peso -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--orange)"></div>Macros objetivo</div>
+          </div>
+          <div style="font-size:12px;color:var(--t1);margin-bottom:2px;">2.800 kcal — días de entrenamiento</div>
+          <div class="macro-bar">
+            <div class="macro-seg" style="width:51%;background:#ff6b6b;"></div>
+            <div class="macro-seg" style="width:36%;background:#ffa94d;"></div>
+            <div class="macro-seg" style="width:13%;background:#74c0fc;"></div>
+          </div>
+          <div class="macro-row">
+            <div class="macro-item"><div class="macro-dot" style="background:#ff6b6b"></div>Proteínas <strong style="color:var(--t0);margin-left:3px;">180g</strong></div>
+            <div class="macro-item"><div class="macro-dot" style="background:#ffa94d"></div>HC <strong style="color:var(--t0);margin-left:3px;">250g</strong></div>
+            <div class="macro-item"><div class="macro-dot" style="background:#74c0fc"></div>Grasas <strong style="color:var(--t0);margin-left:3px;">65g</strong></div>
+          </div>
+          <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--b0);">
+            <div class="t-micro" style="margin-bottom:10px;">Actualizar peso corporal</div>
+            <div style="display:flex;gap:8px;">
+              <input type="number" id="nuevo-peso" placeholder="Ej: 61.5" step="0.1" style="max-width:130px;">
+              <button class="btn btn-primary" onclick="actualizarPeso()">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Progreso -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--red)"></div>Progreso hacia meta</div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t2);margin-bottom:6px;">
+              <span>60 kg</span><span id="prog-label" style="color:var(--lime);font-weight:700;">60 kg</span><span>70 kg</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--t1);margin-bottom:6px;">Estimado: <strong style="color:var(--t0)">6-12 meses</strong> con constancia</div>
+          <div style="font-size:11px;color:var(--t2)">Ganancia real: 0.5-1 kg músculo/mes en recomposición</div>
+        </div>
+
+        <!-- Perfil -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--teal)"></div>Tu perfil</div>
+          </div>
+          <div class="profile-row"><span class="profile-key">Altura</span><span class="profile-val">170 cm</span></div>
+          <div class="profile-row"><span class="profile-key">IMC actual</span><span class="profile-val">20.8</span></div>
+          <div class="profile-row"><span class="profile-key">Sesiones gym</span><span class="profile-val">Push · Pull · Core</span></div>
+          <div class="profile-row"><span class="profile-key">Fútbol</span><span class="profile-val" style="color:var(--green)">2 días/semana</span></div>
+          <div class="profile-row"><span class="profile-key">Sin días de pierna</span><span class="profile-val" style="color:var(--green)">Fútbol lo cubre</span></div>
+          <div class="profile-row"><span class="profile-key">Tipo de dieta</span><span class="profile-val">Recomposición</span></div>
+        </div>
+
+        <!-- Reglas -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--lime)"></div>Reglas de oro</div>
+          </div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Superávit <strong style="color:var(--t0)">limpio</strong>: +300-500 kcal</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>2.5-3g proteína por kg de peso</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Días de fútbol: +500 kcal extra de carbos</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Sin piernas en gym — el fútbol las cubre</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Hidratación: mínimo 3L de agua al día</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Dormir 7-9h: el músculo crece aquí</div>
+          <div class="rule-item"><span class="rule-arrow">→</span>Progresión de carga semanal en gym</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── GYM / ENTRENO ── -->
+    <section id="p-gym" class="page">
+      <div class="page-header">
+        <div class="page-title t-display">Entrenamiento</div>
+        <div class="page-sub">Selecciona la sesión del día · Push · Pull · Core · Fútbol</div>
+      </div>
+      <div id="gym-content"></div>
+    </section>
+
+    <!-- ── DIETA ── -->
+    <section id="p-dieta" class="page">
+      <div class="page-header">
+        <div class="page-title t-display">Plan de alimentación</div>
+        <div class="page-sub">Recomposición corporal · 3 opciones por comida · Sin grasa añadida innecesaria</div>
+      </div>
+
+      <div class="day-tabs" id="diet-tabs">
+        <button class="day-tab active"  onclick="selectDietTab(0,this)">Día 1 · Pecho</button>
+        <button class="day-tab"         onclick="selectDietTab(1,this)">Día 2 · Espalda</button>
+        <button class="day-tab"         onclick="selectDietTab(2,this)">Día 3 · Hombros</button>
+        <button class="day-tab"         onclick="selectDietTab(3,this)">Día 4 · Espalda B</button>
+        <button class="day-tab"         onclick="selectDietTab(4,this)">Día 5 · Pecho+Core</button>
+        <button class="day-tab"         onclick="selectDietTab(5,this)">Día ⚽ · Fútbol</button>
+        <button class="day-tab"         onclick="selectDietTab(6,this)">Día 7 · Descanso</button>
+      </div>
+
+      <div id="diet-content"></div>
+    </section>
+
+    <!-- ── SUPLEMENTOS ── -->
+    <section id="p-suplementos" class="page">
+      <div class="page-header">
+        <div class="page-title t-display">Suplementación</div>
+        <div class="page-sub">Solo con evidencia científica sólida · La dieta es el 90% del resultado</div>
+      </div>
+
+      <div class="supp-grid" id="supp-grid"></div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-header">
+          <div class="card-title"><div class="card-dot"></div>Stack básico recomendado</div>
+        </div>
+        <div style="font-size:13px;color:var(--t1);line-height:1.7;">
+          El orden de prioridad es: <strong style="color:var(--t0)">1) Creatina → 2) Whey → 3) Omega-3 → 4) Vitamina D3 → 5) Magnesio → 6) Zinc</strong>.
+          Si tienes que elegir solo uno, <strong style="color:var(--lime)">la creatina monohidrato</strong> es el suplemento con mejor relación evidencia/coste que existe.
+          Recuerda: ningún suplemento compensa una mala dieta o falta de sueño.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── REGISTRO ── -->
+    <section id="p-registro" class="page">
+      <div class="page-header">
+        <div class="page-title t-display">Registro</div>
+        <div class="page-sub">Controla tu peso, entrenamientos y comidas</div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:18px;">
+        <!-- Form -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot"></div>Añadir registro</div>
+          </div>
+          <div class="log-form">
+            <div class="form-grid">
+              <div class="input-group">
+                <div class="input-label">Fecha</div>
+                <input type="date" id="log-fecha">
+              </div>
+              <div class="input-group">
+                <div class="input-label">Tipo</div>
+                <select id="log-tipo">
+                  <option value="peso">⚖️ Peso corporal</option>
+                  <option value="gym">💪 Gym</option>
+                  <option value="futbol">⚽ Fútbol</option>
+                  <option value="comida">🥗 Comida</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <div class="input-label">Valor</div>
+                <input type="text" id="log-valor" placeholder="61.5 kg · Pecho · Partido 1h">
+              </div>
+              <div class="input-group">
+                <div class="input-label">Kcal (opcional)</div>
+                <input type="number" id="log-kcal" placeholder="650">
+              </div>
+              <div class="input-group span-2">
+                <div class="input-label">Notas</div>
+                <textarea id="log-notas" placeholder="Sensaciones, cargas, energía, sueño..."></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="addLog()">Guardar registro</button>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--orange)"></div>Evolución de peso</div>
+          </div>
+          <canvas id="weight-chart" height="220"></canvas>
+          <div id="chart-empty" class="empty" style="display:none;">
+            <div class="empty-icon">📊</div>
+            <div class="empty-text">Añade registros de peso para ver la gráfica</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="card-dot" style="background:var(--teal)"></div>Historial</div>
+        </div>
+        <div class="log-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Tipo</th><th>Valor</th><th>Kcal</th><th>Notas</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="log-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:28px;color:var(--t2)">No hay registros aún.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /page-container -->
+
+  <!-- ═══ BOTTOM TAB BAR (mobile) ═══ -->
+  <nav id="bottom-tab">
+    <div class="tab-bar-inner">
+      <button class="tab-btn active" data-page="dashboard" onclick="go('dashboard')">
+        <div class="tab-icon">⚡</div>
+        <div class="tab-label">Inicio</div>
+      </button>
+      <button class="tab-btn" data-page="gym" onclick="go('gym')">
+        <div class="tab-icon">💪</div>
+        <div class="tab-label">Entreno</div>
+      </button>
+      <button class="tab-btn" data-page="dieta" onclick="go('dieta')">
+        <div class="tab-icon">🥗</div>
+        <div class="tab-label">Dieta</div>
+      </button>
+      <button class="tab-btn" data-page="suplementos" onclick="go('suplementos')">
+        <div class="tab-icon">⚗️</div>
+        <div class="tab-label">Suplem.</div>
+      </button>
+      <button class="tab-btn" data-page="registro" onclick="go('registro')">
+        <div class="tab-icon">📋</div>
+        <div class="tab-label">Registro</div>
+      </button>
+    </div>
+  </nav>
+
+</div><!-- /app-shell -->
+
+<div id="toast"></div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="data.js"></script>
+<script src="store.js"></script>
+<script src="app.js"></script>
+
+<!-- Bottom tab visibility fix -->
+<script>
+  (function(){
+    function checkMobile(){
+      const isMobile = window.innerWidth <= 640;
+      document.getElementById('bottom-tab').style.display = isMobile ? 'block' : 'none';
+    }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+  })();
+</script>
+</body>
+</html>
