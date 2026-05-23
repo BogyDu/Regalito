@@ -419,27 +419,35 @@ textarea { resize: vertical; min-height: 80px; }
 .form-grid .span-2 { grid-column: 1 / -1; }
 
 /* ── WEEK GRID ───────────────────────────────────────────────── */
-.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: 100%;
+}
 .week-day {
-  aspect-ratio: 1;
-  border-radius: var(--r-md);
+  height: 58px;
+  min-width: 0;
+  border-radius: var(--r-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
   border: 1px solid var(--b1);
   background: var(--bg3);
   cursor: pointer;
   transition: all .2s;
   -webkit-tap-highlight-color: transparent;
-  font-size: 13px;
+  font-size: 12px;
+  overflow: hidden;
+  padding: 2px 0;
 }
 .week-day:active { transform: scale(.94); }
 .week-day.done   { background: var(--lime-dim);  border-color: var(--lime);  color: var(--lime); }
 .week-day.futbol { background: var(--green-dim); border-color: var(--green); }
-.week-day.today  { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-dim); }
-.week-day-lbl    { font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--t2); font-weight: 600; }
+.week-day.today  { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-dim); }
+.week-day-lbl    { font-size: 8px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--t2); font-weight: 700; }
 .week-day.done .week-day-lbl  { color: var(--lime); }
 .week-day.futbol .week-day-lbl { color: var(--green); }
 
@@ -903,8 +911,8 @@ tr:hover td { background: rgba(200,255,0,.015); color: var(--t0); }
 
   .wv-header { flex-direction: column; gap: 10px; }
 
-  .week-grid { gap: 5px; }
-  .week-day { border-radius: var(--r-sm); }
+  .week-grid { gap: 4px; }
+  .week-day  { height: 50px; border-radius: var(--r-sm); font-size: 11px; }
 
   .meal-macros { display: none; }
   .meal-opt { padding: 12px; }
@@ -923,8 +931,8 @@ tr:hover td { background: rgba(200,255,0,.015); color: var(--t0); }
 @media (max-width: 360px) {
   .ds-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-stats.grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .week-grid { gap: 4px; }
-  .week-day { font-size: 11px; }
+  .week-grid { gap: 3px; }
+  .week-day  { height: 44px; font-size: 10px; }
 }
 
 /* iOS safe area support */

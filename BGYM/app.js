@@ -53,8 +53,8 @@ function renderWeek() {
     return `<div class="week-day ${done?"done":""} ${isFtbl?"futbol":""} ${isToday?"today":""}"
                  onclick="toggleWeekDay(${i})" title="${isFtbl?"Fútbol":types[i]}">
       <div class="week-day-lbl">${d}</div>
-      <div style="font-size:14px;font-weight:700;">${done?"✓":isFtbl?"⚽":"○"}</div>
-      <div style="font-size:8px;opacity:.5;">${types[i]}</div>
+      <div style="font-size:13px;font-weight:700;line-height:1;">${done?"✓":isFtbl?"⚽":"○"}</div>
+      <div style="font-size:7px;opacity:.5;letter-spacing:0;">${types[i]}</div>
     </div>`;
   }).join("");
 }
