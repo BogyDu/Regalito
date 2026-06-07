@@ -1,0 +1,1 @@
+// Mover configuración Firebase aquí y usar variables de entorno.
