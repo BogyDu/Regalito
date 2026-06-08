@@ -2,6 +2,7 @@
 //  js/db.js — Firebase database layer
 //  All reads/writes go through here.
 //  Data path: users/{uid}/...
+
 // ═══════════════════════════════════════════════
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
