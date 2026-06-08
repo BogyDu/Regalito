@@ -171,9 +171,11 @@ function navTo(page) {
   renderCurrentPage();
 }
 
+// ── Navigation (updated) ──
 function renderCurrentPage() {
   if (curPage === 'resumen') renderResumen();
   else if (curPage === 'gastos') renderGastos();
+  else if (curPage === 'compartido') renderCompartido();
   else if (curPage === 'anual') renderAnual();
   else if (curPage === 'config') renderConfig();
 }
@@ -749,6 +751,175 @@ window.doSignOut = () => {
   [unsubYear, unsubCats, unsubFixed, unsubTxs].forEach(u => u && u());
   DB.signOut();
 };
+
+// ── Shared Features (Compartido) ──
+window.switchSharedTab = (tab) => {
+  document.querySelectorAll('.shared-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.shared-tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tab}`));
+};
+
+// Calendar
+window.saveCalendarEvent = async () => {
+  const fecha = $('cal-fecha').value;
+  const hora = $('cal-hora').value;
+  const evento = $('cal-evento').value;
+  if (!fecha || !evento) { toast('Completa fecha y evento', 'error'); return; }
+  try {
+    toast('Guardando…', 'saving');
+    await DB.addCalendarEvent({ fecha, hora, evento, createdAt: new Date().toISOString() });
+    $('cal-fecha').value = '';
+    $('cal-hora').value = '';
+    $('cal-evento').value = '';
+    toast('Evento guardado');
+  } catch(e) {
+    console.error(e);
+    toast('Error', 'error');
+  }
+};
+
+function renderCompartido() {
+  loadCalendarEvents();
+  loadShoppingList();
+  loadSharedNotes();
+  loadSharedPhoto();
+}
+
+async function loadCalendarEvents() {
+  try {
+    const events = await DB.getCalendarEvents();
+    const list = $('calendar-list');
+    list.innerHTML = events.map(e => {
+      const dt = new Date(e.createdAt);
+      const timeStr = e.hora || '—';
+      return `<div class="cal-item">
+        <div class="cal-item-time">${timeStr}</div>
+        <div class="cal-item-content">
+          <div class="cal-item-title">${esc(e.evento)}</div>
+          <div class="cal-item-date">${e.fecha} • ${dt.toLocaleDateString()}</div>
+        </div>
+        <button class="cal-item-btn" onclick="deleteCalendarEvent('${e.id}')">🗑️</button>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+window.deleteCalendarEvent = async (id) => {
+  try {
+    await DB.deleteCalendarEvent(id);
+    loadCalendarEvents();
+    toast('Evento eliminado');
+  } catch(e) { console.error(e); toast('Error', 'error'); }
+};
+
+// Shopping list
+window.addShoppingItem = async () => {
+  const item = $('compra-item').value;
+  if (!item) { toast('Escribe un artículo', 'error'); return; }
+  try {
+    toast('Guardando…', 'saving');
+    await DB.addShoppingItem({ name: item, checked: false });
+    $('compra-item').value = '';
+    loadShoppingList();
+    toast('Artículo añadido');
+  } catch(e) { console.error(e); toast('Error', 'error'); }
+};
+
+async function loadShoppingList() {
+  try {
+    const items = await DB.getShoppingItems();
+    const list = $('shopping-list');
+    list.innerHTML = items.map(item => `
+      <div class="shop-item ${item.checked ? 'checked' : ''}">
+        <div class="shop-item-check" onclick="toggleShoppingItem('${item.id}')"></div>
+        <div class="shop-item-text" onclick="toggleShoppingItem('${item.id}')">${esc(item.name)}</div>
+        <button class="shop-item-del" onclick="deleteShoppingItem('${item.id}')">🗑️</button>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+window.toggleShoppingItem = async (id) => {
+  try {
+    await DB.toggleShoppingItem(id);
+    loadShoppingList();
+  } catch(e) { console.error(e); }
+};
+
+window.deleteShoppingItem = async (id) => {
+  try {
+    await DB.deleteShoppingItem(id);
+    loadShoppingList();
+    toast('Artículo eliminado');
+  } catch(e) { console.error(e); toast('Error', 'error'); }
+};
+
+// Notes
+window.saveSharedNotes = async () => {
+  const text = $('notas-text').value;
+  try {
+    toast('Guardando…', 'saving');
+    await DB.saveSharedNotes(text);
+    toast('Notas guardadas');
+  } catch(e) { console.error(e); toast('Error', 'error'); }
+};
+
+async function loadSharedNotes() {
+  try {
+    const notes = await DB.getSharedNotes();
+    $('notas-text').value = notes || '';
+  } catch(e) { console.error(e); }
+}
+
+// Shared Photo
+window.previewPhoto = () => {
+  const file = $('foto-input').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    $('foto-preview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover" alt="preview"/>`;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.uploadPhoto = async () => {
+  const file = $('foto-input').files[0];
+  const desc = $('foto-desc').value;
+  if (!file) { toast('Selecciona una foto', 'error'); return; }
+  try {
+    toast('Subiendo…', 'saving');
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      await DB.saveSharedPhoto({ 
+        data: e.target.result, 
+        desc: desc,
+        uploadedBy: curUser.displayName || 'Anónimo',
+        uploadedAt: new Date().toISOString()
+      });
+      $('foto-input').value = '';
+      $('foto-desc').value = '';
+      loadSharedPhoto();
+      toast('Foto compartida');
+    };
+    reader.readAsDataURL(file);
+  } catch(e) { console.error(e); toast('Error', 'error'); }
+};
+
+async function loadSharedPhoto() {
+  try {
+    const photo = await DB.getSharedPhoto();
+    const preview = $('foto-preview');
+    const info = $('foto-info');
+    if (photo && photo.data) {
+      preview.innerHTML = `<img src="${photo.data}" style="width:100%;height:100%;object-fit:cover" alt="shared"/>`;
+      const dt = new Date(photo.uploadedAt);
+      info.innerHTML = `<div class="foto-info-box">
+        <div class="foto-by">📸 Subida por ${esc(photo.uploadedBy)}</div>
+        ${photo.desc ? `<div class="foto-desc">${esc(photo.desc)}</div>` : ''}
+        <div class="foto-date">${dt.toLocaleString(APP_CONFIG.locale)}</div>
+      </div>`;
+    }
+  } catch(e) { console.error(e); }
+}
 
 // ── Close sheet global ──
 window.closeSheet = closeSheet;

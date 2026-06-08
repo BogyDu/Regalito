@@ -234,6 +234,85 @@
     </div>
   </div>
 
+  <!-- ── PAGE: COMPARTIDO ── -->
+  <div class="page" id="page-compartido">
+    <div class="page-h">
+      <div class="page-h-left">👥 Compartido</div>
+    </div>
+
+    <!-- Tabs for shared features -->
+    <div class="shared-tabs" id="shared-tabs">
+      <button class="shared-tab-btn active" data-tab="calendario" onclick="switchSharedTab('calendario')">📅 Calendario</button>
+      <button class="shared-tab-btn" data-tab="compra" onclick="switchSharedTab('compra')">🛒 Compra</button>
+      <button class="shared-tab-btn" data-tab="notas" onclick="switchSharedTab('notas')">📝 Notas</button>
+      <button class="shared-tab-btn" data-tab="foto" onclick="switchSharedTab('foto')">📸 Foto</button>
+    </div>
+
+    <!-- Calendar Tab -->
+    <div class="shared-tab-content active" id="tab-calendario">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">📅 Eventos compartidos</span>
+        </div>
+        <div style="padding:1.1rem;display:flex;flex-direction:column;gap:.8rem">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:.6rem">
+            <input class="inp" type="date" id="cal-fecha" placeholder="Fecha"/>
+            <input class="inp" type="time" id="cal-hora" placeholder="Hora"/>
+          </div>
+          <input class="inp" id="cal-evento" placeholder="Descripción del evento…"/>
+          <button class="btn btn-prim btn-full" onclick="saveCalendarEvent()">➕ Añadir evento</button>
+        </div>
+      </div>
+      <div id="calendar-list" style="margin-top:.65rem"></div>
+    </div>
+
+    <!-- Shopping List Tab -->
+    <div class="shared-tab-content" id="tab-compra">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">🛒 Artículos a comprar</span>
+        </div>
+        <div style="padding:1.1rem;display:flex;gap:.6rem">
+          <input class="inp" id="compra-item" placeholder="Ej: Pan, Leche, Verduras…"
+            onkeydown="if(event.key==='Enter') addShoppingItem()"/>
+          <button class="btn btn-prim btn-sq" onclick="addShoppingItem()">➕</button>
+        </div>
+      </div>
+      <div id="shopping-list" style="margin-top:.65rem"></div>
+    </div>
+
+    <!-- Notes Tab -->
+    <div class="shared-tab-content" id="tab-notas">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">📝 Notas compartidas</span>
+        </div>
+        <div style="padding:1.1rem;display:flex;flex-direction:column;gap:.6rem">
+          <textarea class="inp" id="notas-text" rows="4" placeholder="Escribe notas compartidas aquí…"></textarea>
+          <button class="btn btn-prim btn-full" onclick="saveSharedNotes()">💾 Guardar notas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo Tab -->
+    <div class="shared-tab-content" id="tab-foto">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">📸 Foto compartida</span>
+        </div>
+        <div style="padding:1.1rem;display:flex;flex-direction:column;gap:.8rem">
+          <div id="foto-preview" style="min-height:200px;border-radius:var(--rad-sm);background:var(--s3);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem">
+            <span>Sin foto aún</span>
+          </div>
+          <input class="inp" type="file" id="foto-input" accept="image/*" onchange="previewPhoto()"/>
+          <textarea class="inp" id="foto-desc" rows="2" placeholder="Descripción de la foto…"></textarea>
+          <button class="btn btn-prim btn-full" onclick="uploadPhoto()">📤 Subir foto</button>
+        </div>
+      </div>
+      <div id="foto-info" style="margin-top:.65rem"></div>
+    </div>
+  </div>
+
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="resumen" onclick="navTo('resumen')">
@@ -241,6 +320,9 @@
     </button>
     <button class="nav-btn" data-page="gastos" onclick="navTo('gastos')">
       <span class="ni">💳</span><span>Gastos</span>
+    </button>
+    <button class="nav-btn" data-page="compartido" onclick="navTo('compartido')">
+      <span class="ni">👥</span><span>Compartido</span>
     </button>
     <button class="nav-btn" data-page="anual" onclick="navTo('anual')">
       <span class="ni">📈</span><span>Anual</span>

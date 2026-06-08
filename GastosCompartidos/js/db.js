@@ -24,7 +24,26 @@ const gProvider   = new GoogleAuthProvider();
 // ── Auth ──
 export const signIn  = () => signInWithPopup(auth, gProvider);
 export const signOut = () => fbSignOut(auth);
-export const onAuth  = (cb) => onAuthStateChanged(auth, cb);
+
+export const onAuth = (cb) => onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const idTokenResult = await user.getIdTokenResult();
+      if (!idTokenResult.claims.appAccess) {
+        // Usuario no autorizado
+        await fbSignOut(auth);
+        cb(null);
+        return;
+      }
+    } catch (e) {
+      console.error('Error verificando claims:', e);
+      cb(null);
+      return;
+    }
+  }
+  cb(user);
+});
+
 export const uid     = () => auth.currentUser?.uid;
 
 // ── Path helpers ──
@@ -120,4 +139,65 @@ export function deleteTx(year, month, id) {
 export async function getYearData(year) {
   const snap = await get(P.year(year));
   return snap.exists() ? snap.val() : {};
+}
+
+// ── Shared Features ──
+
+// Calendar events
+export function addCalendarEvent(data) {
+  return set(push(ref(db, `users/${uid()}/shared/calendar`)), { ...data });
+}
+
+export async function getCalendarEvents() {
+  const snap = await get(ref(db, `users/${uid()}/shared/calendar`));
+  if (!snap.exists()) return [];
+  return Object.entries(snap.val()).map(([id, v]) => ({ id, ...v }));
+}
+
+export function deleteCalendarEvent(id) {
+  return remove(ref(db, `users/${uid()}/shared/calendar/${id}`));
+}
+
+// Shopping list
+export function addShoppingItem(data) {
+  return set(push(ref(db, `users/${uid()}/shared/shopping`)), { ...data });
+}
+
+export async function getShoppingItems() {
+  const snap = await get(ref(db, `users/${uid()}/shared/shopping`));
+  if (!snap.exists()) return [];
+  return Object.entries(snap.val()).map(([id, v]) => ({ id, ...v }));
+}
+
+export function deleteShoppingItem(id) {
+  return remove(ref(db, `users/${uid()}/shared/shopping/${id}`));
+}
+
+export async function toggleShoppingItem(id) {
+  const snap = await get(ref(db, `users/${uid()}/shared/shopping/${id}`));
+  if (snap.exists()) {
+    const item = snap.val();
+    return set(ref(db, `users/${uid()}/shared/shopping/${id}`), { ...item, checked: !item.checked });
+  }
+}
+
+// Shared notes
+export function saveSharedNotes(text) {
+  return set(ref(db, `users/${uid()}/shared/notes`), { text, updatedAt: Date.now() });
+}
+
+export async function getSharedNotes() {
+  const snap = await get(ref(db, `users/${uid()}/shared/notes`));
+  if (!snap.exists()) return '';
+  return snap.val().text || '';
+}
+
+// Shared photo (single, overwrites)
+export function saveSharedPhoto(data) {
+  return set(ref(db, `users/${uid()}/shared/photo`), { ...data });
+}
+
+export async function getSharedPhoto() {
+  const snap = await get(ref(db, `users/${uid()}/shared/photo`));
+  return snap.exists() ? snap.val() : null;
 }

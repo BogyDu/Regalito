@@ -360,6 +360,42 @@ textarea.inp { resize: vertical; min-height: 65px; }
 /* ── Export btn row ── */
 .export-row { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
 
+/* ── Shared Features (Compartido) ── */
+.shared-tabs { display: flex; gap: .5rem; padding: .8rem 1.25rem .5rem;
+  overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); }
+.shared-tab-btn { background: var(--s2); border: 1px solid var(--border); border-radius: var(--rad-xs);
+  color: var(--muted); padding: .45rem .85rem; font-size: .8rem; font-weight: 500; cursor: pointer;
+  transition: all .2s; white-space: nowrap; }
+.shared-tab-btn:hover { color: var(--text); border-color: var(--acc); }
+.shared-tab-btn.active { background: var(--acc); color: var(--bg); border-color: var(--acc); }
+.shared-tab-content { display: none; padding: 1rem 1.25rem; }
+.shared-tab-content.active { display: block; }
+.btn-sq { width: auto; padding: .45rem .65rem; }
+.cal-item { background: var(--s2); border: 1px solid var(--border); border-radius: var(--rad-sm);
+  padding: .75rem .95rem; margin-bottom: .5rem; display: flex; align-items: flex-start; gap: .75rem; }
+.cal-item-time { font-size: .75rem; color: var(--acc); font-weight: 600; flex-shrink: 0; }
+.cal-item-content { flex: 1; min-width: 0; }
+.cal-item-title { font-size: .88rem; font-weight: 500; }
+.cal-item-date { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+.cal-item-btn { background: none; border: none; color: var(--danger); font-size: .7rem;
+  cursor: pointer; padding: 0; transition: all .2s; }
+.cal-item-btn:hover { transform: scale(1.2); }
+.shop-item { background: var(--s2); border: 1px solid var(--border); border-radius: var(--rad-sm);
+  padding: .8rem .95rem; margin-bottom: .5rem; display: flex; align-items: center; gap: .65rem; }
+.shop-item-check { width: 20px; height: 20px; border: 2px solid var(--border2); border-radius: 4px;
+  cursor: pointer; transition: all .2s; flex-shrink: 0; }
+.shop-item.checked .shop-item-check { background: var(--ing); border-color: var(--ing); }
+.shop-item-text { flex: 1; cursor: pointer; }
+.shop-item.checked .shop-item-text { color: var(--muted); text-decoration: line-through; }
+.shop-item-del { background: none; border: none; color: var(--danger); font-size: .7rem;
+  cursor: pointer; padding: 0; transition: all .2s; }
+.shop-item-del:hover { transform: scale(1.2); }
+.foto-info-box { background: var(--s2); border: 1px solid var(--border); border-radius: var(--rad-sm);
+  padding: .85rem .95rem; }
+.foto-by { font-size: .75rem; color: var(--muted); margin-bottom: .35rem; }
+.foto-desc { font-size: .88rem; line-height: 1.4; margin-bottom: .5rem; }
+.foto-date { font-size: .7rem; color: var(--muted2); }
+
 /* ── Responsive tweaks ── */
 @media(max-width:480px) {
   .page { padding: .85rem 1rem 1.25rem; }
