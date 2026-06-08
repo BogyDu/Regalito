@@ -2,7 +2,6 @@
 //  js/db.js — Firebase database layer
 //  All reads/writes go through here.
 //  Data path: users/{uid}/...
-
 // ═══════════════════════════════════════════════
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
@@ -28,19 +27,19 @@ export const signOut = () => fbSignOut(auth);
 
 export const onAuth = (cb) => onAuthStateChanged(auth, async (user) => {
   if (user) {
-    try {
-      const idTokenResult = await user.getIdTokenResult();
-      if (!idTokenResult.claims.appAccess) {
-        // Usuario no autorizado
-        await fbSignOut(auth);
-        cb(null);
-        return;
-      }
-    } catch (e) {
-      console.error('Error verificando claims:', e);
-      cb(null);
-      return;
-    }
+    // TODO: Activar verificación de custom claims después de ejecutar setup-admin.js
+    // try {
+    //   const idTokenResult = await user.getIdTokenResult();
+    //   if (!idTokenResult.claims.appAccess) {
+    //     await fbSignOut(auth);
+    //     cb(null);
+    //     return;
+    //   }
+    // } catch (e) {
+    //   console.error('Error verificando claims:', e);
+    //   cb(null);
+    //   return;
+    // }
   }
   cb(user);
 });
