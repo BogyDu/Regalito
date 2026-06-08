@@ -752,3 +752,4 @@ window.doSignOut = () => {
 
 // ── Close sheet global ──
 window.closeSheet = closeSheet;
+window.navTo = navTo;

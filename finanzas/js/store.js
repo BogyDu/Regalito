@@ -1,1 +1,0 @@
-// Gestión centralizada de estado.
