@@ -18,7 +18,7 @@ export const FIREBASE_CONFIG = {
 export const APP_CONFIG = {
   name: "Nuestras Finanzas",
   version: "2.0.0",
-  persons: ["Persona 1", "Persona 2"],   // ← Change these names
+  persons: ["Paola", "Bogdan"],   // ← Change these names
   currency: "EUR",
   locale: "es-ES"
 };
@@ -28,13 +28,13 @@ export const DEFAULT_CATEGORIES = {
     label: "💰 Ingresos",
     type: "income",
     color: "#34d399",
-    items: ["Sueldo Persona 1", "Sueldo Persona 2", "Otros ingresos"]
+    items: ["Sueldo Paola", "Sueldo Bogdan", "Otros ingresos"]
   },
   gastos_fijos: {
     label: "🏠 Gastos Fijos",
     type: "fixed",
     color: "#fb923c",
-    items: ["Alquiler", "Seguro hogar", "Internet y teléfonos", "Suscripciones", "Cuota préstamo / coche"]
+    items: ["Alquiler", "Agua", "Luz", "Gas"]
   },
   gastos_variables: {
     label: "🛒 Gastos Variables",
